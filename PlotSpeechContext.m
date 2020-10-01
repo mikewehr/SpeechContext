@@ -1,8 +1,8 @@
-function PlotSoundfile(varargin)
+function PlotSpeechContext(varargin)
 
 %plots clustered spiking tuning curve data from djmaus
 %
-% usage: PlotSoundfile([datadir], [tetrode], [clust], [xlimits],[ylimits], [binwidth])
+% usage: PlotSpeechContext([datadir], [tetrode], [clust], [xlimits],[ylimits], [binwidth])
 % Everything is optional.
 % if omitted, the following defaults are used:
 %     datadir defaults to the current directory
@@ -61,7 +61,7 @@ if isempty(channel)     %default to all tetrodes
     d=dir('outPSTH*.mat');
     if ~isempty(d)
         for i=1:length(d)
-            PlotSoundfile_single(datadir, d(i).name, xlimits, ylimits, binwidth)
+            PlotSpeechContext_single(datadir, d(i).name, xlimits, ylimits, binwidth)
         end
     elseif exist('dirs.mat','file') %Nick addition 8/31/18 - defaults to kilosort output if present. Otherwise defaults to .t files.
 
@@ -115,18 +115,18 @@ if isempty(channel)     %default to all tetrodes
             %I made some small changes to accomodate for this:
             %   lines 44-55 in PlotClicktrain_PSTH_single
             %   lines 30-43 in ProcessClicktrain_PSTH_single
-            PlotSoundfile_single(datadir, fn, xlimits, ylimits, binwidth)
+            PlotSpeechContext_single(datadir, fn, xlimits, ylimits, binwidth)
         end
         %end of Nick addition 8/31/18. Some slight rearrangements below.
     else
         d=dir('*.t');
         if isempty(d)
             fprintf('\nNo clustered data found (no .t files in this directory)')
-            PlotSoundfile_single(datadir, fn, xlimits, ylimits, binwidth)
+            PlotSpeechContext_single(datadir, fn, xlimits, ylimits, binwidth)
         end
         for i=1:length(d)
             fn=d(i).name;
-            PlotSoundfile_single(datadir, fn, xlimits, ylimits, binwidth)
+            PlotSpeechContext_single(datadir, fn, xlimits, ylimits, binwidth)
         end
     end
 else %user specified a channel
@@ -134,15 +134,15 @@ else %user specified a channel
         d=dir(sprintf('ch%d*.t', channel));
         for i=1:length(d)
             fn=d(i).name;
-            PlotSoundfile_single(datadir, fn, xlimits, ylimits)
+            PlotSpeechContext_single(datadir, fn, xlimits, ylimits)
         end
     else %user specified a channel and a cluster
         if clust<10
             fn=sprintf('ch%d_simpleclust_0%d.t', channel, clust);
-            PlotSoundfile_single(datadir, fn, xlimits, ylimits)
+            PlotSpeechContext_single(datadir, fn, xlimits, ylimits)
         else
             fn=sprintf('ch%d_simpleclust_%d.t', channel, clust);
-            PlotSoundfile_single(datadir, fn, xlimits, ylimits)
+            PlotSpeechContext_single(datadir, fn, xlimits, ylimits)
             
         end
     end
