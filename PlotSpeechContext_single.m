@@ -157,7 +157,8 @@ p=0;
 % subplot1(numsourcefiles,1, 'Max', [.95 .9])
 for sourcefileindex=1:numsourcefiles
     p=p+1;
-%     subplot1(p)
+figure
+subplot1(p)
     hold on
     spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
     X=xlimits(1):binwidth:xlimits(2); %specify bin centers
@@ -219,6 +220,9 @@ for sourcefileindex=1:numsourcefiles
         h=title(sprintf('%s: \ntetrode%d cell%d %dms, nreps: %d-%d, OFF',datadir,out.channel,out.cluster,durs(dindex),min(min(min(nrepsOFF))),max(max(max(nrepsOFF)))));
         set(h, 'HorizontalAlignment', 'center', 'interpreter', 'none', 'fontsize', fs, 'fontw', 'normal')
     end
+        vpos=mean(ylimits);
+    text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
+
 end
 
 %label amps and freqs
