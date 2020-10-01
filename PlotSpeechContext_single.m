@@ -148,8 +148,8 @@ if isempty(ylimits)
     ylimits=[-.3 ymax];
 end
 
-%aindex=2; %hard-coding to avoid aindex1 (which is silent sound amplitude=-1000)
-dindex=1;
+aindex=2; %hard-coding to avoid aindex1 (which is silent sound amplitude=-1000)
+dindex=2;
 
 %plot the mean tuning curve OFF
 % figure('position',[200 100 600 600])
