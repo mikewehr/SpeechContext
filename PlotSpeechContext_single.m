@@ -158,7 +158,7 @@ p=0;
 for sourcefileindex=1:numsourcefiles
     p=p+1;
 figure
-subplot1(p)
+% subplot1(p)
     hold on
     spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
     X=xlimits(1):binwidth:xlimits(2); %specify bin centers
@@ -233,7 +233,7 @@ for sourcefileindex=1:numsourcefiles
     vpos=mean(ylimits);
     text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
 end
-
+IL
 if IL
     %plot the mean tuning curve ON
     figure('position',[1250 100 600 700])
