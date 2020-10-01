@@ -233,7 +233,7 @@ for sourcefileindex=1:numsourcefiles
     vpos=mean(ylimits);
     text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
 end
-IL
+
 if IL
     %plot the mean tuning curve ON
     figure('position',[1250 100 600 700])
@@ -324,7 +324,6 @@ end
         % set(gca, 'yticklabel', '')
         
     end
-end
 subplot1(1)
 h=title(sprintf('%s: \ntetrode%d cell%d %dms, nreps: %d-%d, ON',datadir,out.channel,out.cluster,durs(dindex),min(min(min(nrepsON))),max(max(max(nrepsON)))));
 set(h, 'HorizontalAlignment', 'center', 'interpreter', 'none', 'fontsize', fs, 'fontw', 'normal')
@@ -338,4 +337,5 @@ for sourcefileindex=1:numsourcefiles
     text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
 end
 
+end %if IL
 
