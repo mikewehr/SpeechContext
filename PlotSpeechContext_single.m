@@ -152,12 +152,12 @@ end
 dindex=1;
 
 %plot the mean tuning curve OFF
-figure('position',[200 100 600 600])
+% figure('position',[200 100 600 600])
 p=0;
-subplot1(numsourcefiles,1, 'Max', [.95 .9])
+% subplot1(numsourcefiles,1, 'Max', [.95 .9])
 for sourcefileindex=1:numsourcefiles
     p=p+1;
-    subplot1(p)
+%     subplot1(p)
     hold on
     spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
     X=xlimits(1):binwidth:xlimits(2); %specify bin centers
@@ -225,7 +225,7 @@ end
 p=0;
 for sourcefileindex=1:numsourcefiles
     p=p+1;
-    subplot1(p)
+%     subplot1(p)
     vpos=mean(ylimits);
     text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
 end
