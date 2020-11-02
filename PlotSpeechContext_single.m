@@ -339,3 +339,79 @@ end
 
 end %if IL
 
+
+for sourcefileindex=1:numsourcefiles
+fprintf('\n%s',    sourcefiles{sourcefileindex})
+end
+% 1:10: ba-da
+% 11:20: iba-ida
+% 21:30: uba-uda
+% note that 10 is out of order
+peakidx=70:90;%for one cell, bin 76 is a response peak
+order=[1 3 4 5 6 7 8 9 10 2];
+cmap=jet(10);
+%plot overlayed curves for ba-da continua
+figure
+c=0;
+for sourcefileindex=order
+c=c+1;
+fprintf('\n%s',    sourcefiles{sourcefileindex})
+    hold on
+    spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
+    X=xlimits(1):binwidth:xlimits(2); %specify bin centers
+    [N, x]=hist(spiketimes1, X);
+    N=N./nreps(sourcefileindex, aindex, dindex); %normalize to spike rate (averaged across trials)
+    N=1000*N./binwidth; %normalize to spike rate in Hz
+    b=plot(x,N);
+    bada(c)=max(N(peakidx));
+    set(b, 'color', cmap(c,:), 'linewid', 2);
+end
+legend ('ba', '', '','','','','','','','da')  
+title('ba-da')
+
+figure
+c=0;
+for sourcefileindex=order+10
+c=c+1;
+    hold on
+    spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
+    X=xlimits(1):binwidth:xlimits(2); %specify bin centers
+    [N, x]=hist(spiketimes1, X);
+    N=N./nreps(sourcefileindex, aindex, dindex); %normalize to spike rate (averaged across trials)
+    N=1000*N./binwidth; %normalize to spike rate in Hz
+    b=plot(x,N);
+    ibaida(c)=max(N(peakidx));
+    set(b, 'color', cmap(c,:), 'linewid', 2);
+end
+legend ('ba', '', '','','','','','','','da')  
+title('iba-ida')
+
+figure
+c=0;
+for sourcefileindex=order+20
+ c=c+1;
+   hold on
+    spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
+    X=xlimits(1):binwidth:xlimits(2); %specify bin centers
+    [N, x]=hist(spiketimes1, X);
+    N=N./nreps(sourcefileindex, aindex, dindex); %normalize to spike rate (averaged across trials)
+    N=1000*N./binwidth; %normalize to spike rate in Hz
+    b=plot(x,N);
+    ubauda(c)=max(N(peakidx));
+    set(b, 'color', cmap(c,:), 'linewid', 2);
+end
+title('uba-uda')
+legend ('ba', '', '','','','','','','','da')  
+figure
+hold on
+x=1:10;
+p=plot(x, bada, x, ibaida, x, ubauda)
+set(p, 'linewidth', 2)
+legend('ba-da', 'iba-ida', 'uba-uda')
+ylabel('firing rate')
+
+keyboard
+
+
+
+
