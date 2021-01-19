@@ -23,6 +23,7 @@ delete(psfilename)
 %finder).
 % cd('/Volumes/D/lab/djmaus/Data/lab') %this is mac format
 cd('\\wehrrig2b\D\lab\djmaus\Data\sfm') %this is windows format
+%testing how github works
 
 cell_list='speech_context_cell_list.txt';
 
