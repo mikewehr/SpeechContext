@@ -410,7 +410,7 @@ set(p, 'linewidth', 2)
 legend('ba-da', 'iba-ida', 'uba-uda')
 ylabel('firing rate')
 
-keyboard
+% keyboard
 
 
 
