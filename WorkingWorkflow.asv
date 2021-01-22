@@ -2,9 +2,8 @@
 
 %% convert out files to raster data
 
-%convert_outfile_to_raster_format.m
-%convert_outfile_to_raster_format_sfm.m
-%use whatever is relevant, already completed this step in test run of data
+%convert_outfile_to_raster_format
+
 
 %% declare your variables
 raster_file_directory_name = 'D:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\';
@@ -27,10 +26,7 @@ end_time = [];
 %% create a DataSource (DS) object
 
 binned_format_file_name = '2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
-specific_label_name_to_use = 'soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps.mat';
-
-%talk to Mike or Nick about getting the program to recognize the different
-%stimuli delivered to make objects to learn
+specific_label_name_to_use = %get Iba-Uda data later
 
 num_cv_splits = [];
 
