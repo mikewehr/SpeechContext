@@ -22,10 +22,10 @@ end_time = [];
 load 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 load 'd:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps.mat';
 
-for k = 1:30
-    inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels.stimulus_ID, k);
-    num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
-end
+%for k = 1:30
+%    inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels.stimulus_ID, k);
+%    num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
+%end
 
 %DJMaus already has the data on how many times each stimulus was ran, will
 %see if we need to add this later
@@ -34,11 +34,15 @@ end
 
 binned_format_file_name = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 specific_label_name_to_use = 'stimuli.mat';
+specific_binned_labels_name = 'd:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps.mat';
+
 
 %talk to Mike or Nick about getting the program to recognize the different
 %stimuli delivered to make objects to learn
 
 num_cv_splits = [20];
+
+
 
 ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits)
 
