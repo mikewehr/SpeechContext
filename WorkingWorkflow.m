@@ -1,5 +1,5 @@
 % The Big Workflow
-
+clear all
 %% convert out files to raster data
 
 %convert_outfile_to_raster_format.m
@@ -27,24 +27,27 @@ load 'd:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800m
 %    num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 %end
 
-%DJMaus already has the data on how many times each stimulus was ran, will
-%see if we need to add this later
+%probably do not need the above code ^ , DJMaus already tells us how many
+%times each stimulus was repeated
 
 %% create a DataSource (DS) object
 
-binned_format_file_name = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
-specific_label_name_to_use = 'stimuli.mat';
-specific_binned_labels_name = 'd:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps.mat';
+binned_format_file_name = '2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
+specific_label_name_to_use = 'soundfiles_IDs.mat'; 
+specific_binned_labels_name = 'uniquestimuli.mat';
+binned_labels = 'WAV files';
+binned_data_name = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 
+%recognize different stimuli
+descriptions = cell(32,1); %%%%% make an empty cell array the length of all the unique stimuli you have
+for i = 1:length(stimuli)
+    descriptions{i} = stimuli(i).stimulus_description;
+end
+uniquestimuli = unique(descriptions);
 
-%talk to Mike or Nick about getting the program to recognize the different
-%stimuli delivered to make objects to learn
+num_cv_splits = [30];
 
-num_cv_splits = [20];
-
-
-
-ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits)
+ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
 
 %% creating a feature-processor (FP) object
 
