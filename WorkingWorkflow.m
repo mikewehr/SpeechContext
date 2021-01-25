@@ -22,10 +22,18 @@ end_time = [];
 load 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 load 'd:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps.mat';
 
-%for k = 1:30
-%    inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels.stimulus_ID, k);
-%    num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
-%end
+%recognize different stimuli
+descriptions = cell(32,1); %%%%% make an empty cell array the length of all the unique stimuli you have
+for i = 1:length(stimuli)
+    descriptions{i} = stimuli(i).stimulus_description;
+end
+uniquestimuli = unique(descriptions);
+
+
+for k = 1:20
+    inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels, k);
+    num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
+end
 
 %probably do not need the above code ^ , DJMaus already tells us how many
 %times each stimulus was repeated
@@ -37,14 +45,7 @@ binned_format_file_name = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098
 binned_labels = 'stimuli.stimulus_description';
 binned_data_name = '2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 
-%recognize different stimuli
-descriptions = cell(32,1); %%%%% make an empty cell array the length of all the unique stimuli you have
-for i = 1:length(stimuli)
-    descriptions{i} = stimuli(i).stimulus_description;
-end
-uniquestimuli = unique(descriptions);
-
-num_cv_splits = [30];
+num_cv_splits = [10];
 specific_label_name_to_use = uniquestimuli;
 ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
 
@@ -58,7 +59,7 @@ the_classifier = max_correlation_coefficient_CL;
 
 %% creating a cross-validator (CV) object
 
-the_cross_validator = standard_resample_CV(ds, the_classifer, the_feature_preprocessor)
+the_cross_validator = standard_resample_CV(ds, the_classifier, the_feature_preprocessors);
 
 %set how many times the outer 'resample' loop is run, generally we use more
 %than 2 resample runs which will give more accurate results but just
