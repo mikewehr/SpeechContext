@@ -30,13 +30,12 @@ end
 uniquestimuli = unique(descriptions);
 binned_labels = 'stimuli.stimulus_description';
 
-for k = 1:9
+for k = 1:20
     [inds_of_sites_with_at_least_k_repeats, ~, ~, ~] = find_sites_with_k_label_repetitions(binned_labels, k, uniquestimuli);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
 
-%probably do not need the above code ^ , DJMaus already tells us how many
-%times each stimulus was repeated
+%k = # of repititions of each unique stimuli (20 for uba-uda x 32)
 
 %% create a DataSource (DS) object
 
@@ -44,7 +43,7 @@ binned_format_file_name = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098
 % specific_label_name_to_use = 'uniquestimuli.mat'; 
 binned_data_name = '2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 
-num_cv_splits = [10];
+num_cv_splits = [1];
 specific_label_name_to_use = uniquestimuli;
 ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
 
