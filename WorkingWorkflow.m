@@ -28,10 +28,10 @@ for i = 1:length(stimuli)
     descriptions{i} = stimuli(i).stimulus_description;
 end
 uniquestimuli = unique(descriptions);
+binned_labels = 'stimuli.stimulus_description';
 
-
-for k = 1:20
-    inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels, k);
+for k = 1:9
+    [inds_of_sites_with_at_least_k_repeats, ~, ~, ~] = find_sites_with_k_label_repetitions(binned_labels, k, uniquestimuli);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
 
@@ -42,7 +42,6 @@ end
 
 binned_format_file_name = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 % specific_label_name_to_use = 'uniquestimuli.mat'; 
-binned_labels = 'stimuli.stimulus_description';
 binned_data_name = '2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 
 num_cv_splits = [10];
