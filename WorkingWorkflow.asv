@@ -1,7 +1,7 @@
 % The Big Workflow
 clear all
 %% convert out files to raster data
-
+pwd = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT';
 %convert_outfile_to_raster_format.m
 %convert_outfile_to_raster_format_sfm.m
 %use whatever is relevant, already completed this step in test run of data
@@ -19,40 +19,49 @@ end_time = [];
 
 %% set number and type of stimulus repetitions
 
-load 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
 load 'd:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps.mat';
 
 %recognize different stimuli
+cd d:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps_sourcefiles;
+stimuli = dir('*.mat');
+uniquestimuli {};
+for i = 1:length(stimuli)
+   clear sample
+   uniquestimuli{i} = stimuli(i).name;
+   load(uniquestimuli{i})
+   wavforms{i} = sample.sample;
+   
+end
+cd pwd
+
 descriptions = cell(32,1); %%%%% make an empty cell array the length of all the unique stimuli you have
 for i = 1:length(stimuli)
     descriptions{i} = stimuli(i).stimulus_description;
 end
 uniquestimuli = unique(descriptions);
-
+binned_labels = 'stimuli.stimulus_description';
 
 for k = 1:20
-    [inds_of_sites_with_at_least_k_repeats], ~, ~, ~] = find_sites_with_k_label_repetitions(binned_labels, k);
+    [inds_of_sites_with_at_least_k_repeats, ~, ~, ~] = find_sites_with_k_label_repetitions(binned_labels, k, uniquestimuli);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
 
-%probably do not need the above code ^ , DJMaus already tells us how many
-%times each stimulus was repeated
+%k = # of repititions of each unique stimuli (20 for iba-uda x 32
+
+
 
 %% create a DataSource (DS) object
 
 binned_format_file_name = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
-% specific_label_name_to_use = 'uniquestimuli.mat'; 
-binned_labels = 'stimuli.stimulus_description';
-binned_data_name = '2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
+binned_data_name = 'binned_data';
 
-num_cv_splits = [10];
+num_cv_splits = [1];
 specific_label_name_to_use = uniquestimuli;
-ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
+ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits, 1);
 
 %% creating a feature-processor (FP) object
 
 the_feature_preprocessors{1} = zscore_normalize_FP;
-
 %% creating a classifier (CL) object
 
 the_classifier = max_correlation_coefficient_CL;
