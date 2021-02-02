@@ -20,6 +20,7 @@ end_time = [];
 %% set number and type of stimulus repetitions
 
 load 'd:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps.mat';
+%label_names_to_use = 'stimuli.stimulus_description';
 
 %recognize different stimuli
 cd d:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps_sourcefiles;
@@ -34,7 +35,6 @@ for i = 1:length(stimuli)
    wavforms{i} = sample.sample;
 end
 cd(pwd);
-binned_labels = 'stimuli.stimulus_description'; %Really figure out what they want here
 
 % We rewrote what is below, to do at the same time of finding the waveforms
 % too
@@ -45,11 +45,21 @@ binned_labels = 'stimuli.stimulus_description'; %Really figure out what they wan
 % uniquestimuli = unique(descriptions);
 % binned_labels = 'stimuli.stimulus_description';
 
+label_names_to_use = uniquestimuli;
+binned_labels = label_names_to_use; %This appears to only be used in the function below to set up k repeats of each stimulus per neuron
+specific_binned_label_name = binned_labels
+
+%SFM 2/1/21 whether giving the above labels as the list of unique stimuli
+%delivered or the raw list of stimuli delivered, somehow in basic_DS
+%'label_names_to_use' is transformed into a string of gibberish
+
 for k = 1:20
     [inds_of_sites_with_at_least_k_repeats, ~, ~, ~] = find_sites_with_k_label_repetitions(binned_labels, k, uniquestimuli);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
-
+%ds.site_to_use =
+%find_sites_with_at_least_k_repeats_of_each_label(the_labels_to_use,
+%num_cv_splits); %See error code in basic_DS Line 590
 %k = # of repititions of each unique stimuli (20 for iba-uda x 32
 
 
