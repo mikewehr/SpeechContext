@@ -17,6 +17,7 @@ function PlotSpeechContext(varargin)
 %Processes data if outfile is not found;
 
 rasters=1;
+force_reprocess=0;
 
 try
     datadir=varargin{1};
@@ -59,6 +60,10 @@ cd(datadir)
 if isempty(channel)     %default to all tetrodes
     %first check for outfiles and use those if possible
     d=dir('outPSTH*.mat');
+    if force_reprocess
+        fprintf('\nforce reprocess')
+        d=[];
+    end
     if ~isempty(d)
         for i=1:length(d)
             PlotSpeechContext_single(datadir, d(i).name, xlimits, ylimits, binwidth)
