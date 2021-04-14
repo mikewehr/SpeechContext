@@ -47,7 +47,7 @@ cd(pwd);
 
 label_names_to_use = uniquestimuli;
 binned_labels = label_names_to_use; %This appears to only be used in the function below to set up k repeats of each stimulus per neuron
-specific_binned_label_name = binned_labels
+specific_binned_label_name = binned_labels;
 
 %SFM 2/1/21 whether giving the above labels as the list of unique stimuli
 %delivered or the raw list of stimuli delivered, somehow in basic_DS
