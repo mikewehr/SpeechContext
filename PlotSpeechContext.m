@@ -17,7 +17,7 @@ function PlotSpeechContext(varargin)
 %Processes data if outfile is not found;
 
 rasters=0;
-force_reprocess=1;
+force_reprocess=0;
 
 try
     datadir=varargin{1};

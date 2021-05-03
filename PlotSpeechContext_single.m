@@ -1,8 +1,9 @@
-function PlotSoundfile_single(varargin)
+function PlotSpeechContext_single(varargin)
 
 %plots a single file of clustered spiking tuning curve data from djmaus
 %
 % usage: PlotTC_PSTH_single(datapath, t_filename, [xlimits],[ylimits], [binwidth])
+% or     PlotTC_PSTH_single(datapath, outfilename, [xlimits],[ylimits], [binwidth])
 % (xlimits, ylimits, binwidth are optional)
 %
 %Processes data if outfile is not found;
@@ -38,7 +39,7 @@ if force_reprocess
     ProcessSoundfile_single(datadir,  t_filename, xlimits, ylimits);
 end
 
-if ischar(varargin{2}) & strfind(varargin{2}, 'outPSTH')
+if ischar(varargin{2}) & strfind(varargin{2}, 'out')
     outfilename=varargin{2};
 else
     %Nick addition 8/31/18 - accomodates kilosort input
@@ -89,9 +90,13 @@ nreps=out.nreps;
 numamps=out.numamps;
 numdurs=out.numdurs;
 samprate=out.samprate; %in Hz
-mM1ON=out.mM1ON;
+if isfield(out, 'mM1ON')
+    mM1ON=out.mM1ON;
+end
+if isfield(out, 'M1ON')
+    M1ON=out.M1ON;
+end
 mM1OFF=out.mM1OFF;
-M1ON=out.M1ON;
 M1OFF=out.M1OFF;
 nrepsON=out.nrepsON;
 nrepsOFF=out.nrepsOFF;
@@ -113,8 +118,8 @@ try
 end
 M1ONStim=out.M1ONStim;
 M1ONLaser=out.M1ONLaser; % a crash here means this is an obsolete outfile. Set force_reprocess=1 up at the top of this mfile. (Don't forget to reset it to 0 when you're done)
-mM1ONStim=out.mM1ONStim;
-mM1ONLaser=out.mM1ONLaser;
+% mM1ONStim=out.mM1ONStim;
+% mM1ONLaser=out.mM1ONLaser;
 M1OFFStim=out.M1OFFStim;
 M1OFFLaser=out.M1OFFLaser;
 mM1OFFStim=out.mM1OFFStim;
