@@ -405,6 +405,7 @@ for sourcefileindex=order+20
     ubauda(c)=max(N(peakidx));
     set(b, 'color', cmap(c,:), 'linewid', 2);
 end
+xlabel('time, ms')
 title('uba-uda')
 legend ('ba', '', '','','','','','','','da')  
 figure
@@ -414,6 +415,7 @@ p=plot(x, bada, x, ibaida, x, ubauda)
 set(p, 'linewidth', 2)
 legend('ba-da', 'iba-ida', 'uba-uda')
 ylabel('firing rate')
+xlabel('stimulus (ba-da continuum)')
 
 % keyboard
 
