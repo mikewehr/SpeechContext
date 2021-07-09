@@ -2,8 +2,8 @@ function PlotSpeechContext_single(varargin)
 
 %plots a single file of clustered spiking tuning curve data from djmaus
 %
-% usage: PlotTC_PSTH_single(datapath, t_filename, [xlimits],[ylimits], [binwidth])
-% or     PlotTC_PSTH_single(datapath, outfilename, [xlimits],[ylimits], [binwidth])
+% usage: PlotSpeechContext_single(datapath, t_filename, [xlimits],[ylimits], [binwidth])
+% or     PlotSpeechContext_single(datapath, outfilename, [xlimits],[ylimits], [binwidth])
 % (xlimits, ylimits, binwidth are optional)
 %
 %Processes data if outfile is not found;
@@ -64,7 +64,9 @@ fprintf('\n%s', outfilename)
 
 cd(datadir)
 
+fprintf('\nloading outfile')
 if exist(outfilename,'file')
+    d=dir(outfilename); fprintf(' (%.1f MB) ...', d.bytes/(1024^2))
     load(outfilename)
     fprintf('\nloaded outfile.')
 else
@@ -411,7 +413,7 @@ legend ('ba', '', '','','','','','','','da')
 figure
 hold on
 x=1:10;
-p=plot(x, bada, x, ibaida, x, ubauda)
+p=plot(x, bada, x, ibaida, x, ubauda);
 set(p, 'linewidth', 2)
 legend('ba-da', 'iba-ida', 'uba-uda')
 ylabel('firing rate')
