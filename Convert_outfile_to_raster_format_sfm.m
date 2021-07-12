@@ -1,6 +1,6 @@
 function Convert_outfile_to_raster_format_sfm
 % convert outfile to raster format
-datadir='D:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098';
+datadir='D:\lab\djmaus\Data\sfm\GrandKilosort0296CombinedOutfiles';   %Enter directory of OUTfiles to be converted here
 
 
 aindex=2;
@@ -70,15 +70,19 @@ for i=1:length(d)
     raster_filename=sprintf('%s_%s_raster_data', datadirstr{end},cellid);
     if ~exist('raster_files', 'dir') mkdir raster_files;end
     cd raster_files
-    save( raster_filename, 'raster_data', 'raster_labels', 'raster_site_info')
-    cd( datadir)
+    
+%     save( raster_filename, 'raster_data', 'raster_labels', 'raster_site_info') %Original, but file over 2GB, so let's save it betterly.
+    %%Sam's compression (LOSSLESS):
+    [I] = find(raster_data);
+    raster_size = size(raster_data);
+    save( raster_filename, 'I', 'raster_size', 'raster_labels', 'raster_site_info')
+   %%Sam's decompression (to be used in whatever the script is that loads the raster files:
+%     load(raster_filename);
+%     raster_data = zeros(raster_size);
+%     raster_data(I) = 1; 
+
+    cd(datadir)
 end
-
-
-    
-    
-    
-    
     
     
     

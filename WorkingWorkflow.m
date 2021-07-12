@@ -1,21 +1,23 @@
 % The Big Workflow
 clear all
-%% convert out files to raster data
-pwd = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT';
-%convert_outfile_to_raster_format.m
+%% convert out files to raster data:
+DataDir = 'F:\Data\sfm\RasterFiles';
+cd(DataDir)
 %convert_outfile_to_raster_format_sfm.m
-%use whatever is relevant, already completed this step in test run of data
 
-%% declare your variables
-raster_file_directory_name = 'D:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\';
-save_prefix_name = '2021-01-18_14-21-23_mouse-0098-NDT\';
-bin_width = 500; %in ms
-sampling_interval = 50; %in ms
-start_time = [];
-end_time = [];
-% if start_time and end_time are not declared NDT will generate values
-%% convert raster files to binned data
-%[saved_binned_data_file_name] = create_binned_data_from_raster_data(raster_file_directory_name, save_prefix_name, bin_width, sampling_interval);
+%% declare your variables:
+raster_file_directory_name = 'F:\Data\sfm\RasterFiles\'; %Directory where rasterized OUTfiles are
+save_prefix_name = 'F:\Data\sfm\BinnedFiles\'; %Directory to send new binned data too
+bin_width = 10; %in ms
+sampling_interval = bin_width/2; %in ms
+start_time = 170; %ms
+end_time = 370; %ms
+% if start_time and end_time are not declared NDT will generate values (we will never do this - SFM 7/12/21)
+%% Creat the binned data:
+Previous_data_file_name = strcat(save_prefix_name,num2str(bin_width),'ms_bins_',num2str(sampling_interval),'ms_sampled_',num2str(start_time),'start_time_',num2str(end_time),'end_time.mat');
+if ~isfile(Previous_data_file_name)
+    [saved_binned_data_file_name] = create_binned_data_from_raster_data(raster_file_directory_name, save_prefix_name, bin_width, sampling_interval, start_time, end_time);
+end
 
 %% set number and type of stimulus repetitions
 
@@ -34,7 +36,17 @@ for i = 1:length(stimuli)
    load(uniquestimuli{i})
    wavforms{i} = sample.sample;
 end
-cd(pwd);
+cd('F:\Data\sfm\BinnedFiles');
+
+%'uniquestimuli' contains the string name of each of the soundfiles presented, 'wavforms' are each soundfile converted into MATLAB 
+
+for i = 1:length(uniquestimuli)
+    presplit = split(uniquestimuli{i}, '_')
+    presort = split(presplit{4}, '+')
+    uniquelabels{i} = presort{1}
+end
+clear presort
+clear presplit
 
 % We rewrote what is below, to do at the same time of finding the waveforms
 % too
@@ -45,31 +57,28 @@ cd(pwd);
 % uniquestimuli = unique(descriptions);
 % binned_labels = 'stimuli.stimulus_description';
 
-label_names_to_use = uniquestimuli;
-binned_labels = label_names_to_use; %This appears to only be used in the function below to set up k repeats of each stimulus per neuron
+label_names_to_use = uniquelabels;
+binned_label = label_names_to_use; %This appears to only be used in the function below to set up k repeats of each stimulus per neuron
 specific_binned_label_name = binned_labels;
 
 %SFM 2/1/21 whether giving the above labels as the list of unique stimuli
 %delivered or the raw list of stimuli delivered, somehow in basic_DS
 %'label_names_to_use' is transformed into a string of gibberish
 
-for k = 1:20
+for k = 1:30
     [inds_of_sites_with_at_least_k_repeats, ~, ~, ~] = find_sites_with_k_label_repetitions(binned_labels, k, uniquestimuli);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
-%ds.site_to_use =
-%find_sites_with_at_least_k_repeats_of_each_label(the_labels_to_use,
-%num_cv_splits); %See error code in basic_DS Line 590
-%k = # of repititions of each unique stimuli (20 for iba-uda x 32
 
-
+%ds.site_to_use = find_sites_with_at_least_k_repeats_of_each_label(the_labels_to_use, num_cv_splits); %See error code in basic_DS Line 590
+%k = # of repititions of each unique stimuli (20 for each unique wav file * 32 unique wavs 
 
 %% create a DataSource (DS) object
 
-binned_format_file_name = 'd:\lab\djmaus\Data\sfm\2021-01-18_14-21-23_mouse-0098-NDT\2021-01-18_14-21-23_mouse-0098-NDT_500ms_bins_50ms_sampled.mat';
-binned_data_name = 'binned_data';
+binned_format_file_name = 'F:\Data\sfm\BinnedFiles\10ms_bins_5ms_sampled_170start_time_370end_time.mat';
+binned_data_name = '10ms_bins_5ms_sampled_170start_time_370end_time.mat';
 
-num_cv_splits = [1];
+num_cv_splits = [20];
 specific_label_name_to_use = uniquestimuli;
 ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits, 1);
 
