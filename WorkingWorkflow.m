@@ -36,7 +36,8 @@ for i = 1:length(stimuli)
    load(uniquestimuli{i})
    wavforms{i} = sample.sample;
 end
-cd('F:\Data\sfm\BinnedFiles');
+BinnedDir = 'F:\Data\sfm\BinnedFiles' %Directory where data is now in Binned form
+cd(BinnedDir);
 
 %'uniquestimuli' contains the string name of each of the soundfiles presented, 'wavforms' are each soundfile converted into MATLAB 
 
@@ -57,16 +58,19 @@ clear presplit
 % uniquestimuli = unique(descriptions);
 % binned_labels = 'stimuli.stimulus_description';
 
-label_names_to_use = uniquelabels;
-binned_label = label_names_to_use; %This appears to only be used in the function below to set up k repeats of each stimulus per neuron
-specific_binned_label_name = binned_labels;
+%This appears to only be used in the function below to set up k repeats of each stimulus per neuron
+binned_labels.full_name = uniquestimuli
+binned_labels.labels_to_use = uniquelabels
 
 %SFM 2/1/21 whether giving the above labels as the list of unique stimuli
 %delivered or the raw list of stimuli delivered, somehow in basic_DS
 %'label_names_to_use' is transformed into a string of gibberish
 
-for k = 1:30
-    [inds_of_sites_with_at_least_k_repeats, ~, ~, ~] = find_sites_with_k_label_repetitions(binned_labels, k, uniquestimuli);
+num_sites = length(dir('F:\Data\sfm\RasterFiles\*.mat'))
+the_labels = binned_labels.full_name
+
+for k = 0:100
+    [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(the_labels, k);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
 
@@ -75,14 +79,18 @@ end
 
 %% create a DataSource (DS) object
 
+num_cv_splits = [20];
+create_simultaneously_recorded_populations = 0; %Logical setting on whether to treat all cells as if recorded simultaneously, default is 0 (FALSE) - SFM 7/13/21
+
 binned_format_file_name = 'F:\Data\sfm\BinnedFiles\10ms_bins_5ms_sampled_170start_time_370end_time.mat';
 binned_data_name = '10ms_bins_5ms_sampled_170start_time_370end_time.mat';
+specific_label_name_to_use = uniquelabels;
 
-num_cv_splits = [20];
-specific_label_name_to_use = uniquestimuli;
-ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits, 1);
+ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
 
 %% creating a feature-processor (FP) object
+get_data(ds)
+the_properties = get_DS_properties(ds)
 
 the_feature_preprocessors{1} = zscore_normalize_FP;
 %% creating a classifier (CL) object
