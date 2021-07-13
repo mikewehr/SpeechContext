@@ -41,10 +41,10 @@ cd(BinnedDir);
 
 %'uniquestimuli' contains the string name of each of the soundfiles presented, 'wavforms' are each soundfile converted into MATLAB 
 
-for i = 1:length(uniquestimuli)
-    presplit = split(uniquestimuli{i}, '_')
-    presort = split(presplit{4}, '+')
-    uniquelabels{i} = presort{1}
+for i = 1:length(uniquestimuli);
+    presplit = split(uniquestimuli{i}, '_');
+    presort = split(presplit{4}, '+');
+    uniquelabels{i} = presort{1};
 end
 clear presort
 clear presplit
@@ -59,15 +59,15 @@ clear presplit
 % binned_labels = 'stimuli.stimulus_description';
 
 %This appears to only be used in the function below to set up k repeats of each stimulus per neuron
-binned_labels.full_name = uniquestimuli
-binned_labels.labels_to_use = uniquelabels
+binned_labels.full_name = uniquestimuli;
+binned_labels.labels_to_use = uniquelabels;
 
 %SFM 2/1/21 whether giving the above labels as the list of unique stimuli
 %delivered or the raw list of stimuli delivered, somehow in basic_DS
 %'label_names_to_use' is transformed into a string of gibberish
 
-num_sites = length(dir('F:\Data\sfm\RasterFiles\*.mat'))
-the_labels = binned_labels.full_name
+num_sites = length(dir('F:\Data\sfm\RasterFiles\*.mat'));
+the_labels = binned_labels.full_name;
 
 for k = 0:100
     [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(the_labels, k);
@@ -81,9 +81,10 @@ end
 
 num_cv_splits = [20];
 create_simultaneously_recorded_populations = 0; %Logical setting on whether to treat all cells as if recorded simultaneously, default is 0 (FALSE) - SFM 7/13/21
+load_data_as_spike_counts = 0; %Logical setting if data should be loaded as absolute spike counts and not firing rates, default is 0 (FALSE/Firing Rate) - SFM 7/13/21
 
 binned_format_file_name = 'F:\Data\sfm\BinnedFiles\10ms_bins_5ms_sampled_170start_time_370end_time.mat';
-binned_data_name = '10ms_bins_5ms_sampled_170start_time_370end_time.mat';
+binned_data_name = '10ms_bins_5ms_sampled_170start_time_370end_time.mat', 'binned_data', 'binned_site_info', 'binned_labels';
 specific_label_name_to_use = uniquelabels;
 
 ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
