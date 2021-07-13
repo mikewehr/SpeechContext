@@ -15,7 +15,7 @@ end_time = 370; %ms
 % if start_time and end_time are not declared NDT will generate values (we will never do this - SFM 7/12/21)
 %% Creat the binned data:
 Previous_data_file_name = strcat(save_prefix_name,num2str(bin_width),'ms_bins_',num2str(sampling_interval),'ms_sampled_',num2str(start_time),'start_time_',num2str(end_time),'end_time.mat');
-if ~isfile(Previous_data_file_name)
+if ~isfile(Previous_data_file_name) % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
     [saved_binned_data_file_name] = create_binned_data_from_raster_data(raster_file_directory_name, save_prefix_name, bin_width, sampling_interval, start_time, end_time);
 end
 
@@ -32,7 +32,7 @@ uniquestimuli = cell(30,1); %%%%% make an empty cell array the length of all the
 % load('F:\Data\sfm\BinnedFiles\10ms_bins_5ms_sampled_170start_time_370end_time.mat');
 % White Noise (WN) and Silent Sound (SS) are located in the stimlog here
 % but need help adding them as labels since they do not have .mat files
-% (can't use dir() method - SFM 7/13/21
+% (can't use dir() method) - SFM 7/13/21
 
 wavforms = cell(30,1);
 for i = 1:length(stimuli)
@@ -50,6 +50,7 @@ for i = 1:length(uniquestimuli);
     presort = split(presplit{4}, '+');
     uniquelabels{i} = presort{1};
 end
+uniquelabels = uniquelabels';
 clear presort
 clear presplit
 
@@ -62,7 +63,6 @@ clear presplit
 % uniquestimuli = unique(descriptions);
 % binned_labels = 'stimuli.stimulus_description';
 
-%This appears to only be used in the function below to set up k repeats of each stimulus per neuron
 binned_labels.full_name = uniquestimuli;
 binned_labels.short_labels = uniquelabels;
 
@@ -73,13 +73,14 @@ binned_labels.short_labels = uniquelabels;
 num_sites = length(dir('F:\Data\sfm\RasterFiles\*.mat'));
 the_labels = binned_labels.short_labels;
 
-for k = 0:100
+%This function is optional but will set some useful paramters further in the analysis pipeline - SFM 7/13/21
+for k = 1:30
     [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(the_labels, k);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
 
-%ds.site_to_use = find_sites_with_at_least_k_repeats_of_each_label(the_labels_to_use, num_cv_splits); %See error code in basic_DS Line 590
-%k = # of repititions of each unique stimuli (20 for each unique wav file * 32 unique wavs 
+%ds.site_to_use = find_sites_with_at_least_k_repeats_of_each_label(the_labels_to_use, num_cv_splits); %See error code in basic_DS Line ~590
+%k = # of repetitions of each unique stimuli per cell (assume to be 100,% could more or less depending on # of cycles or how many sessions cell lasted for - SFM 7/13/21
 
 %% create a DataSource (DS) object
 
