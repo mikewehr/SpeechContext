@@ -28,15 +28,19 @@ load 'd:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800m
 cd d:\lab\djmaus\Data\sfm\soundfile-iba-uda+WN80dB-full_duration--ISS-isi800ms-20reps_sourcefiles;
 stimuli = dir('*.mat');
 uniquestimuli = cell(30,1); %%%%% make an empty cell array the length of all the unique stimuli you have
-%%%% also, you'll need to talk to Mike, see where the SS and WN are
-%%%% located, and then add them to this process
+
+% load('F:\Data\sfm\BinnedFiles\10ms_bins_5ms_sampled_170start_time_370end_time.mat');
+% White Noise (WN) and Silent Sound (SS) are located in the stimlog here
+% but need help adding them as labels since they do not have .mat files
+% (can't use dir() method - SFM 7/13/21
+
 wavforms = cell(30,1);
 for i = 1:length(stimuli)
    uniquestimuli{i} = stimuli(i).name;
    load(uniquestimuli{i})
    wavforms{i} = sample.sample;
 end
-BinnedDir = 'F:\Data\sfm\BinnedFiles' %Directory where data is now in Binned form
+BinnedDir = 'F:\Data\sfm\BinnedFiles' %Directory from save_prefix_name where data is now in Binned form (minus the '\')
 cd(BinnedDir);
 
 %'uniquestimuli' contains the string name of each of the soundfiles presented, 'wavforms' are each soundfile converted into MATLAB 
@@ -60,14 +64,14 @@ clear presplit
 
 %This appears to only be used in the function below to set up k repeats of each stimulus per neuron
 binned_labels.full_name = uniquestimuli;
-binned_labels.labels_to_use = uniquelabels;
+binned_labels.short_labels = uniquelabels;
 
-%SFM 2/1/21 whether giving the above labels as the list of unique stimuli
+%SFM 2/1/21 (still here on 7/13/21): whether giving the above labels as the list of unique stimuli
 %delivered or the raw list of stimuli delivered, somehow in basic_DS
 %'label_names_to_use' is transformed into a string of gibberish
 
 num_sites = length(dir('F:\Data\sfm\RasterFiles\*.mat'));
-the_labels = binned_labels.full_name;
+the_labels = binned_labels.short_labels;
 
 for k = 0:100
     [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(the_labels, k);
@@ -89,11 +93,13 @@ specific_label_name_to_use = uniquelabels;
 
 ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
 
+get_data(ds);
+the_properties = get_DS_properties(ds);
+
 %% creating a feature-processor (FP) object
-get_data(ds)
-the_properties = get_DS_properties(ds)
 
 the_feature_preprocessors{1} = zscore_normalize_FP;
+
 %% creating a classifier (CL) object
 
 the_classifier = max_correlation_coefficient_CL;
