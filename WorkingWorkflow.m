@@ -63,6 +63,8 @@ clear presplit
 % uniquestimuli = unique(descriptions);
 % binned_labels = 'stimuli.stimulus_description';
 
+binned_data_name = '10ms_bins_5ms_sampled_170start_time_370end_time.mat', 'binned_data', 'binned_site_info', 'binned_labels';
+load(binned_data_name);
 binned_labels.full_name = uniquestimuli;
 binned_labels.short_labels = uniquelabels;
 
@@ -74,8 +76,8 @@ num_sites = length(dir('F:\Data\sfm\RasterFiles\*.mat'));
 the_labels = binned_labels.short_labels;
 
 %This function is optional but will set some useful paramters further in the analysis pipeline - SFM 7/13/21
-for k = 1:30
-    [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(the_labels, k);
+for k = 1:100
+    [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(binned_labels.sourcefile, k);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
 
@@ -89,7 +91,6 @@ create_simultaneously_recorded_populations = 0; %Logical setting on whether to t
 load_data_as_spike_counts = 0; %Logical setting if data should be loaded as absolute spike counts and not firing rates, default is 0 (FALSE/Firing Rate) - SFM 7/13/21
 
 binned_format_file_name = 'F:\Data\sfm\BinnedFiles\10ms_bins_5ms_sampled_170start_time_370end_time.mat';
-binned_data_name = '10ms_bins_5ms_sampled_170start_time_370end_time.mat', 'binned_data', 'binned_site_info', 'binned_labels';
 specific_label_name_to_use = uniquelabels;
 
 ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
