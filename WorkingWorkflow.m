@@ -75,7 +75,7 @@ binned_labels.short_labels = uniquelabels;
 num_sites = length(dir('F:\Data\sfm\RasterFiles\*.mat'));
 the_labels = binned_labels.short_labels;
 
-%This function is optional but will set some useful paramters further in the analysis pipeline - SFM 7/13/21
+%This function is optional but will set some useful parameters further in the analysis pipeline - SFM 7/13/21
 for k = 1:100
     [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(binned_labels.sourcefile, k);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
