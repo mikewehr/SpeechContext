@@ -1,11 +1,11 @@
 function Convert_outfile_to_raster_format_sfm
 % convert outfile to raster format
-datadir='D:\lab\djmaus\Data\sfm\GrandKilosort0296CombinedOutfiles';   %Enter directory of OUTfiles to be converted here
+datadir='D:\lab\djmaus\Data\sfm\GrandKilosort0296CombinedOutfiles';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
 
 
 aindex=2;
 dindex=2;
-%should also add silent sound as an additional stimulus type
+%should also add silent sound and white noise as additional stimuli types, contained in out.stimlog(s).stimulus_description('whitenoise* and 'silentsound*) - SFM 7/14/21
 cd(datadir)
 d=dir('outPSTH*.mat');
 for i=1:length(d)
