@@ -32,17 +32,24 @@ for i=1:length(d)
     raster_data=zeros(num_trials, round(num_time_points));
     
     r=0;
-    for stimID=1:out.numsourcefiles
-        nr=out.nrepsOFF(stimID, aindex, dindex);
-        for rep=1:nr
-            r=r+1;
-            spiketimes=out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
-            spiketimes=spiketimes-xlimits(1);
+    for rep = 1:nr %stimID = 1:out.numsourcefiles
+        r = r +1; %nr=out.nrepsOFF(stimID, aindex, dindex);
+        spiketimes = out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
+        spiketimes = spiketimes-xlimits(1);
             %convert ms spiketimes to raster format (samples)
-            spiketimes_rast=1+round(spiketimes*out.samprate/1000);
+        spiketimes_rast = 1+round(spiketimes*out.samprate/1000);
             
-            raster_data(r,spiketimes_rast)=1;
-            raster_labels.sourcefile{r}=out.sourcefiles{stimID};
+        raster_data(r,spiketimes_rast) = 1;
+        raster_labels.sourcefile{r} = out.sourcefiles{stimID};
+        for stimID = 1:out.numsourcefiles %rep=1:nr
+            nr = out.nrepsOFF(stimID, aindex, dindex); %r=r+1;
+%             spiketimes=out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
+%             spiketimes=spiketimes-xlimits(1);
+%             %convert ms spiketimes to raster format (samples)
+%             spiketimes_rast=1+round(spiketimes*out.samprate/1000);
+%             
+%             raster_data(r,spiketimes_rast)=1;
+%             raster_labels.sourcefile{r}=out.sourcefiles{stimID};
         end
     end   %Swap these loops and the order should be preserved later in the pipeline - SFM 7/14/21
     
