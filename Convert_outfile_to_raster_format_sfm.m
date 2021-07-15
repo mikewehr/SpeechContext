@@ -1,6 +1,6 @@
 function Convert_outfile_to_raster_format_sfm
 % convert outfile to raster format
-datadir='D:\lab\djmaus\Data\sfm\GrandKilosort0296CombinedOutfiles';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
+datadir= 'F:\Data\sfm';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
 
 
 aindex=2;
@@ -44,7 +44,7 @@ for i=1:length(d)
             raster_data(r,spiketimes_rast)=1;
             raster_labels.sourcefile{r}=out.sourcefiles{stimID};
         end
-    end
+    end   %Swap these loops and the order should be preserved later in the pipeline - SFM 7/14/21
     
     raster_site_info.IL=out.IL;
     raster_site_info.Nclusters=out.Nclusters;
