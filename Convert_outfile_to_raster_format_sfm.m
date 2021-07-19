@@ -1,6 +1,6 @@
 function Convert_outfile_to_raster_format_sfm
 % convert outfile to raster format
-datadir= 'F:\Data\sfm';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
+datadir= 'D:\lab\djmaus\Data\sfm\GrandKilosort0296CombinedOutfiles';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
 
 
 aindex=2;
@@ -14,6 +14,43 @@ for i=1:length(d)
     load(outfilename)
     cellid=outfilename(9:end-4);
     
+    %%
+    TotalStims = 0;
+    NumberOfStimlogs = length(out.stimlogs);
+    for i = 1:NumberOfStimlogs
+        NewStims = length(out.stimlogs{1,i});
+        TotalStims = TotalStims + NewStims;
+    end
+    
+    GrandStimlog = {};
+    for m = 1:NumberOfStimlogs
+        pathlabel = {};
+        fullnames = cell(1,length(out.stimlogs{1,m})); %get this to include the length of all stimlogs and not just a single stimlog - SFM 7/16/20
+            for i = 1:length(out.stimlogs{1,m})
+                fullnames{i} =out.stimlogs{1,m}(i).stimulus_description;
+            end
+            
+        for i = 1:length(fullnames)
+            presplit = split(fullnames{i}, ':');
+            if isequal(presplit{1},'whitenoise laser')
+               presort = split(presplit{1}, ' ');
+               pathlabel{i} = presort{1}; 
+            elseif isequal(presplit{1},'silentsound laser')
+               presort = split(presplit{1}, ' ');
+               pathlabel{i} = presort{1}; 
+            else
+                presort = split(presplit{2}, ' ');
+                pathlabel{i} = presort{1};
+            end
+        end
+        %pathlabel = pathlabel';
+        clear presplit
+        clear presort
+        clear k
+        
+        GrandStimlog = horzcat(GrandStimlog,pathlabel);
+    end
+    %% 
     
     xlimits=out.xlimits;
     num_trials =out.nrepsOFF(:,aindex, dindex);
@@ -32,26 +69,20 @@ for i=1:length(d)
     raster_data=zeros(num_trials, round(num_time_points));
     
     r=0;
-    for rep = 1:nr %stimID = 1:out.numsourcefiles
-        r = r +1; %nr=out.nrepsOFF(stimID, aindex, dindex);
-        spiketimes = out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
-        spiketimes = spiketimes-xlimits(1);
+    for stimID = 1:out.numsourcefiles
+        nr=out.nrepsOFF(stimID, aindex, dindex);
+       
+        for rep=1:nr
+            r=r+1;
+            spiketimes=out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
+            spiketimes=spiketimes-xlimits(1);
             %convert ms spiketimes to raster format (samples)
-        spiketimes_rast = 1+round(spiketimes*out.samprate/1000);
+            spiketimes_rast=1+round(spiketimes*out.samprate/1000);
             
-        raster_data(r,spiketimes_rast) = 1;
-        raster_labels.sourcefile{r} = out.sourcefiles{stimID};
-        for stimID = 1:out.numsourcefiles %rep=1:nr
-            nr = out.nrepsOFF(stimID, aindex, dindex); %r=r+1;
-%             spiketimes=out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
-%             spiketimes=spiketimes-xlimits(1);
-%             %convert ms spiketimes to raster format (samples)
-%             spiketimes_rast=1+round(spiketimes*out.samprate/1000);
-%             
-%             raster_data(r,spiketimes_rast)=1;
-%             raster_labels.sourcefile{r}=out.sourcefiles{stimID};
+            raster_data(r,spiketimes_rast)=1;
+            raster_labels.sourcefile{r} = GrandStimlog{r};
         end
-    end   %Swap these loops and the order should be preserved later in the pipeline - SFM 7/14/21
+    end   
     
     raster_site_info.IL=out.IL;
     raster_site_info.Nclusters=out.Nclusters;

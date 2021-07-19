@@ -40,6 +40,10 @@ for i = 1:length(stimuli)
    load(uniquestimuli{i})
    wavforms{i} = sample.sample;
 end
+
+uniquestimuli{31} = 'whitenoise'; % add in whitenoise and silent sound stimuli (add stimuli that don't have .mat files and need to be added manually) - SFM 7/19/21
+uniquestimuli{32} = 'silentsound'; %these are auto generated in djmaus and don't have a saved unique waveform
+
 BinnedDir = 'F:\Data\sfm\BinnedFiles' %Directory from save_prefix_name where data is now in Binned form (minus the '\')
 cd(BinnedDir);
 
