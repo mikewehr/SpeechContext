@@ -41,10 +41,7 @@ for i = 1:length(stimuli)
    wavforms{i} = sample.sample;
 end
 
-uniquestimuli{31} = 'whitenoise'; % add in whitenoise and silent sound stimuli (add stimuli that don't have .mat files and need to be added manually) - SFM 7/19/21
-uniquestimuli{32} = 'silentsound'; %these are auto generated in djmaus and don't have a saved unique waveform
-
-BinnedDir = 'F:\Data\sfm\BinnedFiles' %Directory from save_prefix_name where data is now in Binned form (minus the '\')
+BinnedDir = 'F:\Data\sfm\BinnedFiles'; %Directory from save_prefix_name where data is now in Binned form (minus the '\')
 cd(BinnedDir);
 
 %'uniquestimuli' contains the string name of each of the soundfiles presented, 'wavforms' are each soundfile converted into MATLAB 
@@ -55,6 +52,10 @@ for i = 1:length(uniquestimuli);
     uniquelabels{i} = presort{1};
 end
 uniquelabels = uniquelabels';
+uniquelabels{31} = 'whitenoise'; % add in whitenoise and silent sound stimuli (add stimuli that don't have .mat files and need to be added manually) - SFM 7/19/21
+uniquestimuli{31} = 'whitenoise laser:0 duration:363.734 amplitude:80 ramp:0 next:800'; %these are auto generated in djmaus and don't have a saved unique waveform
+uniquelabels{32} = 'silentsound';
+uniquestimuli{32} = 'silentsound laser:0 duration:363.734 ramp:0 next:800'; 
 clear presort
 clear presplit
 
@@ -67,7 +68,7 @@ clear presplit
 % uniquestimuli = unique(descriptions);
 % binned_labels = 'stimuli.stimulus_description';
 
-binned_data_name = '10ms_bins_5ms_sampled_170start_time_370end_time.mat', 'binned_data', 'binned_site_info', 'binned_labels';
+binned_data_name = '10ms_bins_5ms_sampled_170start_time_370end_time.mat'; 'binned_data'; 'binned_site_info'; 'binned_labels';
 load(binned_data_name);
 binned_labels.full_name = uniquestimuli;
 binned_labels.short_labels = uniquelabels;
@@ -77,27 +78,27 @@ binned_labels.short_labels = uniquelabels;
 %'label_names_to_use' is transformed into a string of gibberish
 
 num_sites = length(dir('F:\Data\sfm\RasterFiles\*.mat'));
-the_labels = binned_labels.short_labels;
+the_labels = binned_labels.sourcefile;
 
 %This function is optional but will set some useful parameters further in the analysis pipeline - SFM 7/13/21
 for k = 1:100
-    [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(binned_labels.sourcefile, k);
+    [inds_of_sites_with_at_least_k_repeats, min_num_repeats_all_sites num_repeats_matrix label_names_used] = find_sites_with_k_label_repetitions(the_labels, k);
     num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);
 end
 
 %ds.site_to_use = find_sites_with_at_least_k_repeats_of_each_label(the_labels_to_use, num_cv_splits); %See error code in basic_DS Line ~590
-%k = # of repetitions of each unique stimuli per cell (assume to be 100,% could more or less depending on # of cycles or how many sessions cell lasted for - SFM 7/13/21
+%k = # of repetitions of each unique stimuli per cell - SFM 7/13/21
 
 %% create a DataSource (DS) object
 
-num_cv_splits = [20];
+num_cv_splits = [1];
 create_simultaneously_recorded_populations = 0; %Logical setting on whether to treat all cells as if recorded simultaneously, default is 0 (FALSE) - SFM 7/13/21
 load_data_as_spike_counts = 0; %Logical setting if data should be loaded as absolute spike counts and not firing rates, default is 0 (FALSE/Firing Rate) - SFM 7/13/21
 
 binned_format_file_name = 'F:\Data\sfm\BinnedFiles\10ms_bins_5ms_sampled_170start_time_370end_time.mat';
-specific_label_name_to_use = uniquelabels;
+specific_label_name_to_use = binned_labels.sourcefile;
 
-ds = basic_DS(binned_format_file_name, specific_label_name_to_use, num_cv_splits);
+ds = basic_DS(binned_format_file_name, uniquestimuli, num_cv_splits);
 
 get_data(ds);
 the_properties = get_DS_properties(ds);
