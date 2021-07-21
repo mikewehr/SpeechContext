@@ -52,10 +52,10 @@ for i = 1:length(uniquestimuli);
     uniquelabels{i} = presort{1};
 end
 uniquelabels = uniquelabels';
-uniquelabels{31} = 'whitenoise'; % add in whitenoise and silent sound stimuli (add stimuli that don't have .mat files and need to be added manually) - SFM 7/19/21
-uniquestimuli{31} = 'whitenoise laser:0 duration:363.734 amplitude:80 ramp:0 next:800'; %these are auto generated in djmaus and don't have a saved unique waveform
-uniquelabels{32} = 'silentsound';
-uniquestimuli{32} = 'silentsound laser:0 duration:363.734 ramp:0 next:800'; 
+%uniquelabels{31} = 'whitenoise'; % add in whitenoise and silent sound stimuli (add stimuli that don't have .mat files and need to be added manually) - SFM 7/19/21
+%uniquestimuli{31} = 'whitenoise laser:0 duration:363.734 amplitude:80 ramp:0 next:800'; %these are auto generated in djmaus and don't have a saved unique waveform
+%uniquelabels{32} = 'silentsound';
+%uniquestimuli{32} = 'silentsound laser:0 duration:363.734 ramp:0 next:800'; 
 clear presort
 clear presplit
 
@@ -97,6 +97,7 @@ load_data_as_spike_counts = 0; %Logical setting if data should be loaded as abso
 
 binned_format_file_name = 'F:\Data\sfm\BinnedFiles\10ms_bins_5ms_sampled_170start_time_370end_time.mat';
 specific_label_name_to_use = binned_labels.sourcefile;
+
 
 ds = basic_DS(binned_format_file_name, uniquestimuli, num_cv_splits);
 
