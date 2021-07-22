@@ -21,35 +21,42 @@ for i=1:length(d)
         NewStims = length(out.stimlogs{1,i});
         TotalStims = TotalStims + NewStims;
     end
-    
+    NumExpStims = (size(out.M1OFF,1) * size(out.M1OFF,4));
     GrandStimlog = {};
-    for m = 1:NumberOfStimlogs
-        pathlabel = {};                 % length of M1OFF first element times fourth element - SFM 7/21/21
-        fullnames = cell(1,length(out.stimlogs{1,m})); %get this to include the length of all stimlogs and not just a single stimlog - SFM 7/16/20
-            for i = 1:length(out.stimlogs{1,m})
-                fullnames{i} =out.stimlogs{1,m}(i).stimulus_description;
-            end
-        k = 0;    %this is the mechanism that filters out whitenoise and silentsound stims and only collects test stimuli - SFM 7/21/21
-        for i = 1:length(fullnames)
-            presplit = split(fullnames{i}, ':');
-            if isequal(presplit{1},'whitenoise laser')
-               %pathlabel{i} = 'whitenoise laser:0 duration:363.734 amplitude:80 ramp:0 next:800'; 
-            elseif isequal(presplit{1},'silentsound laser')
-               %pathlabel{i} = 'silentsound laser:0 duration:363.734 ramp:0 next:800'; 
-            else
-                k = k + 1;
-                presort = split(presplit{2}, ' ');
-                pathlabel{k} = presort{1};
-            end
-        end
-        %pathlabel = pathlabel';
-        clear presplit
-        clear presort
-        clear k
-        
-        GrandStimlog = horzcat(GrandStimlog,pathlabel);
+    
+    GrandStimlog = horzcat(out.stimlogs{1:NumberOfStimlogs});
+    
+    fullnames = cell(1, length(GrandStimlog));
+    for m = 1:length(GrandStimlog)
+        fullnames{m} = GrandStimlog(m).stimulus_description;
     end
+            
+            
+    pathlabel = cell(1, NumExpStims);         
+    k = 0;    % This is the mechanism that filters out whitenoise and silentsound stims and only collects test stimuli - SFM 7/21/21
+    for i = 1:TotalStims
+        presplit = split(fullnames{i}, ':');
+        if isequal(presplit{1},'whitenoise laser')
+           %pathlabel{i} = 'whitenoise laser:0 duration:363.734 amplitude:80 ramp:0 next:800'; 
+        elseif isequal(presplit{1},'silentsound laser')
+           %pathlabel{i} = 'silentsound laser:0 duration:363.734 ramp:0 next:800'; 
+        else
+            k = k + 1;
+            presort = split(presplit{2}, ' ');
+            pathlabel{k} = presort{1};
+        end
+    end
+    %pathlabel = pathlabel';
+    clear presplit
+    clear presort
+    clear k
+        
+        %GrandStimlog = horzcat(GrandStimlog, pathlabel);
     %% 
+    
+    clear raster_labels
+    clear raster_site_info
+    clear raster_size % This fixes the issue of each cell having mismatching data - SFM 7/22/21
     
     xlimits=out.xlimits;
     num_trials =out.nrepsOFF(:,aindex, dindex);
@@ -75,7 +82,7 @@ for i=1:length(d)
     
     
     raster_data=zeros(num_trials, round(num_time_points));
-    
+    clear raster_labels
     r=0;
     for stimID = 1:out.numsourcefiles
         nr=out.nrepsOFF(stimID, aindex, dindex);
@@ -88,7 +95,7 @@ for i=1:length(d)
             spiketimes_rast=1+round(spiketimes*out.samprate/1000);
             
             raster_data(r,spiketimes_rast)=1;
-            raster_labels.sourcefile{r} = GrandStimlog{r};
+            raster_labels.sourcefile{r} = pathlabel{r};
         end
     end   
     

@@ -106,26 +106,38 @@ the_properties = get_DS_properties(ds);
 
 %% creating a feature-processor (FP) object
 
-the_feature_preprocessors{1} = zscore_normalize_FP;
+% the_feature_preprocessors{1} = zscore_normalize_FP;
+% X_normalized = preprocess_test_data(fp, X_data);
+% [fp, XTr_normalized] = set_properties_with_training_data(fp, XTr);
+% current_FP_info_to_save = get_current_info_to_save(fp);
 
 %% creating a classifier (CL) object
+load('Training and Testing Data.mat', 'XTr_all_time_cv', 'XTe_all_time_cv', 'YTr_all', 'YTe_all');
+
+XTr_all_time_cv = XTr;
+XTe_all_time_cv = XTe;
+YTr = YTr_all;
+YTe = YTe_all;
 
 the_classifier = max_correlation_coefficient_CL;
+cl = max_correlation_coefficient_CL;
+cl = train(cl, XTr, YTr);
+[predicted_labels, decision_values] = test(cl, XTe);
 
 %% creating a cross-validator (CV) object
 
-the_cross_validator = standard_resample_CV(ds, the_classifier, the_feature_preprocessors);
-
+the_cross_validator.num_resample_runs = 2;
+cv = standard_resample_CV(ds, cl);
+the_cross_validator = standard_resample_CV(ds, cl);
+DECODING_RESULTS = run_cv_decoding(cv);
 %set how many times the outer 'resample' loop is run, generally we use more
 %than 2 resample runs which will give more accurate results but just
 %throwing 2 in for now
 
-the_cross_validator.num_resample_runs = 2;
-
 %% running decoding analysis
 
 decoding_results = the_cross_validator.run_cv_decoding;
-save_file_name = '2021-01-18_14-21-23_mouse-0098-decoding-results';
+save_file_name = 'Initial Decoding Results';
 save(save_file_name, 'decoding-results');
 
 %% plotting results
