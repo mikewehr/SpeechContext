@@ -9,7 +9,7 @@ cd(DataDir)
 raster_file_directory_name = 'F:\Data\sfm\RasterFiles\'; %Directory where rasterized OUTfiles are
 save_prefix_name = 'F:\Data\sfm\BinnedFiles\'; %Directory to send new binned data too
 bin_width = 10; %in ms
-sampling_interval = bin_width/2; %in ms
+sampling_interval = 5; %in ms
 start_time = 170; %ms
 end_time = 370; %ms
 % if start_time and end_time are not declared NDT will generate values (we will never do this - SFM 7/12/21)
