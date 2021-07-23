@@ -17,7 +17,9 @@
 %     -could vary the proportion of responsive/random cells, or SNR of responses
 
 cd /Volumes/wehrrig2b.uoregon.edu/lab/djmaus/Data/sfm/GrandKilosort0095CombinedOutfiles/
+fprintf('\nloading outfile...')
 load outPSTH_combined_ch5c335.mat
+fprintf('\tdone')
 % 
 %          dirlist: {'/'  '/'}
 %          targetdir: '/'
@@ -60,6 +62,42 @@ out.cell=cell_idx;
 out.datadir=[];
 out.datadirs=[];
 
+% generate M1OFF with random spiketimes
+for i=1:out.numsourcefiles
+    for j=1:out.numamps
+        for k=1:out.numdurs
+            for r=1:out.nrepsOFF(i,j,k)
+            %pick a random number of spikes
+            numspikes=randi(20, 1);
+            %generate N random spiketimes within xlimits
+            spiketimes=sort(randi(round(out.xlimits), numspikes, 1))';
+            M1OFF(i,j,k, r).spiketimes=spiketimes;
+            end
+        end
+    end
+end
+% Accumulate spiketimes across trials, for psth...
+for dindex=1:out.numdurs;
+    for aindex=[out.numamps:-1:1]
+        for sourcefileidx=1:out.numsourcefiles
+            % off
+            spiketimesOFF=[];
+            for rep=1:out.nrepsOFF(sourcefileidx, aindex, dindex)
+                spiketimesOFF=[spiketimesOFF M1OFF(sourcefileidx, aindex, dindex, rep).spiketimes];
+            end
+            mM1OFF(sourcefileidx, aindex, dindex).spiketimes=spiketimesOFF;
+        end
+    end
+end
+
+cd /Volumes/wehrrig2b.uoregon.edu/lab/djmaus/Data/sfm/
+mkdir synthetic_SpeechContext_data
+cd synthetic_SpeechContext_data
+synthoutfilename=sprintf('outPSTH_synth_ch%dc%d.mat', cell_idx, cell_idx);
+fprintf('\nsaving synthetic outfile...')
+save(synthoutfilename, 'out', '-v7.3')
+fprintf('\nsaved %s in directory %s', synthoutfilename, pwd)
+fprintf('\n')
 
 
 
