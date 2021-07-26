@@ -70,6 +70,7 @@ if exist(outfilename,'file')
     load(outfilename)
     fprintf('\nloaded outfile.')
 else
+    fprintf('\noutfile not found, calling ProcessSoundfile')
     ProcessSoundfile_single(datadir,  t_filename, xlimits, ylimits);
     load(outfilename);
 end
@@ -347,6 +348,7 @@ end
 end %if IL
 
 
+fprintf('\nlist of sourcefiles:')
 for sourcefileindex=1:numsourcefiles
 fprintf('\n%s',    sourcefiles{sourcefileindex})
 end
