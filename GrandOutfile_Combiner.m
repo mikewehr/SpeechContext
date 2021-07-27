@@ -1,11 +1,11 @@
 clear all;
-masterdir = "D:\lab\djmaus\Data\sfm\2020-12-18_10-27-09_mouse-0095"; %set master directory
-targetdir = "F:\Data\sfm";
+masterdir = "D:\lab\djmaus\Data\sfm\2021-01-18_11-55-16_mouse-0295"; %set master directory
+targetdir = "F:\Data\sfm\Finalized Outfiles\0295";
 
 cd(masterdir)
-%load("dirs.mat")
-load('D:\lab\djmaus\Data\sfm\GrandKilosort0095CombinedOutfiles\GrandKilosortOutfilesFullMouse\outPSTH_combined_ch5c335.mat', 'out');
-dirs = out.dirlist %Use these two lines to pick and choose dirs to combine from in case some are missing triggers/otherwise bad - SFM 7/16/21
+load("dirs.mat")
+%load('D:\lab\djmaus\Data\sfm\GrandKilosort0095CombinedOutfiles\GrandKilosortOutfilesFullMouse\outPSTH_combined_ch5c335.mat', 'out');
+%dirs = out.dirlist %Use these two lines to pick and choose dirs to combine from in case some are missing triggers/otherwise bad - SFM 7/16/21
 
 outfilecelllist = dir('outPSTH*.mat');
 for i = 39:length(outfilecelllist)

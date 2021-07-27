@@ -91,7 +91,7 @@ end
 
 %% create a DataSource (DS) object
 
-num_cv_splits = [1];
+num_cv_splits = [5];
 create_simultaneously_recorded_populations = 0; %Logical setting on whether to treat all cells as if recorded simultaneously, default is 0 (FALSE) - SFM 7/13/21
 load_data_as_spike_counts = 0; %Logical setting if data should be loaded as absolute spike counts and not firing rates, default is 0 (FALSE/Firing Rate) - SFM 7/13/21
 
