@@ -1,5 +1,7 @@
 %% Modified Workflow (Working Working Workflow)
+tic;
 clear all
+
 %%  Preprocessing of Data
 
 % DataDir = 'F:\Data\sfm\RasterFiles';
@@ -20,7 +22,7 @@ if ~isfile(Previous_data_file_name) % Logical on/off switch on generating new bi
     [saved_binned_data_file_name] = create_binned_data_from_raster_data(raster_data_directory_name, save_prefix_name, bin_width, step_size, start_time, end_time);
     binned_data_file_name = saved_binned_data_file_name
 else
-    binned_data_file_name = 'TestRun_10ms_bins_5ms_sampled_170start_time_370end_time.mat' % Enter Binned Data name here if already generated - SFM 7/27/21
+    binned_data_file_name = Previous_data_file_name 
 end                     % 'Binned_Zhang_Desimone_7object_data_150ms_bins_50ms_sampled.mat' example dataset binned
 
 %%  Optional Utility Function
@@ -39,35 +41,36 @@ specific_binned_labels_names = binned_labels.sourcefile; %.stimulus_ID for examp
 num_cv_splits = 20; 
 
 ds = basic_DS(binned_data_file_name, specific_binned_labels_names, num_cv_splits);
-[XTr, YTr, XTe, YTe] = get_data(ds); 
+%The rest is done automatically in cv.run_cv_decoding (and it works) - SFM 7/28/21
+toc
 
 %%   7.  Create FP
 
 fp = zscore_normalize_FP;
-%[fp, XTr_norm] = set_properties_with_training_data(fp, XTr, num_cv_splits); % Need to solve tilde problem - SFM 7/28/21
-% X_norm = preprocess_test_data(fp, XTe)
+[XTr, YTr, XTe, YTe] = get_data(ds);
+[fp, XTr_norm] = set_properties_with_training_data(fp, XTr, num_cv_splits); % Need to solve tilde problem - SFM 7/28/21
+% XTe_norm = preprocess_test_data(fp, XTe)
+toc
 
 %%  8.  Create CL 
 
 cl = max_correlation_coefficient_CL;
-
-cl = train(cl, XTr, YTr, num_cv_splits); % We will see if this is 'right' - SFM 7/28/21
-[predicted_labels, decision_values] = test(cl, XTe); % Still needs work converting to matrices/arrays - SFM 7/28/21
+%The rest is done automatically in cv.run_cv_decoding (and it works) - SFM 7/28/21
 
 %%  9.  CV
 
-the_cross_validator = standard_resample_CV(ds, cl, fp);  
-
-the_cross_validator.num_resample_runs = 20;  % usually more than 2 resample runs are used to get more accurate results, but to save time we are using a small number here
+cv = standard_resample_CV(ds, cl);%, fp);  
+cv.num_resample_runs = 20;
 
 %%  10.  Get Data!   
 
-DECODING_RESULTS = the_cross_validator.run_cv_decoding; 
+DECODING_RESULTS = cv.run_cv_decoding; 
+toc
 
 %%  11.  Save results
 
 % save the results
-save_file_name = 'Initial Output V1';
+save_file_name = 'Initial Output v1';
 save(save_file_name, 'DECODING_RESULTS'); 
 
 %%  12.  Plotting
@@ -97,6 +100,7 @@ plot_obj.significant_event_times = 0;   % the time when the stimulus was shown
 %plot_obj.movie_time_period_titles.title_names = {'Fixation Period', 'Stimulus Period'}
 
 plot_obj.plot_results;  % plot the TCT matrix and a movie showing if information is coded by a dynamic population code
+toc
 
 %%
 
