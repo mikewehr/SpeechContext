@@ -1,38 +1,45 @@
 function Convert_outfile_to_raster_format_sfm
 % convert outfile to raster format
-datadir= 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group1';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
+datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group9';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
 
 
-aindex=2;
-dindex=2;
-%should also add silent sound and white noise as additional stimuli types, contained in out.stimlog(s).stimulus_description('whitenoise* and 'silentsound*) - SFM 7/14/21
+aindex = 2;
+dindex = 2;
 cd(datadir)
-d=dir('outPSTH*.mat');
-for i=1:length(d)
+d = dir('outPSTH*.mat');
+for i = 1:length(d)
     fprintf('\ncell %d of %d', i, length(d))
-    outfilename=d(i).name;
+    outfilename = d(i).name;
     load(outfilename)
-    cellid=outfilename(9:end-4);
+    cellid = outfilename(9:end-4);
     
     %%
     TotalStims = 0;
-    NumberOfStimlogs = length(out.stimlogs);
-    for i = 1:NumberOfStimlogs
-        NewStims = length(out.stimlogs{1,i});
-        TotalStims = TotalStims + NewStims;
+    if exist('out.stimlogs', 'var') == 1
+        NumberOfStimlogs = length(out.stimlogs);
+        for i = 1:NumberOfStimlogs
+            NewStims = length(out.stimlogs{1,i});
+            TotalStims = TotalStims + NewStims;
+        end
+    else
+        TotalStims = length(out.stimlog);
     end
-    NumExpStims = (size(out.M1OFF,1) * size(out.M1OFF,4));
-    GrandStimlog = {};
     
-    GrandStimlog = horzcat(out.stimlogs{1:NumberOfStimlogs});
+    GrandStimlog = {};
+    if exist('out.stimlogs', 'var') == 1
+        GrandStimlog = horzcat(out.stimlogs{1:NumberOfStimlogs});
+    else 
+        GrandStimlog = out.stimlog;
+    end
     
     fullnames = cell(1, length(GrandStimlog));
     for m = 1:length(GrandStimlog)
         fullnames{m} = GrandStimlog(m).stimulus_description;
     end
-            
-            
-    pathlabel = cell(1, NumExpStims);         
+    
+    
+    NumExpStims = (size(out.M1OFF,1) * size(out.M1OFF,4));        
+    pathlabel = cell(1, NumExpStims);
     k = 0;    % This is the mechanism that filters out whitenoise and silentsound stims and only collects test stimuli - SFM 7/21/21
     for i = 1:TotalStims
         presplit = split(fullnames{i}, ':');
@@ -51,25 +58,25 @@ for i=1:length(d)
     clear presort
     clear k
         
-        %GrandStimlog = horzcat(GrandStimlog, pathlabel);
+        
     %% 
     
     clear raster_labels
     clear raster_site_info
     clear raster_size % This fixes the issue of each cell having mismatching data - SFM 7/22/21
     
-    xlimits=out.xlimits;
-    num_trials =out.nrepsOFF(:,aindex, dindex);
+    xlimits = out.xlimits;
+    num_trials = out.nrepsOFF(:,aindex, dindex);
     num_time_points=out.samprate*(1/1000)*(xlimits(2)-xlimits(1));
     
     % M1OFF: [30×2×2×100 struct]
     
     % count actual num_trials
-    num_trials=0;
-    for stimID=1:out.numsourcefiles
-        nr=out.nrepsOFF(stimID, aindex, dindex);
-        for rep=1:nr
-            num_trials=num_trials+1;
+    num_trials = 0;
+    for stimID = 1:out.numsourcefiles
+        nr = out.nrepsOFF(stimID, aindex, dindex);
+        for rep = 1:nr
+            num_trials = num_trials+1;
         end
     end
     
@@ -81,55 +88,55 @@ for i=1:length(d)
     %conditions - SFM 7/21/21
     
     
-    raster_data=zeros(num_trials, round(num_time_points));
+    raster_data = zeros(num_trials, round(num_time_points));
     clear raster_labels
-    r=0;
+    r = 0;
     for stimID = 1:out.numsourcefiles
-        nr=out.nrepsOFF(stimID, aindex, dindex);
+        nr = out.nrepsOFF(stimID, aindex, dindex);
        
-        for rep=1:nr
-            r=r+1;
-            spiketimes=out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
-            spiketimes=spiketimes-xlimits(1);
+        for rep = 1:nr
+            r = r+1;
+            spiketimes = out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
+            spiketimes = spiketimes-xlimits(1); 
             %convert ms spiketimes to raster format (samples)
-            spiketimes_rast=1+round(spiketimes*out.samprate/1000);
+            spiketimes_rast = 1 + round(spiketimes*out.samprate/1000);
             
-            raster_data(r,spiketimes_rast)=1;
+            raster_data(r, spiketimes_rast) = 1; 
             raster_labels.sourcefile{r} = pathlabel{r};
         end
     end   
     
-    raster_site_info.IL=out.IL;
-    raster_site_info.Nclusters=out.Nclusters;
-    raster_site_info.channel=out.channel;
-    raster_site_info.cell=out.cell;
-    raster_site_info.xlimits=out.xlimits;
-    raster_site_info.amps=out.amps;
-    raster_site_info.durs=out.durs;
-    raster_site_info.sourcefiles=out.sourcefiles;
-    raster_site_info.numamps=out.numamps;
-    raster_site_info.numsourcefiles=out.numsourcefiles;
-    raster_site_info.numdurs=out.numdurs;
-    raster_site_info.samprate=out.samprate;
-    raster_site_info.datadir=out.datadir;
-    raster_site_info.outfilename=outfilename;
-    raster_site_info.nb=out.nb;
-    raster_site_info.stimlog=out.stimlog;
-    raster_site_info.run_on=datestr(now);
-    raster_site_info.generated_by=mfilename;
-    raster_site_info.alignment_event_time=-xlimits(1)*out.samprate/1000;
+    raster_site_info.IL = out.IL;
+    raster_site_info.Nclusters = out.Nclusters;
+    raster_site_info.channel = out.channel;
+    raster_site_info.cell = out.cell;
+    raster_site_info.xlimits = out.xlimits;
+    raster_site_info.amps = out.amps;
+    raster_site_info.durs = out.durs;
+    raster_site_info.sourcefiles = out.sourcefiles;
+    raster_site_info.numamps = out.numamps;
+    raster_site_info.numsourcefiles = out.numsourcefiles;
+    raster_site_info.numdurs = out.numdurs;
+    raster_site_info.samprate = out.samprate;
+    raster_site_info.datadir = out.datadir;
+    raster_site_info.outfilename = outfilename;
+    raster_site_info.nb = out.nb;
+    raster_site_info.stimlog = out.stimlog;
+    raster_site_info.run_on = datestr(now);
+    raster_site_info.generated_by = mfilename;
+    raster_site_info.alignment_event_time = -xlimits(1)*out.samprate/1000;
     
-    datadirstr=strsplit(out.datadir, '\');
-    raster_filename=sprintf('%s_%s_raster_data', datadirstr{end},cellid);
-    if ~exist('raster_files', 'dir') mkdir raster_files;end
+    datadirstr = strsplit(string(datadir), '\'); %strsplit(out.datadir, '\'); %SFM 8/2/21 to make this work for synthetic data
+    raster_filename = sprintf('%s_%s_raster_data', datadirstr{6}, cellid); %datadirstr{end} - SFM 8/2/21
+    if ~exist('raster_files', 'dir') mkdir raster_files; end
     cd raster_files
     
 %     save( raster_filename, 'raster_data', 'raster_labels', 'raster_site_info') %Original, but file over 2GB, so let's save it betterly.
-    %%Sam's compression (LOSSLESS):
+   %Sam's compression (LOSSLESS):
     [I] = find(raster_data);
     raster_size = size(raster_data);
     save( raster_filename, 'I', 'raster_size', 'raster_labels', 'raster_site_info')
-   %%Sam's decompression (to be used in whatever the script is that loads the raster files:
+   %Sam's decompression (to be used in whatever the script is that loads the raster files:
 %     load(raster_filename);
 %     raster_data = zeros(raster_size);
 %     raster_data(I) = 1; 

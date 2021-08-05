@@ -14,13 +14,14 @@ for i = 39:length(outfilecelllist)
         cd (dirs{j}) %large outfiles may need to be added in parts or matlab will run out of RAM
         load(string(outfilecelllist(i).name));
         if ~isempty(out.spiketimes) == 1
-            k = k+1;
+            k = k + 1;
             singleoutfilelist{k} = strcat(dirs{j},'\', outfilecelllist(i).name); % consider saving spiketimes as a logical when generating files for speed - SFM 7/15/21
+        else
         end  %also could add this similar code to PlotSpeechContext for generating them in the first place for speed - SFM 7/15/21
         clear out
     end
         
-        Outfile_Combiner(singleoutfilelist, targetdir)
+        Outfile_Combiner(singleoutfilelist, targetdir);
         i
         clear singleoutfilelist
 end
