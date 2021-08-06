@@ -9,7 +9,7 @@ if preprocess_switch == 1
         cd(outdirs{i})
         PlotSpeechContext
     end
-    GrandOutfile_Combiner.masterdir = []; % Set master directory where single outfiles are located - SFM 8/5/21
+    GrandOutfile_Combiner.masterdir = []; %outdirs; % Set master directory where single outfiles are located - SFM 8/5/21
     GrandOutfile_Combiner.targetdir = []; % Set directory for combined outfiles to be saved to - SFM 8/5/21
     for j = 1:length(GrandOutfile_Combiner.masterdir)
         l = 1:length(GrandOutfile_Combiner.targetdir);
@@ -31,10 +31,10 @@ clear all
 
 %%  Binning Data
 
-BinnedDir = 'F:\Data\sfm\BinnedFiles';
+BinnedDir = 'F:\Data\sfm\BinnedFiles'; % Set directory where binned files are located - SFM 8/6/21 
 cd(BinnedDir);
 
-save_prefix_name = 'F:\Data\sfm\BinnedFiles\SynthGroup5';
+save_prefix_name = 'F:\Data\sfm\BinnedFiles\TestRun';
 bin_width = 20; 
 step_size = 10;
 start_time = 170;
@@ -94,24 +94,18 @@ specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for exampl
 num_cv_splits = 20; 
 
 the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
-%{'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat';
+%{'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_iba-da2+3.5oct.wav_12_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da3+3.5oct.wav_13_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_iba-da4+3.5oct.wav_14_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da5+3.5oct.wav_15_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da2+3.5oct.wav_22_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_uba-da3+3.5oct.wav_23_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da4+3.5oct.wav_24_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_uba-da5+3.5oct.wav_25_80dB_0.4s.mat'};
-%the_training_label_names{2} = 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat';
-%{'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da6+3.5oct.wav_16_80dB_0.4s.mat';
+%the_training_label_names{2} = {'soundfile_iba-uda_sourcefile_iba-da6+3.5oct.wav_16_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_iba-da7+3.5oct.wav_17_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da8+3.5oct.wav_18_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_iba-da9+3.5oct.wav_19_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_uba-da6+3.5oct.wav_26_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da7+3.5oct.wav_27_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat';
 %     'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
-%the_training_label_names = {the_training_label_names_ba, the_training_label_names_da};
 the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
     'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
     'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 
@@ -128,12 +122,12 @@ the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80d
 %basic_DS.specific_binned_label_names = []; % ^ same as above, default is all 30 stims (see above) - SFM 8/5/21
 % basic_DS.label_names_to_use = the_test_label_names;
 % basic_DS.randomly_shuffle_labels_before_running = 0; % Set to 1 to to take a null distribution - SFM 8/5/21
-
+% none of these like being piped in, need to be manually set in the respective _DS function - SFM 8/5/21
 ds_switch = 0; % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 if ds_switch == 1
     ds = basic_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits);
 else
-    %generalization_DS.use_unique_data_in_each_cv_split = 1; %Doesn't like being piped in? - SFM 8/5/21
+    %generalization_DS.use_unique_data_in_each_cv_split = 1; 
     ds = generalization_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits, the_training_label_names, the_test_label_names);
 end
 toc
@@ -173,7 +167,7 @@ toc
 %%    Save results
 
 % save the results
-save_file_name = 'SynthGroup5 Output v17';
+save_file_name = 'SynthGroup5 Output v18';
 save(save_file_name, 'DECODING_RESULTS');
 
 %%    Plotting

@@ -8,7 +8,7 @@ load("dirs.mat")
 %dirs = out.dirlist %Use these two lines to pick and choose dirs to combine from in case some are missing triggers/otherwise bad - SFM 7/16/21
 
 outfilecelllist = dir('outPSTH*.mat');
-for i = 39:length(outfilecelllist)
+for i = 62:length(outfilecelllist)
     k = 0;
     for j = 1:length(dirs) %1:total outfile number per mouse
         cd (dirs{j}) %large outfiles may need to be added in parts or matlab will run out of RAM
