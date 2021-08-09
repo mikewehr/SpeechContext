@@ -1,6 +1,6 @@
 clear all;
-masterdir = "D:\lab\djmaus\Data\sfm\2021-01-18_11-55-16_mouse-0295"; %set master directory
-targetdir = "F:\Data\sfm\Finalized Outfiles\0295";
+masterdir = 'D:\lab\djmaus\Data\sfm\2021-02-05_13-37-43_mouse-0296'; %set master directory
+targetdir = 'F:\Data\sfm\Finalized Outfiles\0296';
 
 cd(masterdir)
 load("dirs.mat")
