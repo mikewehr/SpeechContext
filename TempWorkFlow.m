@@ -2,6 +2,7 @@
 % Preprocessing after clustering
 
 clear all
+tic;
 preprocess_switch = 0; % Logical switch on whether to generate outfiles and rasterize them - SFM 8/5/21
 if preprocess_switch == 1
     outdirs = 'D:\lab\djmaus\Data\sfm\'; % Set target dir for outfiles to be generated
@@ -23,10 +24,10 @@ if preprocess_switch == 1
         cd(datadir{j})
         convert_outfile_to_raster_format_sfm;
     end
+    toc
 else
 end
 
-tic;
 clear all
 
 %%  Binning Data
@@ -44,39 +45,10 @@ Previous_data_file_name = strcat(save_prefix_name,'_',num2str(bin_width),'ms_bin
 if ~isfile(Previous_data_file_name) % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
     [saved_binned_data_file_name] = create_binned_data_from_raster_data(RasterDir, save_prefix_name, bin_width, step_size, start_time, end_time);
     binned_data_file_name = saved_binned_data_file_name
+    toc
 else
     binned_data_file_name = Previous_data_file_name 
 end                     % 'Binned_Zhang_Desimone_7object_data_150ms_bins_50ms_sampled.mat' example dataset binned - SFM 7/28/21
-
-%% Encoding of Broad Features
-% This may not be necessary if NDT cooperates - SFM 8/5/21
-
-% binneddir = 'F:\Data\sfm\BinnedFiles'; % Enter binned data directory here - SFM 8/3/21
-% cd(binneddir)
-% 
-% binneddata = [];%Enter binned data to be labeled here - SFM 8/3/21
-% load(binneddata)
-% for j = 1:length(binned_labels.sourcefile)%
-%     for i = 1:length(binned_labels.sourcefile) %may change source of stimlogs - SFM 8/3/21
-%         firstsort = strsplit(binned_labels.sourcefile{1,j}{1,i}, '_');
-%         secondsort = strsplit(firstsort{4}, '+');
-%         thirdsort = strsplit(secondsort{1}, 'a');
-%         if str2num(thirdsort{3}) <= 5
-%             binned_labels.sourcefile{1,j}{1,i}.phonemeidentity = 'ba';
-%         else
-%             binned_labels.sourcefile{1,j}{1,i}.phonemeidentity = 'da';
-%         end
-% 
-%         if strcmp(thirdsort{1}, 'b')
-%             binned_labels.sourcefile{1,j}{1,i}.contextidentity = 'none';
-%         elseif strcmp(thirdsort{1}, 'ub')
-%             binned_labels.sourcefile{1,j}{1,i}.contextidentity = 'U';
-%         else strcmp(thirdsort{1}, 'ib')
-%             binned_labels.sourcefile{1,j}{1,i}.contextidentity = 'I';
-%         end
-%         clear firstsort secondsort thirdsort;
-%     end
-% end
 
 %%  Optional Utility Function
 
@@ -182,7 +154,7 @@ end
 
 %%     Create FP (optional)
 
-set_fp_type = 0;    % Set switch on type of feature preprocessing to use - SFM 8/9/21
+set_fp_type = 2;    % Set switch on type of feature preprocessing to use - SFM 8/9/21
 if set_fp_type == 0
     fp = zscore_normalize_FP;
 elseif set_fp_type == 1
@@ -193,7 +165,7 @@ end
 
 %%    Create CL 
 
-set_cl_type = 2;    % Set switch on type of classifier to use - SFM 8/9/21
+set_cl_type = 0;    % Set switch on type of classifier to use - SFM 8/9/21
 if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
 elseif set_cl_type == 1
@@ -204,7 +176,7 @@ end
 
 %%    CV
 
-set_fp_flag = 0;    % Set binary switch whether to run decoding with FP or not - SFM 8/9/21
+set_fp_flag = 1;    % Set binary switch whether to run decoding with FP or not - SFM 8/9/21
 if set_fp_flag == 0
     cv = standard_resample_CV(ds, cl);
 else 
@@ -230,7 +202,7 @@ toc
 %%    Save results
 
 % save the results
-save_file_name = 'SynthGroup5 Output v24';
+save_file_name = 'SynthGroup5 Output v25';
 save(save_file_name, 'DECODING_RESULTS');
 
 %%    Plotting
