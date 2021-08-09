@@ -1,6 +1,6 @@
 function Convert_outfile_to_raster_format_sfm
 % convert outfile to raster format
-datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group9';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
+datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group10';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
 
 
 aindex = 2;

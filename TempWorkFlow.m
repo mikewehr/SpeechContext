@@ -34,7 +34,7 @@ clear all
 BinnedDir = 'F:\Data\sfm\BinnedFiles'; % Set directory where binned files are located - SFM 8/6/21 
 cd(BinnedDir);
 
-save_prefix_name = 'F:\Data\sfm\BinnedFiles\TestRun';
+save_prefix_name = 'F:\Data\sfm\BinnedFiles\SynthGroup5';
 bin_width = 20; 
 step_size = 10;
 start_time = 170;
@@ -93,61 +93,124 @@ load(binned_data_file_name);
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
 num_cv_splits = 20; 
 
-the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
-%{'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_iba-da2+3.5oct.wav_12_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da3+3.5oct.wav_13_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_iba-da4+3.5oct.wav_14_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da5+3.5oct.wav_15_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da2+3.5oct.wav_22_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_uba-da3+3.5oct.wav_23_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da4+3.5oct.wav_24_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_uba-da5+3.5oct.wav_25_80dB_0.4s.mat'};
-%the_training_label_names{2} = {'soundfile_iba-uda_sourcefile_iba-da6+3.5oct.wav_16_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_iba-da7+3.5oct.wav_17_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da8+3.5oct.wav_18_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_iba-da9+3.5oct.wav_19_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_uba-da6+3.5oct.wav_26_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da7+3.5oct.wav_27_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat';
-%     'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
-the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
-    'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
-    'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 
-    'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat'};
-%the_training_label_names{1};
-%the_test_label_names{2} = 
-%the_training_label_names{2};
+set_training_and_testing_labels = 'none';
+
+if strcmp(set_training_and_testing_labels, 'none') == 1
+    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    %{'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    %{'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat'}; 
+    %{'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
+    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_iba-da2+3.5oct.wav_12_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da3+3.5oct.wav_13_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da4+3.5oct.wav_14_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da5+3.5oct.wav_15_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da6+3.5oct.wav_16_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da7+3.5oct.wav_17_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da8+3.5oct.wav_18_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da9+3.5oct.wav_19_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_uba-da2+3.5oct.wav_22_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da3+3.5oct.wav_23_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da4+3.5oct.wav_24_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da5+3.5oct.wav_25_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da6+3.5oct.wav_26_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da7+3.5oct.wav_27_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat'};
+    
+elseif strcmp(set_training_and_testing_labels, 'i') == 1
+    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat'};
+    %{'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    %{'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat'}; 
+    %{'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
+    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_iba-da2+3.5oct.wav_12_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da3+3.5oct.wav_13_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da4+3.5oct.wav_14_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da5+3.5oct.wav_15_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da6+3.5oct.wav_16_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da7+3.5oct.wav_17_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da8+3.5oct.wav_18_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da9+3.5oct.wav_19_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_uba-da2+3.5oct.wav_22_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da3+3.5oct.wav_23_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da4+3.5oct.wav_24_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da5+3.5oct.wav_25_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da6+3.5oct.wav_26_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da7+3.5oct.wav_27_80dB_0.4s.mat'; 
+    'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat'}; 
+
+elseif strcmp(set_training_and_testing_labels, 'u') == 1
+    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
+    %{'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    %{'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat'}; 
+    %{'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
+    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_iba-da2+3.5oct.wav_12_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da3+3.5oct.wav_13_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da4+3.5oct.wav_14_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da5+3.5oct.wav_15_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da6+3.5oct.wav_16_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da7+3.5oct.wav_17_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da8+3.5oct.wav_18_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da9+3.5oct.wav_19_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_uba-da2+3.5oct.wav_22_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da3+3.5oct.wav_23_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da4+3.5oct.wav_24_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da5+3.5oct.wav_25_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da6+3.5oct.wav_26_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da7+3.5oct.wav_27_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat'}; 
+
+else
+    the_training_label_names = [];
+    the_testing_label_names = [];
+end
 
 % Settings in DS class - SFM 8/5/21
 %generalization_DS.time_periods_to_get_data_from = []; % May be needed for better FP or to isolate elements of a phoneme - SFM 8/5/21
 %basic_DS.num_times_to_repeat_each_label_per_cv_split = k;
-% basic_DS.load_data_as_spike_counts = 0; % Default to 0, can also be basic_DS, need to turn on for Poisson Bayes CL - SFM 8/5/21
+% load_data_as_spike_counts = 1; % Default to 0, can also be basic_DS, need to turn on for Poisson Bayes CL - SFM 8/5/21
 %generalization_DS.use_unique_data_in_each_cv_split = 1; % Maybe this will allow splitting this way - SFM 8/5/21
 %basic_DS.specific_binned_label_names = []; % ^ same as above, default is all 30 stims (see above) - SFM 8/5/21
 % basic_DS.label_names_to_use = the_test_label_names;
 % basic_DS.randomly_shuffle_labels_before_running = 0; % Set to 1 to to take a null distribution - SFM 8/5/21
 % none of these like being piped in, need to be manually set in the respective _DS function - SFM 8/5/21
+
 ds_switch = 0; % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 if ds_switch == 1
     ds = basic_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits);
+    % load_data_as_spike_counts
 else
     %generalization_DS.use_unique_data_in_each_cv_split = 1; 
     ds = generalization_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits, the_training_label_names, the_test_label_names);
+    % load_data_as_spike_counts
 end
-toc
 
-%%     Create FP
+%%     Create FP (optional)
 
-fp = zscore_normalize_FP;
-   % select_or_exclude_top_k_features_FP;
-   % select_pvalue_significant_features_FP;
-toc
+set_fp_type = 0;    % Set switch on type of feature preprocessing to use - SFM 8/9/21
+if set_fp_type == 0
+    fp = zscore_normalize_FP;
+elseif set_fp_type == 1
+    fp = select_or_exclude_top_k_features_FP;
+else
+    fp = select_pvalue_significant_features_FP;
+end
 
 %%    Create CL 
 
-cl = max_correlation_coefficient_CL;  
-   % poisson_naive_bayes_CL;
-   % libsvm_CL;
+set_cl_type = 2;    % Set switch on type of classifier to use - SFM 8/9/21
+if set_cl_type == 0
+    cl = max_correlation_coefficient_CL;
+elseif set_cl_type == 1
+    cl = poisson_naive_bayes_CL;
+else
+    cl = libsvm_CL;
+end
 
 %%    CV
 
-cv = standard_resample_CV(ds, cl);
+set_fp_flag = 0;    % Set binary switch whether to run decoding with FP or not - SFM 8/9/21
+if set_fp_flag == 0
+    cv = standard_resample_CV(ds, cl);
+else 
+    cv = standard_resample_CV(ds, cl, fp);
+end
+
 cv.num_resample_runs = 60;
 
 %All of these default to 0 - SFM 7/30/21
@@ -167,7 +230,7 @@ toc
 %%    Save results
 
 % save the results
-save_file_name = 'SynthGroup5 Output v18';
+save_file_name = 'SynthGroup5 Output v24';
 save(save_file_name, 'DECODING_RESULTS');
 
 %%    Plotting
