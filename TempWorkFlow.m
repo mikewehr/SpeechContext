@@ -73,9 +73,6 @@ set_training_and_testing_labels = 'none';
 
 if strcmp(set_training_and_testing_labels, 'none') == 1
     the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
-    %{'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
-    %{'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat'}; 
-    %{'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
     the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 
@@ -93,9 +90,6 @@ if strcmp(set_training_and_testing_labels, 'none') == 1
     
 elseif strcmp(set_training_and_testing_labels, 'i') == 1
     the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat'};
-    %{'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
-    %{'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat'}; 
-    %{'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
     the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat';
         'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
@@ -113,9 +107,6 @@ elseif strcmp(set_training_and_testing_labels, 'i') == 1
 
 elseif strcmp(set_training_and_testing_labels, 'u') == 1
     the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
-    %{'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
-    %{'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat'}; 
-    %{'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
     the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat';
         'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
@@ -135,14 +126,6 @@ else
     the_testing_label_names = [];
 end
 
-% Settings in DS class
-% basic_DS.time_periods_to_get_data_from = []; % May be needed for better FP or to isolate elements of a phoneme - SFM 8/5/21
-% basic_DS.num_times_to_repeat_each_label_per_cv_split = k; % Need to have run utility function above to set this to k
-% basic_DS.specific_binned_label_names = []; % ^ same as above, default is all 30 stims (see above) - SFM 8/5/21
-% basic_DS.label_names_to_use = the_test_label_names;
-% basic_DS.randomly_shuffle_labels_before_running = 0; % Set to 1 to take a null distribution - SFM 8/5/21
-% none of these like being piped in, need to be manually set in the respective *_DS function - SFM 8/5/21
-
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch needed to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 
@@ -156,13 +139,19 @@ if ds_switch == 1
 else
     if poisson_switch == 1
         load_data_as_spike_counts = 1;
-%         generalization_DS.use_unique_data_in_each_cv_split = 0;     % Defaults to 0 - SFM 8/9/21
         ds = generalization_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits, the_training_label_names, the_test_label_names, load_data_as_spike_counts);
+        ds.use_unique_data_in_each_cv_split = 0;     % Defaults to 0 - SFM 8/9/21
     else
-%         generalization_DS.use_unique_data_in_each_cv_split = 0;     % Defaults to 0 - SFM 8/9/21
         ds = generalization_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits, the_training_label_names, the_test_label_names);
+        ds.use_unique_data_in_each_CV_split = 0;     % Defaults to 0 - SFM 8/9/21
     end
 end
+
+% ***Settings in DS class***
+ds.time_periods_to_get_data_from = []; % Default to [] - SFM 8/5/21
+% ds.num_times_to_repeat_each_label_per_cv_split = k; % Use utility function regarding k_repeats for value to set - SFM 8/9/21
+ds.randomly_shuffle_labels_before_running = 0; % Set to 1 to take a null distribution - SFM 8/5/21
+% Not listing ones that are irrelevant to us* (*future students may disagree, see the documentation for settings) - SFM 8/9/21
 
 %%     Create FP (optional)
 
@@ -171,14 +160,16 @@ if set_fp_type == 0
     fp = zscore_normalize_FP;
 elseif set_fp_type == 1
     fp = select_or_exclude_top_k_features_FP;
+    fp.num_features_to_exclude = 1;        % # of top features to exclude (as determined by ANOVA) - SFM 8/9/21
+    fp.num_features_to_use = 10;           % # of top features (including or excluding the above) used to characterize neuron - SFM 8/9/21
 else
-    select_pvalue_significant_features_FP.pvalue_threshold = 0.01;   % Needs to be set - SFM 8/9/21
     fp = select_pvalue_significant_features_FP;
+    fp.pvalue_threshold = 0.01;   % Needs to be set - SFM 8/9/21
 end
 
 %%    Create CL 
 
-set_cl_type = 2;    % Set switch on type of classifier to use - SFM 8/9/21
+set_cl_type = 0;    % Set switch on type of classifier to use - SFM 8/9/21
 if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
 elseif set_cl_type == 1
@@ -201,13 +192,13 @@ end
 cv.num_resample_runs = 60;
 
 %All of these default to 0 - SFM 7/30/21
-stop_resample_runs_only_when_specific_results_have_converged.decision_values = 0;
-%cv.display_progress.zero_one_loss_results = 0;
-%cv.display_progress.normalized_rank_results = 0;
+cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = 0;
+cv.display_progress.zero_one_loss_results = 0;
+cv.display_progress.normalized_rank_results = 0;
 cv.display_progress.convergence_values = 1;
 cv.display_progress.decision_values = 1;
-%cv.display_progress.combined_CV_ROC_results = 0;
-%cv.display_progress.separate_CV_ROC_results = 0;
+cv.display_progress.combined_CV_ROC_results = 0;
+cv.display_progress.separate_CV_ROC_results = 0;
 
 %%    Get Data!   
 
