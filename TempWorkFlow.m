@@ -5,10 +5,11 @@ clear all
 tic;
 preprocess_switch = 0; % Logical switch on whether to generate outfiles and rasterize them - SFM 8/5/21
 if preprocess_switch == 1
-    outdirs = 'D:\lab\djmaus\Data\sfm\'; % Set target dir for outfiles to be generated
+    outdirs = []; % Set target dir for outfiles to be generated ('D:\lab\djmaus\Data\sfm\') - SFM 8/10/21
     for i = 1:length(outdirs)
         cd(outdirs{i})
-        PlotSpeechContext
+        GrandPlotSpeechContext.masterdir = outdirs{1};
+        GrandPlotSpeechContext;
     end
     GrandOutfile_Combiner.masterdir = []; %outdirs; % Set master directory where single outfiles are located - SFM 8/5/21
     GrandOutfile_Combiner.targetdir = []; % Set directory for combined outfiles to be saved to - SFM 8/5/21
@@ -35,7 +36,7 @@ clear all
 BinnedDir = 'F:\Data\sfm\BinnedFiles'; % Set directory where binned files are located - SFM 8/6/21 
 cd(BinnedDir);
 
-save_prefix_name = 'F:\Data\sfm\BinnedFiles\SynthGroup5';
+save_prefix_name = 'F:\Data\sfm\BinnedFiles\Output_v1';
 bin_width = 20; 
 step_size = 10;
 start_time = 170;
@@ -43,6 +44,7 @@ end_time = 370;
 Previous_data_file_name = strcat(save_prefix_name,'_',num2str(bin_width),'ms_bins_',num2str(step_size),'ms_sampled_',num2str(start_time),'start_time_',num2str(end_time),'end_time.mat');
 
 if ~isfile(Previous_data_file_name) % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
+    RasterDir = 'F:\Data\sfm\RasterFiles'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
     [saved_binned_data_file_name] = create_binned_data_from_raster_data(RasterDir, save_prefix_name, bin_width, step_size, start_time, end_time);
     binned_data_file_name = saved_binned_data_file_name
     toc
@@ -53,7 +55,7 @@ end                     % 'Binned_Zhang_Desimone_7object_data_150ms_bins_50ms_sa
 %%  Optional Utility Function
 
 load(binned_data_file_name);
-k_label_utility_switch = 0;
+k_label_utility_switch = 1;
 
 if k_label_utility_switch == 1
     for k = 1:100
@@ -65,9 +67,6 @@ else
 end
 
 %%    Create DS
-
-specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
-num_cv_splits = 20; 
 
 set_training_and_testing_labels = 'none';
 
@@ -126,8 +125,11 @@ else
     the_testing_label_names = [];
 end
 
+specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
+num_cv_splits = 80; 
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch needed to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
+cv_switch = 1;          % Binary switch to automatically or manually select data for training (hopefully) - SFM 8/10/21
 
 if ds_switch == 1
     if poisson_switch == 1
@@ -149,18 +151,23 @@ end
 
 % ***Settings in DS class***
 ds.time_periods_to_get_data_from = []; % Default to [] - SFM 8/5/21
-% ds.num_times_to_repeat_each_label_per_cv_split = k; % Use utility function regarding k_repeats for value to set - SFM 8/9/21
+if cv_switch == 0
+    ds.num_times_to_repeat_each_label_per_cv_split = 1; % Use utility function regarding k_repeats for value to set - SFM 8/9/21
+else
+    ds.sites_to_use = find_sites_with_k_label_repetitions(binned_labels.sourcefile, num_cv_splits); % Will only select neurons with high presentations of stimuli for training (hopefully) - SFM 8/10/21
+end
 ds.randomly_shuffle_labels_before_running = 0; % Set to 1 to take a null distribution - SFM 8/5/21
 % Not listing ones that are irrelevant to us* (*future students may disagree, see the documentation for settings) - SFM 8/9/21
 
 %%     Create FP (optional)
 
 set_fp_type = 0;    % Set switch on type of feature preprocessing to use - SFM 8/9/21
+
 if set_fp_type == 0
     fp = zscore_normalize_FP;
 elseif set_fp_type == 1
     fp = select_or_exclude_top_k_features_FP;
-    fp.num_features_to_exclude = 1;        % # of top features to exclude (as determined by ANOVA) - SFM 8/9/21
+    fp.num_features_to_exclude = [];        % # of top features to exclude (as determined by ANOVA) - SFM 8/9/21
     fp.num_features_to_use = 10;           % # of top features (including or excluding the above) used to characterize neuron - SFM 8/9/21
 else
     fp = select_pvalue_significant_features_FP;
@@ -170,6 +177,7 @@ end
 %%    Create CL 
 
 set_cl_type = 0;    % Set switch on type of classifier to use - SFM 8/9/21
+
 if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
 elseif set_cl_type == 1
@@ -183,6 +191,7 @@ end
 %%    CV
 
 set_fp_flag = 0;    % Set binary switch whether to run decoding with FP or not - SFM 8/9/21
+
 if set_fp_flag == 0
     cv = standard_resample_CV(ds, cl);
 else 
@@ -192,7 +201,7 @@ end
 cv.num_resample_runs = 60;
 
 %All of these default to 0 - SFM 7/30/21
-cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = 0;
+%cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = 0;
 cv.display_progress.zero_one_loss_results = 0;
 cv.display_progress.normalized_rank_results = 0;
 cv.display_progress.convergence_values = 1;
@@ -208,7 +217,7 @@ toc
 %%    Save results
 
 % save the results
-save_file_name = 'SynthGroup5 Output v27';
+save_file_name = 'Output v2';
 save(save_file_name, 'DECODING_RESULTS');
 
 %%    Plotting
