@@ -12,7 +12,7 @@ if preprocess_switch == 1
         GrandPlotSpeechContext;
     end
     GrandOutfile_Combiner.masterdir = []; %outdirs; % Set master directory where single outfiles are located - SFM 8/5/21
-    GrandOutfile_Combiner.targetdir = []; % Set directory for combined outfiles to be saved to - SFM 8/5/21
+    GrandOutfile_Combiner.targetdir = [];           % Set directory for combined outfiles to be saved to - SFM 8/5/21
     for j = 1:length(GrandOutfile_Combiner.masterdir)
         l = 1:length(GrandOutfile_Combiner.targetdir);
         cd(GrandOutfile_Combiner.masterdir{j})
@@ -43,7 +43,7 @@ start_time = 170;
 end_time = 370;
 Previous_data_file_name = strcat(save_prefix_name,'_',num2str(bin_width),'ms_bins_',num2str(step_size),'ms_sampled_',num2str(start_time),'start_time_',num2str(end_time),'end_time.mat');
 
-if ~isfile(Previous_data_file_name) % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
+if ~isfile(Previous_data_file_name)        % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
     RasterDir = 'F:\Data\sfm\RasterFiles'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
     [saved_binned_data_file_name] = create_binned_data_from_raster_data(RasterDir, save_prefix_name, bin_width, step_size, start_time, end_time);
     binned_data_file_name = saved_binned_data_file_name
@@ -55,7 +55,7 @@ end                     % 'Binned_Zhang_Desimone_7object_data_150ms_bins_50ms_sa
 %%  Optional Utility Function
 
 load(binned_data_file_name);
-k_label_utility_switch = 1;
+k_label_utility_switch = 0;
 
 if k_label_utility_switch == 1
     for k = 1:100
@@ -126,7 +126,7 @@ else
 end
 
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
-num_cv_splits = 80; 
+num_cv_splits = 40; 
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch needed to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 cv_switch = 1;          % Binary switch to automatically or manually select data for training (hopefully) - SFM 8/10/21
@@ -168,7 +168,7 @@ if set_fp_type == 0
 elseif set_fp_type == 1
     fp = select_or_exclude_top_k_features_FP;
     fp.num_features_to_exclude = [];        % # of top features to exclude (as determined by ANOVA) - SFM 8/9/21
-    fp.num_features_to_use = 10;           % # of top features (including or excluding the above) used to characterize neuron - SFM 8/9/21
+    fp.num_features_to_use = 10;            % # of top features (including or excluding the above) used to characterize neuron - SFM 8/9/21
 else
     fp = select_pvalue_significant_features_FP;
     fp.pvalue_threshold = 0.01;   % Needs to be set - SFM 8/9/21
@@ -200,12 +200,14 @@ end
 
 cv.num_resample_runs = 60;
 
-%All of these default to 0 - SFM 7/30/21
-%cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = 0;
-cv.display_progress.zero_one_loss_results = 0;
+% See documentation for defaults - SFM 7/30/21
+cv.stop_resample_runs_only_when_specific_results_have_converged.zero_one_loss_results = 1;
+cv.stop_resample_runs_only_when_specific_results_have_converged.normalized_rank_results = 0;
+cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = 1;
+cv.display_progress.zero_one_loss_results = 1;
 cv.display_progress.normalized_rank_results = 0;
 cv.display_progress.convergence_values = 1;
-cv.display_progress.decision_values = 1;
+cv.display_progress.decision_values = 0;
 cv.display_progress.combined_CV_ROC_results = 0;
 cv.display_progress.separate_CV_ROC_results = 0;
 
@@ -217,12 +219,11 @@ toc
 %%    Save results
 
 % save the results
-save_file_name = 'Output v2';
+save_file_name = 'Output v10';
 save(save_file_name, 'DECODING_RESULTS');
 
 %%    Plotting
 
-% which results should be plotted (only have one result to plot here)
 result_names{1} = save_file_name;
 plot_obj = plot_standard_results_object(result_names);
 plot_obj.significant_event_times = 0;   
