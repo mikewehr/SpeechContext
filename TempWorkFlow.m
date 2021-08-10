@@ -59,8 +59,8 @@ k_label_utility_switch = 0;
 
 if k_label_utility_switch == 1
     for k = 1:100
-        inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels.sourcefile, k);
-        num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats); 
+        inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels.sourcefile, k); 
+        num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);    % How many neurons received at least k repetitions of all stimuli? - SFM 8/10/21
     end
     toc
 else
@@ -102,7 +102,7 @@ elseif strcmp(set_training_and_testing_labels, 'i') == 1
         'soundfile_iba-uda_sourcefile_uba-da2+3.5oct.wav_22_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da3+3.5oct.wav_23_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_uba-da4+3.5oct.wav_24_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da5+3.5oct.wav_25_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_uba-da6+3.5oct.wav_26_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da7+3.5oct.wav_27_80dB_0.4s.mat'; 
-    'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat'}; 
+        'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat'}; 
 
 elseif strcmp(set_training_and_testing_labels, 'u') == 1
     the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
@@ -128,8 +128,8 @@ end
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
 num_cv_splits = 40; 
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
-poisson_switch = 0;     % Binary switch needed to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
-cv_switch = 1;          % Binary switch to automatically or manually select data for training (hopefully) - SFM 8/10/21
+poisson_switch = 0;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
+cv_switch = 1;          % Binary switch to automatically or manually select data for training - SFM 8/10/21
 
 if ds_switch == 1
     if poisson_switch == 1
@@ -152,10 +152,10 @@ end
 % ***Settings in DS class***
 ds.time_periods_to_get_data_from = []; % Default to [] - SFM 8/5/21
 if cv_switch == 0
-    ds.num_times_to_repeat_each_label_per_cv_split = 1; % Use utility function regarding k_repeats for value to set - SFM 8/9/21
+    ds.num_times_to_repeat_each_label_per_cv_split = 1; 
 else
-    ds.sites_to_use = find_sites_with_k_label_repetitions(binned_labels.sourcefile, num_cv_splits); % Will only select neurons with high presentations of stimuli for training (hopefully) - SFM 8/10/21
-end
+    ds.sites_to_use = find_sites_with_k_label_repetitions(binned_labels.sourcefile, num_cv_splits); % Only analyze sites with num_cv_split reps of all stimuli - SFM 8/10/21
+end                                                                                                 % Use in conjunction with k_labels utility function in previous code chunk
 ds.randomly_shuffle_labels_before_running = 0; % Set to 1 to take a null distribution - SFM 8/5/21
 % Not listing ones that are irrelevant to us* (*future students may disagree, see the documentation for settings) - SFM 8/9/21
 
