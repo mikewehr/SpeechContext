@@ -1,11 +1,10 @@
 clear all;
-masterdir = 'D:\lab\djmaus\Data\sfm\2021-02-05_13-37-43_mouse-0296'; %set master directory
-targetdir = 'F:\Data\sfm\Finalized Outfiles\0296';
+masterdir = 'D:\lab\djmaus\Data\sfm\2020-12-18_10-27-09_mouse-0095'; %set master directory
+targetdir = 'F:\Data\sfm\Finalized Outfiles\0095';
 
 cd(masterdir)
-load("dirs.mat")
-%load('D:\lab\djmaus\Data\sfm\GrandKilosort0095CombinedOutfiles\GrandKilosortOutfilesFullMouse\outPSTH_combined_ch5c335.mat', 'out');
-%dirs = out.dirlist %Use these two lines to pick and choose dirs to combine from in case some are missing triggers/otherwise bad - SFM 7/16/21
+%load('dirs.mat')
+%dirs = {}; %Use this line to manually choose dirs to combine from, in case some are missing triggers/otherwise bad - SFM 7/16/21
 
 outfilecelllist = dir('outPSTH*.mat');
 for i = 1:length(outfilecelllist)
@@ -21,9 +20,14 @@ for i = 1:length(outfilecelllist)
         clear out
     end
         
+    if isempty(singleoutfilelist)
+        fprintf('%s has no recorded spiketimes in these directories, and was not combined', outfilecelllist(i).name)
+        clear singleoutfilelist
+    else
         Outfile_Combiner(singleoutfilelist, targetdir);
         i
         clear singleoutfilelist
+    end
 end
 
 fprintf("Outfiles for this selection have been combined and saved to")
