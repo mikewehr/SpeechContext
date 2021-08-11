@@ -55,10 +55,10 @@ end                     % 'Binned_Zhang_Desimone_7object_data_150ms_bins_50ms_sa
 %%  Optional Utility Function
 
 load(binned_data_file_name);
-k_label_utility_switch = 0;
+k_label_utility_switch = 1;
 
 if k_label_utility_switch == 1
-    for k = 1:100
+    for k = 1:200
         inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels.sourcefile, k); 
         num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);    % How many neurons received at least k repetitions of all stimuli? - SFM 8/10/21
     end
@@ -142,7 +142,7 @@ else
     if poisson_switch == 1
         load_data_as_spike_counts = 1;
         ds = generalization_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits, the_training_label_names, the_test_label_names, load_data_as_spike_counts);
-        ds.use_unique_data_in_each_cv_split = 0;     % Defaults to 0 - SFM 8/9/21
+%         ds.use_unique_data_in_each_cv_split = 0;     % Defaults to 0 - SFM 8/9/21
     else
         ds = generalization_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits, the_training_label_names, the_test_label_names);
         ds.use_unique_data_in_each_CV_split = 0;     % Defaults to 0 - SFM 8/9/21
@@ -201,10 +201,10 @@ end
 cv.num_resample_runs = 60;
 
 % See documentation for defaults - SFM 7/30/21
-cv.stop_resample_runs_only_when_specific_results_have_converged.zero_one_loss_results = 1;
-cv.stop_resample_runs_only_when_specific_results_have_converged.normalized_rank_results = 0;
-cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = 1;
-cv.display_progress.zero_one_loss_results = 1;
+cv.stop_resample_runs_only_when_specific_results_have_converged.zero_one_loss_results = [];     % Default is [], not 0! - SFM 8/10/21
+cv.stop_resample_runs_only_when_specific_results_have_converged.normalized_rank_results = [];
+cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = [];
+cv.display_progress.zero_one_loss_results = 1;                                                  % Default is 0, not []! - SFM 8/10/21
 cv.display_progress.normalized_rank_results = 0;
 cv.display_progress.convergence_values = 1;
 cv.display_progress.decision_values = 0;
@@ -219,7 +219,7 @@ toc
 %%    Save results
 
 % save the results
-save_file_name = 'Output v10';
+save_file_name = 'Output v12';
 save(save_file_name, 'DECODING_RESULTS');
 
 %%    Plotting
