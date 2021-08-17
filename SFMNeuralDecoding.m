@@ -55,10 +55,10 @@ end                     % 'Binned_Zhang_Desimone_7object_data_150ms_bins_50ms_sa
 %%  Optional Utility Function
 
 load(binned_data_file_name);
-k_label_utility_switch = 1;
+k_label_utility_switch = 0;
 
 if k_label_utility_switch == 1
-    for k = 1:200
+    for k = 1:100
         inds_of_sites_with_at_least_k_repeats = find_sites_with_k_label_repetitions(binned_labels.sourcefile, k); 
         num_sites_with_k_repeats(k) = length(inds_of_sites_with_at_least_k_repeats);    % How many neurons received at least k repetitions of all stimuli? - SFM 8/10/21
     end
@@ -150,13 +150,13 @@ else
 end
 
 % ***Settings in DS class***
-ds.time_periods_to_get_data_from = []; % Default to [] - SFM 8/5/21
+ds.time_periods_to_get_data_from = [];                                                              % Default to [] - SFM 8/5/21
 if cv_switch == 0
     ds.num_times_to_repeat_each_label_per_cv_split = 1; 
 else
     ds.sites_to_use = find_sites_with_k_label_repetitions(binned_labels.sourcefile, num_cv_splits); % Only analyze sites with num_cv_split reps of all stimuli - SFM 8/10/21
 end                                                                                                 % Use in conjunction with k_labels utility function in previous code chunk
-ds.randomly_shuffle_labels_before_running = 0; % Set to 1 to take a null distribution - SFM 8/5/21
+ds.randomly_shuffle_labels_before_running = 0;                                                      % Set to 1 to take a null distribution - SFM 8/5/21
 % Not listing ones that are irrelevant to us* (*future students may disagree, see the documentation for settings) - SFM 8/9/21
 
 %%     Create FP (optional)
@@ -185,6 +185,7 @@ elseif set_cl_type == 1
     cl.lambdas = 100;                          % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
     cl.labels = the_test_label_names{1,1};     % What are the potential labels each neuron can have? - SFM 8/9/21
 else
+    % add_ndt_paths_and_init_rand_generator;
     cl = libsvm_CL;
 end
 
@@ -201,15 +202,19 @@ end
 cv.num_resample_runs = 60;
 
 % See documentation for defaults - SFM 7/30/21
-cv.stop_resample_runs_only_when_specific_results_have_converged.zero_one_loss_results = [];     % Default is [], not 0! - SFM 8/10/21
-cv.stop_resample_runs_only_when_specific_results_have_converged.normalized_rank_results = [];
-cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = [];
+cv.stop_resample_runs_only_when_specific_results_have_converged.zero_one_loss_results = [];     % Default is [], not 0! 
+cv.stop_resample_runs_only_when_specific_results_have_converged.normalized_rank_results = [];   % for these you need to enter a value that when the results from one resample to another change by less than it,
+cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = [];           % resampling runs are stopped - SFM 8/10/21
+
 cv.display_progress.zero_one_loss_results = 1;                                                  % Default is 0, not []! - SFM 8/10/21
-cv.display_progress.normalized_rank_results = 0;
+cv.display_progress.normalized_rank_results = 0;                                                % and these are back to binary switches
 cv.display_progress.convergence_values = 1;
 cv.display_progress.decision_values = 0;
 cv.display_progress.combined_CV_ROC_results = 0;
 cv.display_progress.separate_CV_ROC_results = 0;
+
+cv.confusion_matrix_params.create_all_test_points_separate_confusion_matrix = 0;                % Default is 0 - SFM 8/11/21
+cv.save_results.extended_decision_values = 2;                                                   % Default is 0, set to 1 or 2 (may run out of RAM or file larger than 2GB) - SFM 8/12/21
 
 %%    Get Data!   
 
@@ -218,24 +223,23 @@ toc
 
 %%    Save results
 
-% save the results
-save_file_name = 'Output v12';
-save(save_file_name, 'DECODING_RESULTS');
+save_file_name = 'Output v25';
+save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
 
 %%    Plotting
 
 result_names{1} = save_file_name;
 plot_obj = plot_standard_results_object(result_names);
 plot_obj.significant_event_times = 0;   
-% plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
+plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
 plot_obj.plot_results;
 
 %%    Plot the TCT matrix
 
 plot_obj = plot_standard_results_TCT_object(save_file_name);
 plot_obj.significant_event_times = 0; % the time when the stimulus was shown
-% plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
-plot_obj.plot_results;  % plot the TCT matrix and a movie showing if information is coded by a dynamic population code
+plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
+plot_obj.plot_results; 
 toc
 binned_data_file_name
 %%
