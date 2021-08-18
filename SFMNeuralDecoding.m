@@ -201,7 +201,7 @@ end
 
 cv.num_resample_runs = 60;
 
-% See documentation for defaults - SFM 7/30/21
+% CV Settings (see documentation for default values if not listed here) - SFM 7/30/21
 cv.stop_resample_runs_only_when_specific_results_have_converged.zero_one_loss_results = [];     % Default is [], not 0! 
 cv.stop_resample_runs_only_when_specific_results_have_converged.normalized_rank_results = [];   % for these you need to enter a value that when the results from one resample to another change by less than it,
 cv.stop_resample_runs_only_when_specific_results_have_converged.decision_values = [];           % resampling runs are stopped - SFM 8/10/21
@@ -213,8 +213,10 @@ cv.display_progress.decision_values = 0;
 cv.display_progress.combined_CV_ROC_results = 0;
 cv.display_progress.separate_CV_ROC_results = 0;
 
-cv.confusion_matrix_params.create_all_test_points_separate_confusion_matrix = 0;                % Default is 0 - SFM 8/11/21
-cv.save_results.extended_decision_values = 2;                                                   % Default is 0, set to 1 or 2 (may run out of RAM or file larger than 2GB) - SFM 8/12/21
+cv.confusion_matrix_params.create_all_test_points_separate_confusion_matrix = 0;                % Default is 0, documentation says turning this on may be useful for generalization_DS - SFM 8/11/21
+cv.confusion_matrix_params.create_confusion_matrix = 1;                                         % Default is 1, should be always on - SFM 8/18/21
+
+cv.save_results.extended_decision_values = 1;                                                   % Default is 0, set to 1 or 2 (may run out of RAM or file larger than 2GB) - SFM 8/12/21
 
 %%    Get Data!   
 
