@@ -36,15 +36,15 @@ clear all
 BinnedDir = 'F:\Data\sfm\BinnedFiles'; % Set directory where binned files are located - SFM 8/6/21 
 cd(BinnedDir);
 
-save_prefix_name = 'F:\Data\sfm\BinnedFiles\Output_v1';
-bin_width = 5; 
-step_size = 2;
+save_prefix_name = 'F:\Data\sfm\BinnedFiles\SynthGroup5';
+bin_width = 200; 
+step_size = 200;
 start_time = 170;
 end_time = 370;
 Previous_data_file_name = strcat(save_prefix_name,'_',num2str(bin_width),'ms_bins_',num2str(step_size),'ms_sampled_',num2str(start_time),'start_time_',num2str(end_time),'end_time.mat');
 
 if ~isfile(Previous_data_file_name)        % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
-    RasterDir = 'F:\Data\sfm\RasterFiles'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
+    RasterDir = 'F:\Data\sfm\Synthetic Test Data\Group 5'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
     [saved_binned_data_file_name] = create_binned_data_from_raster_data(RasterDir, save_prefix_name, bin_width, step_size, start_time, end_time);
     binned_data_file_name = saved_binned_data_file_name
     toc
@@ -68,14 +68,15 @@ end
 
 %%    Create DS
 
-set_training_and_testing_labels = 'none';
+set_training_and_testing_labels = 'test_NDT';
 
 if strcmp(set_training_and_testing_labels, 'none') == 1
     the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
-    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 
-        'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 
-        'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 
-        'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat';
+    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat';
         'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da2+3.5oct.wav_12_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_iba-da3+3.5oct.wav_13_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da4+3.5oct.wav_14_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_iba-da5+3.5oct.wav_15_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da6+3.5oct.wav_16_80dB_0.4s.mat'; 
@@ -120,13 +121,17 @@ elseif strcmp(set_training_and_testing_labels, 'u') == 1
         'soundfile_iba-uda_sourcefile_uba-da4+3.5oct.wav_24_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da5+3.5oct.wav_25_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_uba-da6+3.5oct.wav_26_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da7+3.5oct.wav_27_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat'};
+    
+elseif strcmp(set_training_and_testing_labels, 'test_NDT') == 1
+    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
 else
     the_training_label_names = [];
     the_testing_label_names = [];
 end
 
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
-num_cv_splits = 40; 
+num_cv_splits = 20; 
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 cv_switch = 1;          % Binary switch to automatically or manually select data for training - SFM 8/10/21
@@ -215,8 +220,10 @@ cv.display_progress.separate_CV_ROC_results = 0;
 
 cv.confusion_matrix_params.create_all_test_points_separate_confusion_matrix = 0;                % Default is 0, documentation says turning this on may be useful for generalization_DS - SFM 8/11/21
 cv.confusion_matrix_params.create_confusion_matrix = 1;                                         % Default is 1, should be always on - SFM 8/18/21
+cv.confusion_matrix_params.save_confusion_matrix_only_train_and_test_at_same_time = 0;          % Default is 0, see documentation for function - SFM 8/18/21
 
-cv.save_results.extended_decision_values = 1;                                                   % Default is 0, set to 1 or 2 (may run out of RAM or file larger than 2GB) - SFM 8/12/21
+cv.test_only_at_training_times = 0;                                                             % Default is 0, see documentation for function - SFM 8/18/21
+cv.save_results.extended_decision_values = 1;                                                   % Default is 0, set to 1 or 2 for increased data saved/returned (may run out of RAM or file larger than 2GB) - SFM 8/12/21
 
 %%    Get Data!   
 
@@ -225,23 +232,36 @@ toc
 
 %%    Save results
 
-save_file_name = 'Output v29';
+save_file_name = 'SynthGroup5 Output v30';
 save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
 
 %%    Plotting
 
-result_names{1} = save_file_name;
-plot_obj = plot_standard_results_object(result_names);
-plot_obj.significant_event_times = 0;   
-plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
-plot_obj.plot_results;
+plot_switch = 1;                   % Binary switch on whether to plot results or end the script after saving the decoding data - SFM 8/18/21
+quick_analysis = 1;                % Binary switch on whether to do a quick analysis of decoding results - SFM 8/18/21
 
-%%    Plot the TCT matrix
+if plot_switch == 0
+    result_names{1} = save_file_name;
+    plot_obj = plot_standard_results_object(result_names);
+    plot_obj.significant_event_times = 0;   
+    plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
+    plot_obj.plot_results;
 
-plot_obj = plot_standard_results_TCT_object(save_file_name);
-plot_obj.significant_event_times = 0; % the time when the stimulus was shown
-plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
-plot_obj.plot_results; 
+    %    Plot the TCT matrix
+
+    plot_obj = plot_standard_results_TCT_object(save_file_name);
+    plot_obj.significant_event_times = 0; % the time when the stimulus was shown
+    plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
+    plot_obj.plot_results;
+else
+end
+
+if quick_analysis == 1
+    cm = DECODING_RESULTS.ZERO_ONE_LOSS_RESULTS.confusion_matrix_results.confusion_matrix
+    cm(1,1)/(cm(1,1)+cm(2,1)), cm(2,2)/(cm(1,2)+cm(2,2))
+else
+end
 toc
 binned_data_file_name
 %%
+
