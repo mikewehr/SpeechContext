@@ -36,7 +36,7 @@ clear all
 BinnedDir = 'F:\Data\sfm\BinnedFiles'; % Set directory where binned files are located - SFM 8/6/21 
 cd(BinnedDir);
 
-save_prefix_name = 'F:\Data\sfm\BinnedFiles\SynthGroup5';
+save_prefix_name = 'F:\Data\sfm\BinnedFiles\SynthGroup5_';
 bin_width = 200; 
 step_size = 200;
 start_time = 170;
@@ -131,7 +131,7 @@ else
 end
 
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
-num_cv_splits = 20; 
+num_cv_splits = 40; 
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 cv_switch = 1;          % Binary switch to automatically or manually select data for training - SFM 8/10/21
@@ -181,17 +181,29 @@ end
 
 %%    Create CL 
 
-set_cl_type = 0;    % Set switch on type of classifier to use - SFM 8/9/21
+set_cl_type = 2;    % Set switch on type of classifier to use - SFM 8/9/21
 
 if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
 elseif set_cl_type == 1
     cl = poisson_naive_bayes_CL;
-    cl.lambdas = 100;                          % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
+    cl.lambdas = 40;                           % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
     cl.labels = the_test_label_names{1,1};     % What are the potential labels each neuron can have? - SFM 8/9/21
 else
-    % add_ndt_paths_and_init_rand_generator;
+    if ~exist(svmtrain2, 'file')
+        add_ndt_paths_and_init_rand_generator;
+    else
+    end
     cl = libsvm_CL;
+    svm.C = 1;                                 % Default is 1, see documentation for more (higher the value, the better the fit) - SFM 8/19/21
+    svm.kernel = 'gaussian';                     % Default is 'linear', can also be 'polynomial' or 'gaussian' (will need to set the additional parameters for these - SFM 8/19/21
+    if strcmp(svm.kernel, 'polynomial') == 1
+        svm.poly_degree = 2;                   % No default value, must be set - SFM 8/19/21 
+        svm.poly_offset = 0;                   % Default is 0 - SFM 8/19/21 
+    elseif strcmp(svm.kernel, 'gaussian') == 1
+        svm.gaussian_gamma = [];               % No default  value, must be set - SFM 8/19/21 
+    else
+    end
 end
 
 %%    CV
@@ -232,8 +244,19 @@ toc
 
 %%    Save results
 
-save_file_name = 'SynthGroup5 Output v30';
-save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
+partsplit = strsplit(save_prefix_name, '\');
+dirsearchchar = strcat(partsplit{5}, 'Output_', '*');
+outputnum = length(dir(dirsearchchar));
+save_file_name = strcat(partsplit{5}, 'Output_', (outputnum + 1));
+if exist(save_file_name, 'file')
+    warning('An output with this name has already been detected in this directory, will be saved under a different name.')
+    save_file_name = strcat(partsplit{5}, 'Output_', (outputnum + 1), '-2');
+    save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
+    fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
+else
+    save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
+    fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
+end
 
 %%    Plotting
 
@@ -262,6 +285,5 @@ if quick_analysis == 1
 else
 end
 toc
-binned_data_file_name
 %%
 
