@@ -181,7 +181,7 @@ end
 
 %%    Create CL 
 
-set_cl_type = 2;    % Set switch on type of classifier to use - SFM 8/9/21
+set_cl_type = 0;    % Set switch on type of classifier to use - SFM 8/9/21
 
 if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
@@ -199,9 +199,9 @@ else
     svm.kernel = 'gaussian';                     % Default is 'linear', can also be 'polynomial' or 'gaussian' (will need to set the additional parameters for these - SFM 8/19/21
     if strcmp(svm.kernel, 'polynomial') == 1
         svm.poly_degree = 2;                   % No default value, must be set - SFM 8/19/21 
-        svm.poly_offset = 0;                   % Default is 0 - SFM 8/19/21 
+        svm.poly_offset = 1;                   % Default is 0 - SFM 8/19/21 
     elseif strcmp(svm.kernel, 'gaussian') == 1
-        svm.gaussian_gamma = [];               % No default  value, must be set - SFM 8/19/21 
+        svm.gaussian_gamma = 1;                % No default value, must be set (how much impact does any one trial have?) - SFM 8/19/21 
     else
     end
 end
@@ -244,18 +244,25 @@ toc
 
 %%    Save results
 
-partsplit = strsplit(save_prefix_name, '\');
-dirsearchchar = strcat(partsplit{5}, 'Output_', '*');
-outputnum = length(dir(dirsearchchar));
-save_file_name = strcat(partsplit{5}, 'Output_', (outputnum + 1));
-if exist(save_file_name, 'file')
-    warning('An output with this name has already been detected in this directory, will be saved under a different name.')
-    save_file_name = strcat(partsplit{5}, 'Output_', (outputnum + 1), '-2');
-    save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
-    fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
+save_switch = 1;                                            % Binary switch on whether to automate save name or enter one in manually - SFM 8/19/21
+
+if save_switch == 1
+    partsplit = strsplit(save_prefix_name, '\');
+    dirsearchchar = strcat(partsplit{5}, 'Output_', '*');
+    outputnum = length(dir(dirsearchchar));
+    save_file_name = strcat(partsplit{5}, 'Output_v', num2str(outputnum + 1));
+    if exist(save_file_name, 'file')
+        warning('An output with this name has already been detected in this directory, will be saved under a different name.')
+        save_file_name = strcat(partsplit{5}, 'Output_v', num2str(outputnum + 1), '-2');
+        save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
+        fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
+    else
+        save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
+        fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
+    end
 else
-    save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
-    fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
+    save_file_name = 'SynthGroup5_Output_v39';              % Enter custom name here (if save_switch ~= 1) - SFM 8/19/21
+    save(save_file_name, 'DECODING_RESULTS', 'ds');
 end
 
 %%    Plotting
