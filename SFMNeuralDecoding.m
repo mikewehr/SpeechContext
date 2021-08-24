@@ -3,9 +3,9 @@
 
 clear all
 tic;
-preprocess_switch = 0; % Logical switch on whether to generate outfiles and rasterize them - SFM 8/5/21
+preprocess_switch = 0;                              % Logical switch on whether to generate outfiles and rasterize them - SFM 8/5/21
 if preprocess_switch == 1
-    outdirs = []; % Set target dir for outfiles to be generated ('D:\lab\djmaus\Data\sfm\') - SFM 8/10/21
+    outdirs = [];                                   % Set target dir for outfiles to be generated ('D:\lab\djmaus\Data\sfm\') - SFM 8/10/21
     for i = 1:length(outdirs)
         cd(outdirs{i})
         GrandPlotSpeechContext.masterdir = outdirs{1};
@@ -33,7 +33,7 @@ clear all
 
 %%  Binning Data
 
-BinnedDir = 'F:\Data\sfm\BinnedFiles'; % Set directory where binned files are located - SFM 8/6/21 
+BinnedDir = 'F:\Data\sfm\BinnedFiles';     % Set directory where binned files are located - SFM 8/6/21 
 cd(BinnedDir);
 
 save_prefix_name = 'F:\Data\sfm\BinnedFiles\Output_';
@@ -44,13 +44,13 @@ end_time = 370;
 Previous_data_file_name = strcat(save_prefix_name, num2str(bin_width), 'ms_bins_', num2str(step_size), 'ms_sampled_', num2str(start_time), 'start_time_', num2str(end_time), 'end_time.mat');
 
 if ~isfile(Previous_data_file_name)        % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
-    RasterDir = 'F:\Data\sfm\Rasterfiles'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
+    RasterDir = 'F:\Data\sfm\RasterFiles'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
     [saved_binned_data_file_name] = create_binned_data_from_raster_data(RasterDir, save_prefix_name, bin_width, step_size, start_time, end_time);
     binned_data_file_name = saved_binned_data_file_name
     toc
 else
     binned_data_file_name = Previous_data_file_name 
-end                     % 'Binned_Zhang_Desimone_7object_data_150ms_bins_50ms_sampled.mat' example dataset binned - SFM 7/28/21
+end                                        % 'Binned_Zhang_Desimone_7object_data_150ms_bins_50ms_sampled.mat' example dataset binned - SFM 7/28/21
 
 %%  Optional Utility Function
 
@@ -133,6 +133,24 @@ elseif strcmp(set_training_and_testing_labels, 'no_context') == 1
         'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    
+elseif strcmp(set_training_and_testing_labels, 'reverse') == 1
+    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_iba-da1+3.5oct.wav_11_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da2+3.5oct.wav_12_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da3+3.5oct.wav_13_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da4+3.5oct.wav_14_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da5+3.5oct.wav_15_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da6+3.5oct.wav_16_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da7+3.5oct.wav_17_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da8+3.5oct.wav_18_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_iba-da9+3.5oct.wav_19_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_iba-da10+3.5oct.wav_20_80dB_0.4s.mat';
+        'soundfile_iba-uda_sourcefile_uba-da1+3.5oct.wav_21_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da2+3.5oct.wav_22_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da3+3.5oct.wav_23_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da4+3.5oct.wav_24_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da5+3.5oct.wav_25_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da6+3.5oct.wav_26_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da7+3.5oct.wav_27_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da10+3.5oct.wav_30_80dB_0.4s.mat'};
 else
     the_training_label_names = {};
     the_testing_label_names = {};
@@ -141,7 +159,7 @@ end
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
 num_cv_splits = 40; 
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
-poisson_switch = 1;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
+poisson_switch = 0;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 cv_switch = 1;          % Binary switch to automatically or manually select data for training - SFM 8/10/21
 
 if ds_switch == 1
@@ -174,22 +192,22 @@ ds.randomly_shuffle_labels_before_running = 0;                                  
 
 %%     Create FP (optional)
 
-set_fp_type = 0;    % Set switch on type of feature preprocessing to use - SFM 8/9/21
+set_fp_type = 0;                               % Set switch on type of feature preprocessing to use - SFM 8/9/21
 
 if set_fp_type == 0
     fp = zscore_normalize_FP;
 elseif set_fp_type == 1
     fp = select_or_exclude_top_k_features_FP;
-    fp.num_features_to_exclude = 0;        % # of top features to exclude (as determined by ANOVA) - SFM 8/9/21
-    fp.num_features_to_use = 10;            % # of top features (including or excluding the above) used to characterize neuron - SFM 8/9/21
+    fp.num_features_to_exclude = 0;            % # of top features to exclude (as determined by ANOVA) - SFM 8/9/21
+    fp.num_features_to_use = 20;               % # of top features (including or excluding the above) used to characterize neuron - SFM 8/9/21
 else
     fp = select_pvalue_significant_features_FP;
-    fp.pvalue_threshold = 0.05;   % Needs to be set - SFM 8/9/21
+    fp.pvalue_threshold = 0.05;                % Needs to be set - SFM 8/9/21
 end
 
 %%    Create CL 
 
-set_cl_type = 0;    % Set switch on type of classifier to use - SFM 8/9/21
+set_cl_type = 0;                               % Set switch on type of classifier to use - SFM 8/9/21
 
 if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
@@ -205,12 +223,12 @@ else
     cl = libsvm_CL;
     svm.additional_libsvm_options = 'q';       % See documentation for more, this is just to make the output shut up (the 'q' is for 'quiet')(doesn't work?) - SFM 8/19/21
     svm.C = 1;                                 % Default is 1, see documentation for more (higher the value, the better the fit) - SFM 8/19/21
-    svm.kernel = 'gaussian';                     % Default is 'linear', can also be 'polynomial' or 'gaussian' (will need to set the additional parameters for these - SFM 8/19/21
+    svm.kernel = 'linear';                     % Default is 'linear', can also be 'polynomial' or 'gaussian' (will need to set the additional parameters for these - SFM 8/19/21
     if strcmp(svm.kernel, 'polynomial') == 1
-        svm.poly_degree = 4;                   % No default value, must be set - SFM 8/19/21 
+        svm.poly_degree = 5;                   % No default value, must be set - SFM 8/19/21 
         svm.poly_offset = 0;                   % Default is 0 - SFM 8/19/21 
     elseif strcmp(svm.kernel, 'gaussian') == 1
-        svm.gaussian_gamma = 2;                % No default value, must be set (how much impact does any one trial have?) - SFM 8/19/21 
+        svm.gaussian_gamma = 1;                % No default value, must be set (how much impact does any one trial have?) - SFM 8/19/21 
     else
     end
 end
@@ -253,7 +271,7 @@ toc
 
 %%    Save results
 
-save_switch = 1;                                            % Binary switch on whether to automate save name or enter one in manually - SFM 8/19/21
+save_switch = 0;                                            % Binary switch on whether to automate save name or enter one in manually - SFM 8/19/21
 
 if save_switch == 1
     partsplit = strsplit(save_prefix_name, '\');
@@ -262,12 +280,12 @@ if save_switch == 1
         outputnum = length(dir(dirsearchchar));
         save_file_name = strcat(partsplit{5}, 'Output_v', num2str(outputnum + 1));
     else
-        dirsearchchar = strcat(partsplit{5}, 'Output_', '*');
+        dirsearchchar = strcat('Output_*');
         outputnum = length(dir(dirsearchchar));
         save_file_name = strcat('Output_v', num2str(outputnum + 1));
     end
     if exist(save_file_name, 'file')
-        warning('An output with this name has already been detected in this directory, will be saved under a different name.')
+        warning('An output with this name already exists in this directory, will be saved under a different name.')
         save_file_name = strcat(partsplit{5}, 'Output_v', num2str(outputnum + 1), '-2');
         save(save_file_name, 'DECODING_RESULTS', 'ds');     % Need all of the fine detail in the DS for later - SFM 8/13/21
         fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
@@ -276,16 +294,16 @@ if save_switch == 1
         fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
     end
 else
-    save_file_name = 'SynthGroup10_Output_v14';              % Enter custom name here (if save_switch ~= 1) - SFM 8/19/21
+    save_file_name = 'Output_v54';                          % Enter custom name here (if save_switch ~= 1) - SFM 8/19/21
     save(save_file_name, 'DECODING_RESULTS', 'ds');
 end
 
 %%    Plotting
 
-plot_switch = 1;                   % Binary switch on whether to plot results or end the script after saving the decoding data - SFM 8/18/21
-quick_analysis = 1;                % Binary switch on whether to do a quick analysis of decoding results - SFM 8/18/21
+plot_switch = 0;                       % Binary switch on whether to plot results or end the script after saving the decoding data - SFM 8/18/21
+quick_analysis = 1;                    % Binary switch on whether to do a quick analysis of decoding results - SFM 8/18/21
 
-if plot_switch == 0
+if plot_switch == 1
     result_names{1} = save_file_name;
     plot_obj = plot_standard_results_object(result_names);
     plot_obj.significant_event_times = 0;   
@@ -295,7 +313,7 @@ if plot_switch == 0
     %    Plot the TCT matrix
 
     plot_obj = plot_standard_results_TCT_object(save_file_name);
-    plot_obj.significant_event_times = 0; % the time when the stimulus was shown
+    plot_obj.significant_event_times = 0; 
     plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
     plot_obj.plot_results;
 else
