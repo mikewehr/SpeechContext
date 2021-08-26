@@ -163,6 +163,7 @@ num_cv_splits = 140;
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 cv_switch = 1;          % Binary switch to automatically or manually select data for training - SFM 8/10/21
+label_switch = 0;       % Binary switch to only use specific labels that have num_cv_splits reps - SFM 8/26/21
 
 if ds_switch == 1
     if poisson_switch == 1
@@ -185,13 +186,18 @@ else
 end
 
 % ***Settings in DS class***
-ds.time_periods_to_get_data_from = [];                                                              % Default to [] - SFM 8/5/21
+ds.time_periods_to_get_data_from = [];                                                                                      % Default to [] - SFM 8/5/21
 if cv_switch == 0
     ds.num_times_to_repeat_each_label_per_cv_split = 1; 
 else
-    ds.sites_to_use = find_sites_with_k_label_repetitions(binned_labels.sourcefile, num_cv_splits); % Only analyze sites with num_cv_split reps of all stimuli - SFM 8/10/21
-end                                                                                                 % Use in conjunction with k_labels utility function in previous code chunk
-ds.randomly_shuffle_labels_before_running = 0;                                                      % Set to 1 to take a null distribution - SFM 8/5/21
+    if label_switch == 1
+        label_names_to_use = [];                                                                                            % Can enter a subset of labels that need to have at least num_cv_splits reps while the remaining labels can have any # of reps - SFM 8/26/21 
+        ds.sites_to_use = find_sites_with_k_label_repetitions(binned_labels.sourcefile, num_cv_splits, label_names_to_use); % Only analyze sites with num_cv_split reps of all stimuli - SFM 8/10/21
+    else
+        ds.sites_to_use = find_sites_with_k_label_repetitions(binned_labels.sourcefile, num_cv_splits);
+    end
+end                                                                                                                         % Use in conjunction with k_labels utility function in previous code chunk
+ds.randomly_shuffle_labels_before_running = 0;                                                                              % Set to 1 to take a null distribution - SFM 8/5/21
 % Not listing ones that are irrelevant to us* (*future students may disagree, see the documentation for settings) - SFM 8/9/21
 
 %%     Create FP (optional)
