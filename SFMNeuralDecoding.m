@@ -273,7 +273,7 @@ cv.confusion_matrix_params.create_all_test_points_separate_confusion_matrix = 0;
 cv.confusion_matrix_params.create_confusion_matrix = 1;                                         % Default is 1, should be always on - SFM 8/18/21
 cv.confusion_matrix_params.save_confusion_matrix_only_train_and_test_at_same_time = 0;          % Default is 0, see documentation for function - SFM 8/18/21
 
-cv.test_only_at_training_times = 1;                                                             % Default is 0, see documentation for function - SFM 8/18/21
+cv.test_only_at_training_times = 0;                                                             % Default is 0, see documentation for function - SFM 8/18/21
 cv.save_results.extended_decision_values = 0;                                                   % Default is 0, set to 1 or 2 for increased data saved/returned (may run out of RAM or file larger than 2GB) - SFM 8/12/21
 
 %%    Get Data!   
