@@ -123,14 +123,18 @@ elseif strcmp(set_training_and_testing_labels, 'u') == 1
         'soundfile_iba-uda_sourcefile_uba-da8+3.5oct.wav_28_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_uba-da9+3.5oct.wav_29_80dB_0.4s.mat'};
     
 elseif strcmp(set_training_and_testing_labels, 'test_NDT') == 1
-    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
-    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'};
+    the_training_label_names{2} = {'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'};
+    the_test_label_names{2} = {'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
 
 elseif strcmp(set_training_and_testing_labels, 'no_context') == 1
-    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+    the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'};
+    the_training_label_names{2} = {'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
     the_test_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da2+3.5oct.wav_2_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da3+3.5oct.wav_3_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da4+3.5oct.wav_4_80dB_0.4s.mat'; 
-        'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 
+        'soundfile_iba-uda_sourcefile_ba-da5+3.5oct.wav_5_80dB_0.4s.mat'};
+    the_test_label_names{2} = {'soundfile_iba-uda_sourcefile_ba-da6+3.5oct.wav_6_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da7+3.5oct.wav_7_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da8+3.5oct.wav_8_80dB_0.4s.mat'; 
         'soundfile_iba-uda_sourcefile_ba-da9+3.5oct.wav_9_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
     
@@ -159,7 +163,7 @@ else
 end
 
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
-num_cv_splits = 140; 
+num_cv_splits = 60; 
 ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 cv_switch = 1;          % Binary switch to automatically or manually select data for training - SFM 8/10/21
@@ -178,7 +182,7 @@ if ds_switch == 1
         ds.label_names_to_use = [];
     else
         ds = basic_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits);
-        ds.label_names_to_use = [];
+        ds.label_names_to_use = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
     end
 else
     if poisson_switch == 1
@@ -194,7 +198,7 @@ end
 % ***Settings in DS class***
 ds.time_periods_to_get_data_from = [];                                                                                      % Default to [] - SFM 8/5/21
 if cv_switch == 0
-    ds.num_times_to_repeat_each_label_per_cv_split = 1; 
+    ds.num_times_to_repeat_each_label_per_cv_split = 2; 
 else
     if label_switch == 1
         label_names_to_use = [];                                                                                            % Can enter a subset of labels that need to have at least num_cv_splits reps while the remaining labels can have any # of reps - SFM 8/26/21 
@@ -229,8 +233,7 @@ if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
 elseif set_cl_type == 1
     cl = poisson_naive_bayes_CL;
-    cl.lambdas = 140;                           % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
-    cl.labels = the_test_label_names{1,1};     % What are the potential labels each neuron can have? - SFM 8/9/21
+    cl.lambdas = 100;                           % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
 else
     if ~exist(svmtrain2, 'file')
         add_ndt_paths_and_init_rand_generator;
@@ -327,8 +330,6 @@ if plot_switch == 1
     plot_obj.significant_event_times = 0;   
     plot_obj.result_type_to_plot = 1;  % Default to 1 (zero-one-loss results) - SFM 8/4/21
     plot_obj.plot_results;
-
-    %    Plot the TCT matrix
 
     plot_obj = plot_standard_results_TCT_object(save_file_name);
     plot_obj.significant_event_times = 0; 
