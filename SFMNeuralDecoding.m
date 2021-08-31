@@ -36,15 +36,15 @@ clear all
 BinnedDir = 'F:\Data\sfm\BinnedFiles';     % Set directory where binned files are located - SFM 8/6/21 
 cd(BinnedDir);
 
-save_prefix_name = 'F:\Data\sfm\BinnedFiles\Output_';
-bin_width = 200; 
-step_size = 200;
-start_time = 170;
-end_time = 370;
+save_prefix_name = 'F:\Data\sfm\BinnedFiles\Group6';
+bin_width = 6000;   % 200ms with conversion - SFM 8/31/21 
+step_size = 6000;
+start_time = 10550;
+end_time = 16550;
 Previous_data_file_name = strcat(save_prefix_name, num2str(bin_width), 'ms_bins_', num2str(step_size), 'ms_sampled_', num2str(start_time), 'start_time_', num2str(end_time), 'end_time.mat');
 
 if ~isfile(Previous_data_file_name)        % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
-    RasterDir = 'F:\Data\sfm\Synthetic Test Data\RasterFiles'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
+    RasterDir = 'F:\Data\sfm\Synthetic Test Data\Group6'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
     [saved_binned_data_file_name] = create_binned_data_from_raster_data(RasterDir, save_prefix_name, bin_width, step_size, start_time, end_time);
     binned_data_file_name = saved_binned_data_file_name
     toc
@@ -68,7 +68,7 @@ end
 
 %%    Create DS
 
-set_training_and_testing_labels = 'test_NDT';
+set_training_and_testing_labels = 'no_context';
 
 if strcmp(set_training_and_testing_labels, 'none') == 1
     the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
@@ -163,8 +163,8 @@ else
 end
 
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
-num_cv_splits = 60; 
-ds_switch = 0;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
+num_cv_splits = 20; 
+ds_switch = 1;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 cv_switch = 1;          % Binary switch to automatically or manually select data for training - SFM 8/10/21
 label_switch = 0;       % Binary switch to only use specific labels that have num_cv_splits reps - SFM 8/26/21
@@ -179,10 +179,10 @@ if ds_switch == 1
     if poisson_switch == 1
         load_data_as_spike_counts = 1;
         ds = basic_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits, load_data_as_spike_counts);
-        ds.label_names_to_use = [];
+        ds.label_names_to_use = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'}; % Default to [] - SFM 8/31/21
     else
         ds = basic_DS(binned_data_file_name, specific_binned_label_names, num_cv_splits);
-        ds.label_names_to_use = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
+        ds.label_names_to_use = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'}; % Default to [] - SFM 8/31/21
     end
 else
     if poisson_switch == 1
@@ -233,7 +233,7 @@ if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
 elseif set_cl_type == 1
     cl = poisson_naive_bayes_CL;
-    cl.lambdas = 100;                           % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
+    cl.lambdas = 60;                           % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
 else
     if ~exist(svmtrain2, 'file')
         add_ndt_paths_and_init_rand_generator;
@@ -245,7 +245,7 @@ else
     svm.kernel = 'gaussian';                     % Default is 'linear', can also be 'polynomial' or 'gaussian' (will need to set the additional parameters for these - SFM 8/19/21
     if strcmp(svm.kernel, 'polynomial') == 1
         svm.poly_degree = 5;                   % No default value, must be set - SFM 8/19/21 
-        svm.poly_offset = 1;                   % Default is 0 - SFM 8/19/21 
+        svm.poly_offset = 0;                   % Default is 0 - SFM 8/19/21 
     elseif strcmp(svm.kernel, 'gaussian') == 1
         svm.gaussian_gamma = 1;                % No default value, must be set (how much impact does any one trial have?) - SFM 8/19/21 
     else
@@ -315,7 +315,7 @@ if save_switch == 1
         fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
     end
 else
-    save_file_name = 'Output_v54';                          % Enter custom name here (if save_switch ~= 1) - SFM 8/19/21
+    save_file_name = 'SynthGroup10_Test_1';                          % Enter custom name here (if save_switch ~= 1) - SFM 8/19/21
     save(save_file_name, 'DECODING_RESULTS', 'ds');
 end
 
