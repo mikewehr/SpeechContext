@@ -4,6 +4,7 @@
 clear all
 tic;
 preprocess_switch = 0;                              % Logical switch on whether to generate outfiles and rasterize them - SFM 8/5/21
+
 if preprocess_switch == 1
     outdirs = [];                                   % Set target dir for outfiles to be generated ('D:\lab\djmaus\Data\sfm\') - SFM 8/10/21
     for i = 1:length(outdirs)
@@ -39,9 +40,9 @@ cd(BinnedDir);
 save_prefix_name = 'F:\Data\sfm\BinnedFiles\Group6';
 bin_width = 6000;   % 200ms with conversion - SFM 8/31/21 
 step_size = 6000;
-start_time = 10550;
-end_time = 16550;
-Previous_data_file_name = strcat(save_prefix_name, num2str(bin_width), 'ms_bins_', num2str(step_size), 'ms_sampled_', num2str(start_time), 'start_time_', num2str(end_time), 'end_time.mat');
+start_time = 10530;
+end_time = 16530;
+Previous_data_file_name = strcat(save_prefix_name, '_', num2str(bin_width), 'ms_bins_', num2str(step_size), 'ms_sampled_', num2str(start_time), 'start_time_', num2str(end_time), 'end_time.mat');
 
 if ~isfile(Previous_data_file_name)        % Logical on/off switch on generating new binned data (with different parameters) by including or removing tilde - SFM 7/13/21
     RasterDir = 'F:\Data\sfm\Synthetic Test Data\Group6'; % Enter directory containing raster files to bin if not already binned - SFM 8/10/21
@@ -163,7 +164,7 @@ else
 end
 
 specific_binned_label_names = binned_labels.sourcefile; %.stimulus_ID for example data - SFM 7/28/21
-num_cv_splits = 20; 
+num_cv_splits = 40; 
 ds_switch = 1;          % Binary switch to change between generalization_DS or basic_DS - SFM 8/5/21
 poisson_switch = 0;     % Binary switch to be switched on if using poisson_naive_bayes_FP - SFM 8/9/21
 cv_switch = 1;          % Binary switch to automatically or manually select data for training - SFM 8/10/21
@@ -315,7 +316,7 @@ if save_switch == 1
         fprintf('Results have been saved as %s in %s', save_file_name, BinnedDir)
     end
 else
-    save_file_name = 'SynthGroup10_Test_1';                          % Enter custom name here (if save_switch ~= 1) - SFM 8/19/21
+    save_file_name = 'SynthGroup6_Test_1';                          % Enter custom name here (if save_switch ~= 1) - SFM 8/19/21
     save(save_file_name, 'DECODING_RESULTS', 'ds');
 end
 
@@ -340,7 +341,7 @@ end
 
 if quick_analysis == 1
     cm = DECODING_RESULTS.ZERO_ONE_LOSS_RESULTS.confusion_matrix_results.confusion_matrix
-    cm(1,1)/(cm(1,1)+cm(2,1)), cm(2,2)/(cm(1,2)+cm(2,2))
+    cm(1, 1) / (cm(1, 1) + cm(2, 1)), cm(2,2) / (cm(1, 2) + cm(2, 2))
 else
 end
 toc

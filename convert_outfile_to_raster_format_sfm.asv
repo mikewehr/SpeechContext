@@ -1,22 +1,23 @@
-function convert_outfile_to_raster_format_sfm %(datadir)
+function convert_outfile_to_raster_format_sfm(datadir)
 % convert outfile to raster format
+% numargs = nargin(convert_outfile_to_raster_format_sfm);
 % 
-% if nargin == 0
+% if numargs == 0
 %     datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
 %     datadir = cell(datadir);
 %     fprintf('No input argument of outfile directories passed into function. Using manually entered dirs %s', datadir{1})
-% elseif nargin == 1
+% elseif numargs == 1
 %     datadir = cell(datadir);
-% else nargin > 1;
+% else numargs > 1;
 %     tempdatadir = cell();
 %         for k = 1:length(nargin)
-%             tempdatadir{k} = nargin{k};
+%             tempdatadir{k} = numargs{k};
 %         end
 %     datadir = tempdatadir;
 % end
 
 datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
-% for j = 1:length(datadir)
+for j = 1:length(datadir)
     aindex = 2;
     dindex = 2;
     cd(datadir)
@@ -161,7 +162,7 @@ datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
 
         cd(datadir)
     end
-% end
+end
     
     
     
