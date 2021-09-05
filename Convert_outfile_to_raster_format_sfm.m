@@ -2,8 +2,7 @@ function convert_outfile_to_raster_format_sfm %(datadir)
 % convert outfile to raster format
 % 
 % if nargin == 0
-%     datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';   %Enter directory of OUTfiles to be converted - SFM 7/14/21
-%     datadir = cell(datadir);
+%     datadir = {'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6'};   % Enter directory of OUTfiles to be converted - SFM 7/14/21
 %     fprintf('No input argument of outfile directories passed into function. Using manually entered dirs %s', datadir{1})
 % elseif nargin == 1
 %     datadir = cell(datadir);
@@ -15,19 +14,29 @@ function convert_outfile_to_raster_format_sfm %(datadir)
 %     datadir = tempdatadir;
 % end
 
-datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
-% for j = 1:length(datadir)
+datadir = {'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6'};
+for j = 1:length(datadir)
     aindex = 2;
     dindex = 2;
-    cd(datadir)
+    cd(datadir{j})
     d = dir('outPSTH*.mat');
+    
+    for k = 1:length(d)
+        presplit = strsplit(d(k).name, '_');
+        presplit2 = strsplit(presplit{3}, 'c');
+        presplit3 = strsplit(presplit2{3}, '.');
+        dirindex = str2num(presplit3{1});
+        fixeddir(dirindex) = d(k);
+    end                             % Let's put everything in order just in case - SFM 9/3/21
+    d = fixeddir;
+    
+    
     for i = 1:length(d)
         fprintf('\ncell %d of %d', i, length(d))
         outfilename = d(i).name;
         load(outfilename)
         cellid = outfilename(9:end-4);
 
-        %%
         TotalStims = 0;
         if exist('out.stimlogs', 'var') == 1
             NumberOfStimlogs = length(out.stimlogs);
@@ -53,7 +62,7 @@ datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
 
         NumExpStims = (size(out.M1OFF, 1) * size(out.M1OFF, 4));        
         pathlabel = cell(1, NumExpStims);
-        k = 0;    % This is the mechanism that filters out whitenoise and silentsound stims and only collects test stimuli - SFM 7/21/21
+        k = 0; % This is the mechanism that filters out whitenoise and silentsound stims and only collects test stimuli - SFM 7/21/21
         for i = 1:TotalStims
             presplit = split(fullnames{i}, ':');
             if isequal(presplit{1},'whitenoise laser')
@@ -66,19 +75,11 @@ datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
                 pathlabel{k} = presort{1};
             end
         end
-        clear presplit
-        clear presort
-        clear k
-
-        %% 
-
-        clear raster_labels
-        clear raster_site_info
-        clear raster_size 
+        
+        clear presplit presort k raster_labels raster_site_info raster_size 
         % This fixes the issue of each cell having mismatching data - SFM 7/22/21
 
         xlimits = out.xlimits;
-        num_trials = out.nrepsOFF(:,aindex, dindex);
         num_time_points = out.samprate * (1/1000) * (xlimits(2) - xlimits(1));
 
         % M1OFF: [30×2×2×100 struct]
@@ -101,6 +102,7 @@ datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
 
         raster_data = zeros(num_trials, round(num_time_points));
         r = 0;
+        spikecount = 0;
         for stimID = 1:out.numsourcefiles
             nr = out.nrepsOFF(stimID, aindex, dindex);
             for rep = 1:nr
@@ -109,9 +111,12 @@ datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
                 spiketimes = spiketimes - xlimits(1); 
                 %convert ms spiketimes to raster format (samples)
                 spiketimes_rast = 1 + round(spiketimes * out.samprate/1000);
-
-                raster_data(r, spiketimes_rast) = 1; 
+                spikecount = spikecount + length(spiketimes);   % A descrepancy in spikecount occurs on this line dropping some spike times - SFM 9/3/21
+                raster_data(r, spiketimes_rast) = 1;            % Can two spikes be counted simultaneously? That's whats happening. - SFM 9/3/21
                 raster_labels.sourcefile{r} = pathlabel{r};
+                
+%                 repspikecount{r} = length(spiketimes);
+%                 rastspikecount{r} = length(find(raster_data(r,:)));
             end
         end   
 
@@ -133,21 +138,22 @@ datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
         raster_site_info.stimlog = out.stimlog;
         raster_site_info.run_on = datestr(now);
         raster_site_info.generated_by = mfilename;
+        raster_site_info.spikecount = spikecount;
         raster_site_info.alignment_event_time = -xlimits(1) * out.samprate/1000;
+%         if exist(out.stimlogs, 'var')
+%             raster_site_info.GrandStimlog = GrandStimlog;
+%         else
+%         end
 
         datadirstr = strsplit(string(datadir), '\');                           %strsplit(out.datadir, '\'); %SFM 8/2/21 to make this work for synthetic data
         raster_filename = sprintf('%s_%s_raster_data', datadirstr{6}, cellid); %datadirstr{end} - SFM 8/2/21
-%         if length(datadir) > 1
-%             rasterdirname = strcat(datadir{1}, '\raster_files');
-%         else
         rasterdirname = strcat(datadir, '\raster_files');
-%         end
-        if ~exist(rasterdirname, 'dir')
+        if ~exist(rasterdirname{1}, 'dir')
            mkdir raster_files; 
         end
         cd raster_files
 
-    %     save(raster_filename, 'raster_data', 'raster_labels', 'raster_site_info') % - Original, but the file can be over 2GB, so let's save it betterly.
+    %     save(raster_filename, 'raster_data', 'raster_labels', 'raster_site_info') % This file can be over 2GB, so let's save it betterly.
     %     SFM's Compression (LOSSLESS):
 
         [I] = find(raster_data);
@@ -159,9 +165,9 @@ datadir = 'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6';
     %     raster_data = zeros(raster_size);
     %     raster_data(I) = 1; 
 
-        cd(datadir)
+        cd(datadir{j})
     end
-% end
+end
     
     
     

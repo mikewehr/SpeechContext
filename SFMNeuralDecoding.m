@@ -69,7 +69,7 @@ end
 
 %%    Create DS
 
-set_training_and_testing_labels = 'no_context';
+set_training_and_testing_labels = 'test_NDT';
 
 if strcmp(set_training_and_testing_labels, 'none') == 1
     the_training_label_names{1} = {'soundfile_iba-uda_sourcefile_ba-da1+3.5oct.wav_1_80dB_0.4s.mat'; 'soundfile_iba-uda_sourcefile_ba-da10+3.5oct.wav_10_80dB_0.4s.mat'};
@@ -209,6 +209,8 @@ else
     end
 end                                                                                                                         % Use in conjunction with k_labels utility function in previous code chunk
 ds.randomly_shuffle_labels_before_running = 0;                                                                              % Set to 1 to take a null distribution - SFM 8/5/21
+ds.sample_sites_with_replacement = 0;                                                                                       % Default to 0 - SFM 9/3/21
+ds.create_simultaneously_recorded_populations = 0;                                                                          % Default to 0 - SFM 9/3/21
 % Not listing ones that are irrelevant to us* (*future students may disagree, see the documentation for settings) - SFM 8/9/21
 
 %%     Create FP (optional)
@@ -234,9 +236,9 @@ if set_cl_type == 0
     cl = max_correlation_coefficient_CL;
 elseif set_cl_type == 1
     cl = poisson_naive_bayes_CL;
-    cl.lambdas = 60;                           % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
+    cl.lambdas = 40;                           % How many times do you expect each neuron to have been presented each soundfile? - SFM 8/9/21
 else
-    if ~exist(svmtrain2, 'file')
+    if ~exist(svmtrain2)
         add_ndt_paths_and_init_rand_generator;
     else
     end
@@ -323,7 +325,7 @@ end
 %%    Plotting
 
 plot_switch = 0;                       % Binary switch on whether to plot results or end the script after saving the decoding data - SFM 8/18/21
-quick_analysis = 1;                    % Binary switch on whether to do a quick analysis of decoding results - SFM 8/18/21
+quick_analysis = 0;                    % Binary switch on whether to do a quick analysis of decoding results - SFM 8/18/21
 
 if plot_switch == 1
     result_names{1} = save_file_name;
