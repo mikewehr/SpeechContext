@@ -31,6 +31,10 @@ for i=1:length(d)
     end
     raster_data=zeros(num_trials, round(num_time_points));
     
+    figure(100)
+clf
+hold on
+
     r=0;
     for stimID=1:out.numsourcefiles
         nr=out.nrepsOFF(stimID, aindex, dindex);
@@ -38,6 +42,7 @@ for i=1:length(d)
             r=r+1;
             spiketimes=out.M1OFF(stimID, aindex, dindex, rep).spiketimes;
             spiketimes=spiketimes-xlimits(1);
+plot(spiketimes, ones(size(spiketimes))+r, 'k.')
             %convert ms spiketimes to raster format (samples)
             spiketimes_rast=1+round(spiketimes*out.samprate/1000);
             
@@ -45,7 +50,7 @@ for i=1:length(d)
             raster_labels.sourcefile{r}=out.sourcefiles{stimID};
         end
     end
-    
+title(outfilename)    
     raster_site_info.IL=out.IL;
     raster_site_info.Nclusters=out.Nclusters;
     raster_site_info.channel=out.channel;

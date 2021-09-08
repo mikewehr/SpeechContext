@@ -245,7 +245,7 @@ else
     cl = libsvm_CL;
     svm.additional_libsvm_options = 'q';       % See documentation for more, this is just to make the output shut up (the 'q' is for 'quiet')(doesn't work?) - SFM 8/19/21
     svm.C = 1;                                 % Default is 1, see documentation for more (higher the value, the better the fit) - SFM 8/19/21
-    svm.kernel = 'gaussian';                     % Default is 'linear', can also be 'polynomial' or 'gaussian' (will need to set the additional parameters for these - SFM 8/19/21
+    svm.kernel = 'linear';                     % Default is 'linear', can also be 'polynomial' or 'gaussian' (will need to set the additional parameters for these - SFM 8/19/21
     if strcmp(svm.kernel, 'polynomial') == 1
         svm.poly_degree = 5;                   % No default value, must be set - SFM 8/19/21 
         svm.poly_offset = 0;                   % Default is 0 - SFM 8/19/21 
@@ -325,7 +325,7 @@ end
 %%    Plotting
 
 plot_switch = 0;                       % Binary switch on whether to plot results or end the script after saving the decoding data - SFM 8/18/21
-quick_analysis = 0;                    % Binary switch on whether to do a quick analysis of decoding results - SFM 8/18/21
+quick_analysis = 1;                    % Binary switch on whether to do a quick analysis of decoding results - SFM 8/18/21
 
 if plot_switch == 1
     result_names{1} = save_file_name;
@@ -342,8 +342,9 @@ else
 end
 
 if quick_analysis == 1
-    cm = DECODING_RESULTS.ZERO_ONE_LOSS_RESULTS.confusion_matrix_results.confusion_matrix
-    cm(1, 1) / (cm(1, 1) + cm(2, 1)), cm(2,2) / (cm(1, 2) + cm(2, 2))
+    CM = DECODING_RESULTS.MUTUAL_INFORMATION.raw_cm
+    ScoreBA = CM(1)/(CM(1) + CM(2))
+    ScoreDA = CM(3)/(CM(3) + CM(4))
 else
 end
 toc
