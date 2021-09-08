@@ -82,10 +82,20 @@ end_time = 365 - xlim;
 start_time_samp = (start_time/1000) * samprate;
 end_time_samp = (end_time/1000) * samprate;
 
+badaindex = [baindex; daindex];
+badaindex = sort(badaindex, 'ascend');
 
+datatable = table();
+for i = 1:length(rasterlist)
+    load(rasterlist(i).name);
+    for j = 1:length(badaindex)
+        table(i,j) = sum(raster_data(badaindex{j}, (start_time_samp:end_time_samp)));
+    end
+end
 
-
-
+table((i + 1), 1:9) = 'DA';
+table((i + 1), 9:15) = 'noise';
+table((i + 1), 16:25) = 'BA';
 
 
 
