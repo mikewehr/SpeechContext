@@ -75,27 +75,29 @@ toc
 % 193-353 for synth data
 % 170-370 originally
 % ~180 - 365
-xlim = -181.8672;
-samprate = raster_site_info.samprate;
-start_time = 180 - xlim;
+xlim = -181.8672;                               % Shouldn't ever change - SFM 9/8/21
+samprate = raster_site_info.samprate;           % Also shouldn't change, but just in case we will get it from the raster/out data - SFM 9/8/21
+start_time = 180 - xlim;                        % 
 end_time = 365 - xlim;
-start_time_samp = (start_time/1000) * samprate;
-end_time_samp = (end_time/1000) * samprate;
+start_time_samp = round((start_time/1000) * samprate);
+end_time_samp = round((end_time/1000) * samprate);
+hertzconv = round((1 / ((end_time - start_time) / 1000)), 2);
 
-badaindex = [baindex; daindex];
-badaindex = sort(badaindex, 'ascend');
+dataindices = [baindex; daindex];
+dataindices = sort(dataindices, 'ascend');          % Put all relevant indices together
 
-datatable = table();
+datatable = table();                            % Construct the data table from the raster data - SFM 9/8/21
 for i = 1:length(rasterlist)
     load(rasterlist(i).name);
-    for j = 1:length(badaindex)
-        table(i,j) = sum(raster_data(badaindex{j}, (start_time_samp:end_time_samp)));
+    for j = 1:length(dataindices)
+        spikesum = sum(raster_data(dataindices(j), start_time_samp:end_time_samp));
+        datatable(i,j) = spikesum;
     end
 end
 
-table((i + 1), 1:9) = 'DA';
-table((i + 1), 9:15) = 'noise';
-table((i + 1), 16:25) = 'BA';
+datatable((i + 1), 1:9) = 'DA';
+datatable((i + 1), 9:15) = 'noise';
+datatable((i + 1), 16:25) = 'BA';
 
 
 
