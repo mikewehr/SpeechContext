@@ -87,16 +87,19 @@ if split_switch == 1
     first_n_indices = round(length(baindex) * 0.5);
     baindex = baindex(randperm(length(baindex)));
     daindex = daindex(randperm(length(daindex)));
-    dataindices = [baindex(1:first_n_indices); daindex(1:first_n_indices)];
-    dataindices = sort(dataindices, 'ascend');      % Put all relevant indices together - SFM 9/9/21
+    dataindices_train = [baindex(1:first_n_indices); daindex(1:first_n_indices)];
+    dataindices_train = sort(dataindices, 'ascend');      % Put all relevant indices together - SFM 9/9/21
+    dataindices_test = [baindex((first_n_indices + 1):end); daindex((first_n_indices + 1):end)];
+    dataindices_test = sort(dataindices, 'ascend');
 else
     dataindices = [baindex; daindex];
     dataindices = sort(dataindices, 'ascend');
 end
- 
+
+which_split = {};                                   % Do you want to make the training table or testing table? - SFM 9/9/21
 clear datatable
 datatable = [];                                     % Construct the data table from the raster data - SFM 9/8/21
-exclude_sites = [];                                 % Array containing sites/neurons to exclude from the model - SFM 9/9/21
+exclude_cells = [10:15];                            % Array containing sites/neurons to exclude from the model - SFM 9/9/21
 for i = 1:length(rasterlist)
     if ~isempty(setdiff(i, exclude_cells))
         clear raster_data I
@@ -106,7 +109,13 @@ for i = 1:length(rasterlist)
             raster_data(I) = 1;
         end
         for j = 1:length(dataindices)
-            Ind(j) = sum(raster_data(dataindices(j), start_time_samp:end_time_samp));
+            if strcmp(which_split, 'train')
+                Ind(j) = sum(raster_data(dataindices_train(j), start_time_samp:end_time_samp));
+            elseif strcmp(which_split, 'test')
+                Ind(j) = sum(raster_data(dataindices_test(j), start_time_samp:end_time_samp));
+            else
+                error("which_split must be set to either 'train' or 'test' !!!!!!!")
+            end
         end
         if i == 1
             datatable = [Ind];
@@ -120,14 +129,12 @@ if hertzconv_switch == 1
     datatable = datatable * hertzconv;
 end
 
-datatable_pre = table(datatable);
-Stim = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'noise', 'noise', 'noise', 'noise', 'noise', 'noise', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'};
-StimTest = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'};
-Stim = Stim';
-StimTest = StimTest';
-datatable_supervised = addvars(datatable_pre, StimTest);
-stim_unsupervised = cell(length(rasterlist), 1);
-datatable_unsupervised = addvars(datatable_pre, stim_unsupervised);
+datatable_unsupervised = table(datatable);
+% Stim = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'noise', 'noise', 'noise', 'noise', 'noise', 'noise', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
+Stim = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
+datatable_supervised = addvars(datatable_unsupervised, Stim);
+% stim_unsupervised = cell(length(rasterlist), 1);
+% datatable_unsupervised = addvars(datatable_pre, stim_unsupervised);
 
 toc
 
@@ -140,17 +147,17 @@ numtables = length(dir('*.mat'));
 
 if strcmp(datatype, 'Synthetic Test Data')
     savename_supervised = strcat('Synth', groupname, 'Supervised_', num2str(numtables + 1));
-    savename_unsupervised = strcat('Synth', groupname, 'Unsupervised_', num2str(numtables + 1));
+%     savename_unsupervised = strcat('Synth', groupname, 'Unsupervised_', num2str(numtables + 1));
 else
     savename_supervised = strcat('ExperimentalDataSupervised_', num2str(numtables + 1));
-    savename_unsupervised = strcat('ExperimentalDataUnsupervised_', num2str(numtables + 1));
+%     savename_unsupervised = strcat('ExperimentalDataUnsupervised_', num2str(numtables + 1));
 end
 
 save_switch = 0;
 
 if save_switch == 1
     save(savename_supervised, 'datatable_supervised'); 
-    save(savename_unsupervised, 'datatable_unsupervised');
+%     save(savename_unsupervised, 'datatable_unsupervised');
 end
 
 
