@@ -1,5 +1,6 @@
 % SFM Matlab Machine Learning
 
+clear all
 tic
 raster_switch = 0;
 
@@ -70,11 +71,8 @@ else
 end
 toc
 
-%% Machine Learning
+%% Table Construction
 
-% 193-353 for synth data
-% 170-370 originally
-% ~180 - 365
 xlim = -181.8672;                               % Shouldn't ever change - SFM 9/8/21
 samprate = raster_site_info.samprate;           % Also shouldn't change, but just in case we will get it from the raster/out data - SFM 9/8/21
 start_time = 175 - xlim;                        % 
@@ -86,44 +84,59 @@ hertzconv = round((1 / ((end_time - start_time) / 1000)), 2);
 dataindices = [baindex; daindex];
 dataindices = sort(dataindices, 'ascend');          % Put all relevant indices together
  
-                              
-predatatable = [];                                  % Construct the data table from the raster data - SFM 9/8/21
+clear datatable
+datatable = [];                                  % Construct the data table from the raster data - SFM 9/8/21
 for i = 1:length(rasterlist)
     clear raster_data I
     load(rasterlist(i).name);
-    currvar = {strcat('Var', num2str(i))};
-    
     if ~exist('raster_data', 'var')
         raster_data = zeros(raster_size);
         raster_data(I) = 1;
     else
     end
     for j = 1:length(dataindices)
-        currvar(j) = sum(raster_data(dataindices(j), start_time_samp:end_time_samp));
-%         predatatable(i,j) = spikesum;
+        Ind(j) = sum(raster_data(dataindices(j), start_time_samp:end_time_samp));
     end
-    
     if i == 1
-        datatable = table(Var1);
+        datatable = [Ind];
     else
-        datatable = addvars(datatable);
+        datatable = [datatable; Ind];
     end
 end
 
-datatable = table(predatatable);
+datatable_unsupervised = table(datatable);
+Stim = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'noise', 'noise', 'noise', 'noise', 'noise', 'noise', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'};
+Stim = Stim';
+datatable_supervised = addvars(datatable_unsupervised, Stim);
+
+toc
+
+groupname = strsplit(rasterdir, '\');
+datatype = groupname{4};
+groupname = groupname{end};
+savedir = 'F:\Data\sfm\DataTables';
+cd(savedir);
+numtables = length(dir('*.mat'));
+
+if strcmp(datatype, 'Synthetic Test Data')
+    savename_supervised = strcat('Synth', groupname, 'Supervised', num2str(numtables + 1));
+    savename_unsupervised = strcat('Synth', groupname, 'Unsupervised', num2str(numtables + 1));
+else
+    savename_supervised = strcat('ExperimentalDataSupervised', num2str(numtables + 1));
+    savename_unsupervised = strcat('ExperimentalDataUnsupervised', num2str(numtables + 1));
+end
+
+save_switch = 0;
+
+if save_switch == 1
+    save(savename_supervised, 'datatable_supervised'); 
+    save(savename_unsupervised, 'datatable_unsupervised');
+else
+end
 
 
-Stim(1:9) = {'DA'};
-Stim(9:15) = {'noise'};
-Stim(16:25) = {'BA'};
-% 
-% 
-% 
-%     if ~isempty(datatable)
-%         currvar = strcat('Var', num2str(i));
-%         datatable = addvars(datatable, currvar);
-%     else
-%         currvar = Var1;
+%%
+
 
 
 
