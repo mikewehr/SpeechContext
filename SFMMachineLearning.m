@@ -77,7 +77,7 @@ toc
 % ~180 - 365
 xlim = -181.8672;                               % Shouldn't ever change - SFM 9/8/21
 samprate = raster_site_info.samprate;           % Also shouldn't change, but just in case we will get it from the raster/out data - SFM 9/8/21
-start_time = 180 - xlim;                        % 
+start_time = 175 - xlim;                        % 
 end_time = 365 - xlim;
 start_time_samp = round((start_time/1000) * samprate);
 end_time_samp = round((end_time/1000) * samprate);
@@ -85,22 +85,45 @@ hertzconv = round((1 / ((end_time - start_time) / 1000)), 2);
 
 dataindices = [baindex; daindex];
 dataindices = sort(dataindices, 'ascend');          % Put all relevant indices together
-
-datatable = table();                            % Construct the data table from the raster data - SFM 9/8/21
+ 
+                              
+predatatable = [];                                  % Construct the data table from the raster data - SFM 9/8/21
 for i = 1:length(rasterlist)
+    clear raster_data I
     load(rasterlist(i).name);
+    currvar = {strcat('Var', num2str(i))};
+    
+    if ~exist('raster_data', 'var')
+        raster_data = zeros(raster_size);
+        raster_data(I) = 1;
+    else
+    end
     for j = 1:length(dataindices)
-        spikesum = sum(raster_data(dataindices(j), start_time_samp:end_time_samp));
-        datatable(i,j) = spikesum;
+        currvar(j) = sum(raster_data(dataindices(j), start_time_samp:end_time_samp));
+%         predatatable(i,j) = spikesum;
+    end
+    
+    if i == 1
+        datatable = table(Var1);
+    else
+        datatable = addvars(datatable);
     end
 end
 
-datatable((i + 1), 1:9) = 'DA';
-datatable((i + 1), 9:15) = 'noise';
-datatable((i + 1), 16:25) = 'BA';
+datatable = table(predatatable);
 
 
-
+Stim(1:9) = {'DA'};
+Stim(9:15) = {'noise'};
+Stim(16:25) = {'BA'};
+% 
+% 
+% 
+%     if ~isempty(datatable)
+%         currvar = strcat('Var', num2str(i));
+%         datatable = addvars(datatable, currvar);
+%     else
+%         currvar = Var1;
 
 
 
