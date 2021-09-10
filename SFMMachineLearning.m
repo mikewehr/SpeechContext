@@ -83,19 +83,26 @@ end_time_samp = round((end_time/1000) * samprate);
 hertzconv = round((1 / ((end_time - start_time) / 1000)), 2);   % Factor to multiple spike counts by to convert to Hertz - SFM 9/9/21
 hertzconv_switch = 0;                                           % Switch on whether to convery spike counts to Hz - SFM 9/10/21
 
+
 baindex = stimindices(:,1);
 daindex = stimindices(:,10);
+list_of_stims_to_test = {'ba-da1-1', 'ba-da10-10'};
+num_relevant_labels = 2;                                        % How many types of stimuli do you want to make the model with? - SFM 9/10/21
+
 
 split_switch = 1;                                               % Binary on whether to create training and test split tables or one big table - SFM 9/10/21
 split_point = 0.5;                                              % Portion of data you want selected for training the model - SFM 9/9/21
 if split_switch == 1
-    first_n_indices = round(length(baindex) * 0.5);
-    baindex = baindex(randperm(length(baindex)));
-    daindex = daindex(randperm(length(daindex)));
-    dataindices_train = [baindex(1:first_n_indices); daindex(1:first_n_indices)];
-    dataindices_train = sort(dataindices_train, 'ascend');      % Put all relevant indices together - SFM 9/9/21
-    dataindices_test = [baindex((first_n_indices + 1):end); daindex((first_n_indices + 1):end)];
-    dataindices_test = sort(dataindices_test, 'ascend');
+%     for k = 1:length(num_relevant_trials)
+%         first_n_indices = round(length(list_of_stims_to_test{k}) * 0.5);
+        first_n_indices = round(length(baindex) * 0.5);
+        baindex = baindex(randperm(length(baindex)));
+        daindex = daindex(randperm(length(daindex)));
+        dataindices_train = [baindex(1:first_n_indices); daindex(1:first_n_indices)];
+        dataindices_train = sort(dataindices_train, 'ascend');  % Put all relevant indices together - SFM 9/9/21
+        dataindices_test = [baindex((first_n_indices + 1):end); daindex((first_n_indices + 1):end)];
+        dataindices_test = sort(dataindices_test, 'ascend');
+%     end
 else
     dataindices = [baindex; daindex];
     dataindices = sort(dataindices, 'ascend');
@@ -146,10 +153,10 @@ end
 
 if hertzconv_switch == 1
     try
-        datatable = datatable * hertzconv;
-    catch
         datatable_train = datatable_train * hertzconv;
         datatable_test = datatable_test * hertzconv;
+    catch
+        datatable = datatable * hertzconv;
     end
 end
 
