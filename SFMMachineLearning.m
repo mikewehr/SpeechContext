@@ -45,27 +45,30 @@ if preprocess_switch == 1
     end                                                       % 80 reps/stim - SFM 9/14/21
 
     stimlog = raster_labels.sourcefile';                      % Simplify the labels, but keep the old ones - SFM 9/8/21
+    uniquestims = {};
     for i = 1:600                                             % NOTE: We are assuming all cells have the same stimlog (should be the case) - SFM 9/9/21
         presplit = strsplit(stimlog{i}, '_');
         presplit2 = strsplit(presplit{4}, '+');
         newlabel = strcat(presplit2{1}, '-', presplit{5});
+        uniquestimindex = str2double(presplit{5});
         stim{i} = newlabel;
+        uniquestims{uniquestimindex} = newlabel;
     end
-%    stim = [stim; stim];                                      % The more flexible way to do this is to only shorten labels for the first cycle and then replicate that X times for X number of repeats - SFM 9/13/21
+    uniquestims = uniquestims';                               % The more flexible way to do this is to only shorten labels for the first cycle and then replicate that X times for X number of repeats - SFM 9/13/21
 
-    uniquestims = unique(stimlog);                            % Let's put everything in order just in case - SFM 9/3/21
-    for k = 1:length(uniquestims)                             % Need to have stimuli names numbered in order - SFM 9/14/21
-        presplit = strsplit(uniquestims{k}, '_');
+    uniquestimuli = unique(stimlog);                          % Let's put everything in order just in case - SFM 9/3/21
+    for k = 1:length(uniquestimuli)                           % Need to have stimuli names numbered in order - SFM 9/14/21
+        presplit = strsplit(uniquestimuli{k}, '_');
         dirindex = str2num(presplit{5});
-        stimdir(dirindex) = uniquestims(k);
+        stimdir(dirindex) = uniquestimuli(k);
     end                             
-    uniquestims = stimdir';
+    uniquestimuli = stimdir';
 
     stimindices = [];
     tempstimindices = [];
-    for j = 1:length(uniquestims)
+    for j = 1:length(uniquestimuli)
         for i = 1:length(stimlog)
-            if strcmp(uniquestims{j}, stimlog{i}) == 1
+            if strcmp(uniquestimuli{j}, stimlog{i}) == 1
                 tempstimindices = [tempstimindices i];
             end
         end
@@ -79,7 +82,7 @@ toc
 
 %% Table Construction
 
-xlim = -181.8672;                                               % Shouldn't ever change - SFM 9/8/21
+xlim = -181.8672;                                               % Shouldn't ever change, if so use round(out.xlimits(1), 4) - SFM 9/8/21
 samprate = raster_site_info.samprate;                           % Also shouldn't change, but just in case we will get it from the raster/out data - SFM 9/8/21
 start_time = 175 - xlim;                                  
 end_time = 365 - xlim;
@@ -87,26 +90,25 @@ start_time_samp = round((start_time/1000) * samprate);
 end_time_samp = round((end_time/1000) * samprate);
 hertzconv = round((1 / ((end_time - start_time) / 1000)), 2);   % Factor to multiple spike counts by to convert to Hertz - SFM 9/9/21
 hertzconv_switch = 0;                                           % Switch on whether to convery spike counts to Hz - SFM 9/10/21
-min_trials = 80;                                                % Set minimum number of repetitions each cell needs to have to be included - SFM 9/14/21
-min_indices = min_trials * length(uniquestims);
+min_reps = 80;                                                  % Set minimum number of repetitions each cell needs to have to be included - SFM 9/14/21
+min_indices = min_reps * length(uniquestimuli);
 
-% list_of_stims_to_test = uniquestims{1:30};
-list_of_stims_to_test = {'ba-da1-1', 'ba-da10-10', 'iba-da1-11', 'iba-da10-20', 'uba-da1-21', 'uba-da10-30'};
+% list_of_stims_to_use = uniquestims(1:30);
+list_of_stims_to_use = {uniquestims{1}, uniquestims{10}, uniquestims{11}, uniquestims{20}, uniquestims{21}, uniquestims{30}}; 
 
 split_switch = 0;                                               % Binary on whether to create training and test split tables or one big table - SFM 9/10/21
 split_point = 0.5;                                              % Portion of data you want selected for training the model - SFM 9/9/21
-iLabel = 0;
 
 if split_switch == 1
     dataindices_train = [];
     dataindices_test = [];
-    for k = 1:length(list_of_stims_to_test)
-        stim_split = strsplit(list_of_stims_to_test{k}, '-');
+    for k = 1:length(list_of_stims_to_use)
+        stim_split = strsplit(list_of_stims_to_use{k}, '-');
         index_to_use = str2double(stim_split{end});
         curr_stims = stimindices(:, index_to_use);
         first_n_indices = round(length(curr_stims) * split_point);
         curr_stims = curr_stims(randperm(length(curr_stims)));
-        if iLabel == 1
+        if k == 1
             dataindices_train = [curr_stims(1:first_n_indices)]; 
             dataindices_test = [curr_stims((first_n_indices + 1):end)];
         else    
@@ -118,8 +120,8 @@ if split_switch == 1
     dataindices_test = sort(dataindices_test, 'ascend');
 else
     dataindices = [];
-    for k = 1:length(list_of_stims_to_test)
-        stim_split = strsplit(list_of_stims_to_test{k}, '-');
+    for k = 1:length(list_of_stims_to_use)
+        stim_split = strsplit(list_of_stims_to_use{k}, '-');
         index_to_use = str2double(stim_split{end});
         curr_stims = stimindices(:, index_to_use);
         if k == 1
@@ -183,6 +185,7 @@ for i = 1:length(rasterlist)                                    % Construct the 
         end
     end
 end
+toc
 
 list_of_cells_excluded = list_of_cells_excluded(~cellfun('isempty', list_of_cells_excluded));
 if hertzconv_switch == 1
@@ -206,7 +209,6 @@ else
 %     Stim = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
 %     datatable_supervised = addvars(datatable_unsupervised, Stim);
 end
-toc
 
 groupname = strsplit(rasterdir, '\');
 datatype = groupname{4};
@@ -221,15 +223,15 @@ if save_switch == 1
         savename_supervised = strcat('Synth', groupname, 'Supervised_', num2str(numtables + 1));
         savename_unsupervised = strcat('Synth', groupname, 'Unsupervised_', num2str(numtables + 1));
     else
-        savename_supervised = strcat('ExperimentalDataSupervised_', num2str(min_trials), 'MinReps_', num2str(numtables + 1));
-        savename_unsupervised = strcat('ExperimentalDataUnsupervised_', num2str(min_trials), 'MinReps_', num2str(numtables + 1));
+        savename_supervised = strcat('ExperimentalDataSupervised_', num2str(min_reps), 'MinReps_', num2str(length(list_of_stims_to_use)), 'LabelsUsed_', num2str(numtables + 1));
+        savename_unsupervised = strcat('ExperimentalDataUnsupervised_', num2str(min_reps), 'MinReps_', num2str(length(list_of_stims_to_use)), 'LabelsUsed_', num2str(numtables + 1));
     end
-    save('datatable_supervised', 'list_of_cells_excluded'); 
-    save('datatable_unsupervised', 'list_of_cells_excluded');
+%     save(datatable_supervised, 'list_of_cells_excluded'); 
+    save(savename_unsupervised, 'datatable_unsupervised', 'list_of_cells_excluded');
 end
 
-modeldir = 'F:\Data\sfm\Machine Learning Models';
-cd(modeldir);
+% modeldir = 'F:\Data\sfm\Machine Learning Models';
+% cd(modeldir);
 
 %%
 
