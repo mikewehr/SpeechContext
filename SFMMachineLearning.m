@@ -54,7 +54,7 @@ if preprocess_switch == 1
 %    stim = [stim; stim];                                      % The more flexible way to do this is to only shorten labels for the first cycle and then replicate that X times for X number of repeats - SFM 9/13/21
 
     uniquestims = unique(stimlog);                            % Let's put everything in order just in case - SFM 9/3/21
-    for k = 1:length(uniquestims)
+    for k = 1:length(uniquestims)                             % Need to have stimuli names numbered in order - SFM 9/14/21
         presplit = strsplit(uniquestims{k}, '_');
         dirindex = str2num(presplit{5});
         stimdir(dirindex) = uniquestims(k);
@@ -87,60 +87,47 @@ start_time_samp = round((start_time/1000) * samprate);
 end_time_samp = round((end_time/1000) * samprate);
 hertzconv = round((1 / ((end_time - start_time) / 1000)), 2);   % Factor to multiple spike counts by to convert to Hertz - SFM 9/9/21
 hertzconv_switch = 0;                                           % Switch on whether to convery spike counts to Hz - SFM 9/10/21
+min_trials = 80;                                                % Set minimum number of repetitions each cell needs to have to be included - SFM 9/14/21
+min_indices = min_trials * length(uniquestims);
 
-% baindex = stimindices(:,1);
-% daindex = stimindices(:,10);
-label_1 = stimindices(:,1);
-label_2 = stimindices(:,2);
-label_3 = stimindices(:,3);
-label_4 = stimindices(:,4);
-label_5 = stimindices(:,5);
-label_6 = stimindices(:,6);
-label_7 = stimindices(:,7);
-label_8 = stimindices(:,8);
-label_9 = stimindices(:,9);
-label_10 = stimindices(:,10);
-label_11 = stimindices(:,11);
-label_12 = stimindices(:,12);
-label_13 = stimindices(:,13);
-label_14 = stimindices(:,14);
-label_15 = stimindices(:,15);
-label_16 = stimindices(:,16);
-label_17 = stimindices(:,17);
-label_18 = stimindices(:,18);
-label_19 = stimindices(:,19);
-label_20 = stimindices(:,20);
-label_21 = stimindices(:,21);
-label_22 = stimindices(:,22);
-label_23 = stimindices(:,23);
-label_24 = stimindices(:,24);
-label_25 = stimindices(:,25);
-label_26 = stimindices(:,26);
-label_27 = stimindices(:,27);
-label_28 = stimindices(:,28);
-label_29 = stimindices(:,29);
-label_30 = stimindices(:,30);
-% list_of_stims_to_test = {'ba-da1-1', 'ba-da2-2', 'ba-da3-3', 'ba-da4-4', 'ba-da5-5', 'ba-da6-6', 'ba-da7-7', 'ba-da8-8', 'ba-da9-9', 'ba-da10-10'};
-% num_relevant_labels = 10;                                       % How many types of stimuli do you want to make the model with? - SFM 9/10/21
+% list_of_stims_to_test = uniquestims{1:30};
+list_of_stims_to_test = {'ba-da1-1', 'ba-da10-10', 'iba-da1-11', 'iba-da10-20', 'uba-da1-21', 'uba-da10-30'};
 
 split_switch = 0;                                               % Binary on whether to create training and test split tables or one big table - SFM 9/10/21
 split_point = 0.5;                                              % Portion of data you want selected for training the model - SFM 9/9/21
-if split_switch == 1
-%     for k = 1:length(num_relevant_trials)
-%         first_n_indices = round(length(list_of_stims_to_test{k}) * 0.5);
+iLabel = 0;
 
-        first_n_indices = round(length(baindex) * 0.5);
-        baindex = baindex(randperm(length(baindex)));
-        daindex = daindex(randperm(length(daindex)));
-        dataindices_train = [baindex(1:first_n_indices); daindex(1:first_n_indices)];
-        dataindices_train = sort(dataindices_train, 'ascend');  % Put all relevant indices together - SFM 9/9/21
-        dataindices_test = [baindex((first_n_indices + 1):end); daindex((first_n_indices + 1):end)];
-        dataindices_test = sort(dataindices_test, 'ascend');
-%     end
+if split_switch == 1
+    dataindices_train = [];
+    dataindices_test = [];
+    for k = 1:length(list_of_stims_to_test)
+        stim_split = strsplit(list_of_stims_to_test{k}, '-');
+        index_to_use = str2double(stim_split{end});
+        curr_stims = stimindices(:, index_to_use);
+        first_n_indices = round(length(curr_stims) * split_point);
+        curr_stims = curr_stims(randperm(length(curr_stims)));
+        if iLabel == 1
+            dataindices_train = [curr_stims(1:first_n_indices)]; 
+            dataindices_test = [curr_stims((first_n_indices + 1):end)];
+        else    
+            dataindices_train = [dataindices_train; curr_stims(1:first_n_indices)];
+            dataindices_test = [dataindices_test; curr_stims((first_n_indices + 1):end)];
+        end
+    end
+    dataindices_train = sort(dataindices_train, 'ascend');
+    dataindices_test = sort(dataindices_test, 'ascend');
 else
-%     dataindices = [baindex; daindex];
-%     dataindices = [label_1; label_2; label_3; label_4; label_5; label_6; label_7; label_8; label_9; label_10]; 
-    dataindices = [label_1; label_2; label_3; label_4; label_5; label_6; label_7; label_8; label_9; label_10; label_11; label_12; label_13; label_14; label_15; label_16; label_17; label_18; label_19; label_20; label_21; label_22; label_23; label_24; label_25; label_26; label_27; label_28; label_29; label_30]; 
+    dataindices = [];
+    for k = 1:length(list_of_stims_to_test)
+        stim_split = strsplit(list_of_stims_to_test{k}, '-');
+        index_to_use = str2double(stim_split{end});
+        curr_stims = stimindices(:, index_to_use);
+        if k == 1
+            dataindices = [curr_stims];
+        else
+            dataindices = [dataindices; curr_stims];
+        end
+    end
     dataindices = sort(dataindices, 'ascend');
 end
 
@@ -151,11 +138,10 @@ if split_switch == 1
 else
     datatable = []; 
 end
+
 exclude_cells = [];                                             % Array containing sites/neurons to exclude from the model - SFM 9/9/21
 list_of_cells_excluded = {};                                    % If a cell doesn't have the minimum num of repeats, return the name just in case - SFM 9/14/21
-min_trials = 80;                                                % Set minimum number of repetitions each cell needs to have to be included - SFM 9/14/21
-min_indices = min_trials * length(uniquestims);                 
-
+                 
 for i = 1:length(rasterlist)                                    % Construct the data table from the raster data - SFM 9/8/21
     if ~isempty(setdiff(i, exclude_cells))
         clear raster_data I raster_labels
@@ -198,7 +184,7 @@ for i = 1:length(rasterlist)                                    % Construct the 
     end
 end
 
-list_of_cells_excluded(~cellfun('isempty', list_of_cells_excluded));
+list_of_cells_excluded = list_of_cells_excluded(~cellfun('isempty', list_of_cells_excluded));
 if hertzconv_switch == 1
     try
         datatable_train = datatable_train * hertzconv;
@@ -235,11 +221,11 @@ if save_switch == 1
         savename_supervised = strcat('Synth', groupname, 'Supervised_', num2str(numtables + 1));
         savename_unsupervised = strcat('Synth', groupname, 'Unsupervised_', num2str(numtables + 1));
     else
-        savename_supervised = strcat('ExperimentalDataSupervised_', num2str(numtables + 1));
-        savename_unsupervised = strcat('ExperimentalDataUnsupervised_', num2str(numtables + 1));
+        savename_supervised = strcat('ExperimentalDataSupervised_', num2str(min_trials), 'MinReps_', num2str(numtables + 1));
+        savename_unsupervised = strcat('ExperimentalDataUnsupervised_', num2str(min_trials), 'MinReps_', num2str(numtables + 1));
     end
-    save(savename_supervised, 'datatable_supervised'); 
-    save(savename_unsupervised, 'datatable_unsupervised');
+    save('datatable_supervised', 'list_of_cells_excluded'); 
+    save('datatable_unsupervised', 'list_of_cells_excluded');
 end
 
 modeldir = 'F:\Data\sfm\Machine Learning Models';
