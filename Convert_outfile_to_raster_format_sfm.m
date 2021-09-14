@@ -14,21 +14,21 @@ function convert_outfile_to_raster_format_sfm %(datadir)
 %     datadir = tempdatadir;
 % end
 
-datadir = {'D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group6'};
+datadir = {'F:\Data\sfm\Finalized Outfiles\0095'; 'F:\Data\sfm\Finalized Outfiles\0098'; 'F:\Data\sfm\Finalized Outfiles\0295'; 'F:\Data\sfm\Finalized Outfiles\0296'};
 for j = 1:length(datadir)
     aindex = 2;
     dindex = 2;
     cd(datadir{j})
     d = dir('outPSTH*.mat');
     
-    for k = 1:length(d)
-        presplit = strsplit(d(k).name, '_');
-        presplit2 = strsplit(presplit{3}, 'c');
-        presplit3 = strsplit(presplit2{3}, '.');
-        dirindex = str2num(presplit3{1});
-        fixeddir(dirindex) = d(k);
-    end                             % Let's put everything in order just in case - SFM 9/3/21
-    d = fixeddir;
+%     for k = 1:length(d)
+%         presplit = strsplit(d(k).name, '_');
+%         presplit2 = strsplit(presplit{3}, 'c');
+%         presplit3 = strsplit(presplit2{3}, '.');
+%         dirindex = str2num(presplit3{1});
+%         fixeddir(dirindex) = d(k);
+%     end                             % Let's put everything in order just in case - SFM 9/3/21
+%     d = fixeddir;
     
     
     for i = 1:length(d)
@@ -38,7 +38,7 @@ for j = 1:length(datadir)
         cellid = outfilename(9:end-4);
 
         TotalStims = 0;
-        if exist('out.stimlogs', 'var') == 1
+        if isfield(out, 'stimlogs')
             NumberOfStimlogs = length(out.stimlogs);
             for i = 1:NumberOfStimlogs
                 NewStims = length(out.stimlogs{1,i});
@@ -49,7 +49,7 @@ for j = 1:length(datadir)
         end
 
         GrandStimlog = {};
-        if exist('out.stimlogs', 'var') == 1
+        if isfield(out, 'stimlogs')
             GrandStimlog = horzcat(out.stimlogs{1:NumberOfStimlogs});
         else 
             GrandStimlog = out.stimlog;
@@ -139,14 +139,15 @@ for j = 1:length(datadir)
         raster_site_info.run_on = datestr(now);
         raster_site_info.generated_by = mfilename;
         raster_site_info.spikecount = spikecount;
+        raster_site_info.numrepcycles = out.nrepsOFF(:,:,2)/20;
         raster_site_info.alignment_event_time = -xlimits(1) * out.samprate/1000;
-%         if exist(out.stimlogs, 'var')
-%             raster_site_info.GrandStimlog = GrandStimlog;
-%         else
-%         end
+        if isfield(out, 'stimlogs')
+            raster_site_info.GrandStimlog = GrandStimlog;
+        end
 
-        datadirstr = strsplit(string(datadir), '\');                           %strsplit(out.datadir, '\'); %SFM 8/2/21 to make this work for synthetic data
-        raster_filename = sprintf('%s_%s_raster_data', datadirstr{6}, cellid); %datadirstr{end} - SFM 8/2/21
+        datadirstr = strsplit(string(datadir{j}), '\');                             % strsplit(out.datadir, '\'); %SFM 8/2/21 to make this work for synthetic data
+        fprintf('\n%s_%s_raster_data\n', datadirstr{end}, cellid)                   % datadirstr{end} - SFM 8/2/21
+        raster_filename = strcat('raster_', cellid, '_combined', datadirstr{end});
         rasterdirname = strcat(datadir, '\raster_files');
         if ~exist(rasterdirname{1}, 'dir')
            mkdir raster_files; 
