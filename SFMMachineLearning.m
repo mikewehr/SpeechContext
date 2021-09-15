@@ -143,7 +143,29 @@ end
 
 exclude_cells = [];                                             % Array containing sites/neurons to exclude from the model - SFM 9/9/21
 list_of_cells_excluded = {};                                    % If a cell doesn't have the minimum num of repeats, return the name just in case - SFM 9/14/21
-                 
+manual_cell_curation_switch = 1;                                % Logical switch on whether to manually put neurons into training or testing groups - SFM 9/15/21
+list_of_cell_names = {'raster_combined_ch9c449_combined0095', 'raster_combined_ch11c619_combined0095', 'raster_combined_ch16c341_combined0095', 'raster_combined_ch18c567_combined0095', 'raster_combined_ch23c181_combined0095', 'raster_combined_ch26c171_combined0095', 'raster_combined_ch31c193_combined0095', 'raster_combined_ch0c263_combined0098', 'raster_combined_ch3c636_combined0098', 'raster_combined_ch7c101_combined0098', 'raster_combined_ch12c237_combined0098', 'raster_combined_ch19c222_combined0098', 'raster_combined_ch21c666_combined0098', 'raster_combined_ch22c483_combined0098', 'raster_combined_ch31c377_combined0098', 'raster_combined_ch0c1615_combined0295', 'raster_combined_ch2c2214_combined0295', 'raster_combined_ch3c1757_combined0295', 'raster_combined_ch6c2239_combined0295', 'raster_combined_ch10c1810_combined0295', 'raster_combined_ch14c1910_combined0295', 'raster_combined_ch14c1922_combined0295', 'raster_combined_ch14c2287_combined0295', 'raster_combined_ch33c1952_combined0295', 'raster_combined_ch35c1978_combined0295', 'raster_combined_ch38c1463_combined0295', 'raster_combined_ch39c279_combined0295', 'raster_combined_ch39c2319_combined0295', 'raster_combined_ch42c2062_combined0295', 'raster_combined_ch45c465_combined0295', 'raster_combined_ch48c2096_combined0295', 'raster_combined_ch48c2338_combined0295', 'raster_combined_ch52c929_combined0295', 'raster_combined_ch55c2140_combined0295', 'raster_combined_ch55c2142_combined0295', 'raster_combined_ch57c2152_combined0295', 'raster_combined_ch61c1712_combined0295', 'raster_combined_ch61c2188_combined0295', 'raster_combined_ch61c2196_combined0295', 'raster_combined_ch7c321_combined0296', 'raster_combined_ch12c187_combined0296', 'raster_combined_ch15c340_combined0296', 'raster_combined_ch34c251_combined0296', 'raster_combined_ch44c313_combined0296'}; 
+% List name format of cell names here (someone in the future reading it can
+% automate this, I only need it once!!!!!) - SFM 9/15/21
+
+if manual_cell_curation_switch == 1
+    ListedCell = 0;
+    UnlistedCell = 0;
+    for iCell = 1:length(rasterlist)
+        if strcmp(rasterlist(iCell).name, list_of_cell_names{:}) == 1
+            ListedCell = ListedCell + 1;
+            selectedrasterlist(ListedCell) = rasterlist(iCell);
+        else
+            UnlistedCell = UnlistedCell + 1;
+            unselectedrasterlist(UnlistedCell) = rasterlist(iCell);
+        end
+    end
+    selectedrasterlist = sort(selectedrasterlist, 'ascend');
+    unselectedrasterlist = sort(unselectedrasterlist, 'ascend');
+else
+end
+
+
 for i = 1:length(rasterlist)                                    % Construct the data table from the raster data - SFM 9/8/21
     if ~isempty(setdiff(i, exclude_cells))
         clear raster_data I raster_labels
