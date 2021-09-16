@@ -147,7 +147,7 @@ for j = 1:length(datadir)
 
         datadirstr = strsplit(string(datadir{j}), '\');                             % strsplit(out.datadir, '\'); %SFM 8/2/21 to make this work for synthetic data
         fprintf('\n%s_%s_raster_data\n', datadirstr{end}, cellid)                   % datadirstr{end} - SFM 8/2/21
-        raster_filename = strcat('raster_', cellid, '_combined_', datadirstr{end});
+        raster_filename = strcat('raster_', cellid, '_', datadirstr{end});
         rasterdirname = strcat(datadir, '\raster_files');
         if ~exist(rasterdirname{1}, 'dir')
            mkdir raster_files; 
