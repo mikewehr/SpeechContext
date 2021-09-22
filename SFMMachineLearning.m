@@ -10,10 +10,9 @@ if raster_switch == 1
     cd(ourdir{end});
 end
 
-%% Preprocessing of Raster Data
+% % Preprocessing of Raster Data
 
-rasterdir = 'F:\Data\sfm\RasterFiles';
-%'F:\Data\sfm\Synthetic Test Data\Group10';         % Enter dir with rastered data if skipping the step from above - SFM 9/8/21
+rasterdir = 'F:\Data\sfm\Synthetic Test Data\Group6';         % Enter dir with rastered data if skipping the step from above - SFM 9/8/21
 cd(rasterdir)
 rasterlist = dir('*.mat');
 preprocess_switch = 1;
@@ -81,7 +80,7 @@ if preprocess_switch == 1
 end
 toc
 
-%% Table Construction
+% % Table Construction
 
 xlim = -181.8672;                                               % Shouldn't ever change, if so use round(out.xlimits(1), 4) - SFM 9/8/21
 samprate = raster_site_info.samprate;                           % Also shouldn't change, but just in case we will get it from the raster/out data - SFM 9/8/21
@@ -146,8 +145,7 @@ exclude_cells = [];                                             % Array containi
 list_of_cells_excluded = {};                                    % If a cell doesn't have the minimum num of repeats, return the name just in case - SFM 9/14/21
 manual_cell_curation_switch = 1;                                % Logical switch on whether to manually put neurons into training or testing groups - SFM 9/15/21
 list_of_cell_names = {'raster_combined_ch9c449_combined0095.mat', 'raster_combined_ch16c341_combined0095.mat', 'raster_combined_ch18c567_combined0095.mat', 'raster_combined_ch23c181_combined0095.mat', 'raster_combined_ch26c171_combined0095.mat', 'raster_combined_ch31c193_combined0095.mat', 'raster_combined_ch0c263_combined0098.mat', 'raster_combined_ch3c636_combined0098.mat', 'raster_combined_ch12c237_combined0098.mat', 'raster_combined_ch19c222_combined0098.mat', 'raster_combined_ch21c666_combined0098.mat', 'raster_combined_ch22c483_combined0098.mat', 'raster_combined_ch31c377_combined0098.mat', 'raster_combined_ch3c1757_combined0295.mat', 'raster_combined_ch6c2239_combined0295.mat', 'raster_combined_ch10c1810_combined0295.mat', 'raster_combined_ch14c1910_combined0295.mat', 'raster_combined_ch14c2287_combined0295.mat', 'raster_combined_ch33c1952_combined0295.mat', 'raster_combined_ch35c1978_combined0295.mat', 'raster_combined_ch38c1463_combined0295.mat', 'raster_combined_ch42c2062_combined0295.mat', 'raster_combined_ch45c465_combined0295.mat', 'raster_combined_ch48c2096_combined0295.mat', 'raster_combined_ch52c929_combined0295.mat', 'raster_combined_ch55c2140_combined0295.mat', 'raster_combined_ch57c2152_combined0295.mat', 'raster_combined_ch61c1712_combined0295.mat', 'raster_combined_ch61c2188_combined0295.mat', 'raster_combined_ch61c2196_combined0295.mat', 'raster_combined_ch12c187_combined0296.mat', 'raster_combined_ch34c251_combined0296.mat', 'raster_combined_ch44c313_combined0296.mat'}'; 
-% List name format of cell names here (someone in the future reading it can
-% automate this, I only need it once!!!!!) - SFM 9/15/21
+% List name format of cell names here (someone in the future reading it can automate this, I only need it once!!!!!) - SFM 9/15/21
 
 if manual_cell_curation_switch == 1
     ListedCell = 0;
@@ -258,10 +256,6 @@ quick_results_switch = 0;
 if quick_results_switch == 1
     [resultstable] = quickresults(list_of_stims_to_use, min_reps);
 end
-%%
-
-
-
-
+%
 
 
