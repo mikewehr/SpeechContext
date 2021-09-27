@@ -144,8 +144,15 @@ end
 
 exclude_cells = [];                                             % Array containing sites/neurons to exclude from the model - SFM 9/9/21
 list_of_cells_excluded = {};                                    % If a cell doesn't have the minimum num of repeats, return the name just in case - SFM 9/14/21
-manual_cell_curation_switch = 1;                                % Logical switch on whether to manually put neurons into training or testing groups - SFM 9/15/21
-list_of_cell_names = {'raster_combined_ch9c449_combined0095.mat', 'raster_combined_ch16c341_combined0095.mat', 'raster_combined_ch18c567_combined0095.mat', 'raster_combined_ch23c181_combined0095.mat', 'raster_combined_ch26c171_combined0095.mat', 'raster_combined_ch31c193_combined0095.mat', 'raster_combined_ch0c263_combined0098.mat', 'raster_combined_ch3c636_combined0098.mat', 'raster_combined_ch12c237_combined0098.mat', 'raster_combined_ch19c222_combined0098.mat', 'raster_combined_ch21c666_combined0098.mat', 'raster_combined_ch22c483_combined0098.mat', 'raster_combined_ch31c377_combined0098.mat', 'raster_combined_ch3c1757_combined0295.mat', 'raster_combined_ch6c2239_combined0295.mat', 'raster_combined_ch10c1810_combined0295.mat', 'raster_combined_ch14c1910_combined0295.mat', 'raster_combined_ch14c2287_combined0295.mat', 'raster_combined_ch33c1952_combined0295.mat', 'raster_combined_ch35c1978_combined0295.mat', 'raster_combined_ch38c1463_combined0295.mat', 'raster_combined_ch42c2062_combined0295.mat', 'raster_combined_ch45c465_combined0295.mat', 'raster_combined_ch48c2096_combined0295.mat', 'raster_combined_ch52c929_combined0295.mat', 'raster_combined_ch55c2140_combined0295.mat', 'raster_combined_ch57c2152_combined0295.mat', 'raster_combined_ch61c1712_combined0295.mat', 'raster_combined_ch61c2188_combined0295.mat', 'raster_combined_ch61c2196_combined0295.mat', 'raster_combined_ch12c187_combined0296.mat', 'raster_combined_ch34c251_combined0296.mat', 'raster_combined_ch44c313_combined0296.mat'}'; 
+manual_cell_curation_switch = 0;                                % Logical switch on whether to manually put neurons into training or testing groups - SFM 9/15/21
+%All Examplars
+% list_of_cell_names = {'raster_combined_ch9c449_combined0095.mat', 'raster_combined_ch16c341_combined0095.mat', 'raster_combined_ch18c567_combined0095.mat', 'raster_combined_ch23c181_combined0095.mat', 'raster_combined_ch26c171_combined0095.mat', 'raster_combined_ch31c193_combined0095.mat', 'raster_combined_ch0c263_combined0098.mat', 'raster_combined_ch3c636_combined0098.mat', 'raster_combined_ch12c237_combined0098.mat', 'raster_combined_ch19c222_combined0098.mat', 'raster_combined_ch21c666_combined0098.mat', 'raster_combined_ch22c483_combined0098.mat', 'raster_combined_ch31c377_combined0098.mat', 'raster_combined_ch3c1757_combined0295.mat', 'raster_combined_ch6c2239_combined0295.mat', 'raster_combined_ch10c1810_combined0295.mat', 'raster_combined_ch14c1910_combined0295.mat', 'raster_combined_ch14c2287_combined0295.mat', 'raster_combined_ch33c1952_combined0295.mat', 'raster_combined_ch35c1978_combined0295.mat', 'raster_combined_ch38c1463_combined0295.mat', 'raster_combined_ch42c2062_combined0295.mat', 'raster_combined_ch45c465_combined0295.mat', 'raster_combined_ch48c2096_combined0295.mat', 'raster_combined_ch52c929_combined0295.mat', 'raster_combined_ch55c2140_combined0295.mat', 'raster_combined_ch57c2152_combined0295.mat', 'raster_combined_ch61c1712_combined0295.mat', 'raster_combined_ch61c2188_combined0295.mat', 'raster_combined_ch61c2196_combined0295.mat', 'raster_combined_ch12c187_combined0296.mat', 'raster_combined_ch34c251_combined0296.mat', 'raster_combined_ch44c313_combined0296.mat'}'; 
+%BA/DA
+% list_of_cell_names = {'raster_combined_ch9c449_combined0095.mat', 'raster_combined_ch16c341_combined0095.mat', 'raster_combined_ch18c567_combined0095.mat', 'raster_combined_ch23c181_combined0095.mat', 'raster_combined_ch26c171_combined0095.mat', 'raster_combined_ch6c2239_combined0295.mat', 'raster_combined_ch14c1910_combined0295.mat', 'raster_combined_ch14c2287_combined0295.mat', 'raster_combined_ch33c1952_combined0295.mat', 'raster_combined_ch35c1978_combined0295.mat'}; 
+%IBA/IDA
+% list_of_cell_names = {'raster_combined_ch0c263_combined0098.mat', 'raster_combined_ch3c636_combined0098.mat', 'raster_combined_ch12c237_combined0098.mat', 'raster_combined_ch21c666_combined0098.mat', 'raster_combined_ch31c377_combined0098.mat', 'raster_combined_ch48c2096_combined0295.mat', 'raster_combined_ch52c929_combined0295.mat', 'raster_combined_ch57c2152_combined0295.mat', 'raster_combined_ch61c2188_combined0295.mat', 'raster_combined_ch61c2196_combined0295.mat', 'raster_combined_ch34c251_combined0296.mat'};
+%UBA/UDA
+% list_of_cell_names = {'raster_combined_ch31c193_combined0095.mat', 'raster_combined_ch19c222_combined0098.mat', 'raster_combined_ch22c483_combined0098.mat', 'raster_combined_ch3c1757_combined0295.mat', 'raster_combined_ch10c1810_combined0295.mat', 'raster_combined_ch38c1463_combined0295.mat', 'raster_combined_ch42c2062_combined0295.mat', 'raster_combined_ch45c465_combined0295.mat', 'raster_combined_ch55c2140_combined0295.mat', 'raster_combined_ch61c1712_combined0295.mat', 'raster_combined_ch12c187_combined0296.mat', 'raster_combined_ch44c313_combined0296.mat'};
 % List name format of cell names here (someone in the future reading it can automate this, I only need it once!!!!!) - SFM 9/15/21
 
 if manual_cell_curation_switch == 1
@@ -162,8 +169,9 @@ if manual_cell_curation_switch == 1
     end
 %     selectedrasterlist = sort(selectedrasterlist.name, 'ascend');
 %     unselectedrasterlist = sort(unselectedrasterlist.name, 'ascend');
-    rasterlist = unselectedrasterlist;                            % Quick and dirty way to make this new table - SFM 9/16/21
-else
+    rasterlist = selectedrasterlist;                            % Quick and dirty way to make this new table - SFM 9/16/21
+    
+    
 end
 
 for i = 1:length(rasterlist)                                    % Construct the data table from the raster data - SFM 9/8/21
@@ -218,16 +226,25 @@ if hertzconv_switch == 1
         datatable = datatable * hertzconv;
     end
 end
+
+stim_name = 'BA-DA';
+
 if split_switch == 1
     datatable_supervised = table(datatable_train);
     datatable_unsupervised = table(datatable_test);
-%    true_stims = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
+    %true_stims = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
     datatable_supervised = addvars(datatable_unsupervised, true_stims);
 else
     datatable_unsupervised = table(datatable);
-%     true_stims = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
-%     true_stims = {'IBA', 'UDA', 'UDA', 'IBA', 'BA', 'DA', 'DA', 'BA', 'UBA', 'IDA', 'UBA', 'DA', 'DA', 'UDA', 'IBA', 'DA', 'IDA', 'BA', 'UBA', 'UBA', 'IDA', 'UDA', 'UDA', 'UBA', 'IDA', 'IBA', 'UBA', 'IBA', 'UBA', 'IDA', 'IBA', 'DA', 'BA'}';
-%     datatable_supervised = addvars(datatable_unsupervised, true_stims);
+%     true_stims_synth6_19 = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
+%    true_stims = {'IBA', 'UDA', 'UDA', 'IBA', 'BA', 'DA', 'DA', 'BA', 'BA', 'IDA', 'UBA', 'DA', 'DA', 'UDA', 'IBA', 'DA', 'IDA', 'BA', 'UBA', 'UBA', 'IDA', 'UDA', 'UDA', 'UBA', 'IDA', 'IBA', 'UBA', 'IBA', 'UBA', 'IDA', 'IBA', 'DA', 'BA'}';
+    %BA/DA
+%     Stim = {'BA', 'DA', 'DA', 'BA', 'DA', 'DA', 'DA', 'BA', 'DA', 'BA'}';
+    %IBA/IDA
+%     Stim = {'BA', 'BA', 'DA', 'BA', 'DA', 'DA', 'DA', 'BA', 'BA', 'DA', 'BA'}';
+    %UBA/UDA
+%     Stim = {'DA', 'DA', 'BA', 'BA', 'DA', 'BA', 'BA', 'DA', 'DA', 'BA', 'BA', 'BA'}';
+%     datatable_supervised = addvars(datatable_unsupervised, Stim);
 end
 
 groupname = strsplit(rasterdir, '\');
@@ -243,11 +260,11 @@ cells_used = length(rasterlist) - length(list_of_cells_excluded);
 
 if save_switch == 1
     if strcmp(datatype, 'Synthetic Test Data')
-%         savename_supervised = strcat('Synth', groupname, 'Supervised_', num2str(cells_used), 'Cells_', num2str(numtables + 1));
-        savename_unsupervised = strcat('Synth', groupname, 'Unsupervised_', num2str(cells_used), 'Cells_', num2str(numtables + 1));
+%         savename_supervised = strcat('Synth', groupname, 'Supervised_', stim_name, num2str(cells_used), 'Cells_', num2str(numtables + 1));
+        savename_unsupervised = strcat('Synth', groupname, 'Unsupervised_', stim_name, num2str(cells_used), 'Cells_', num2str(numtables + 1));
     else
-%         savename_supervised = strcat('ExperimentalDataSupervised_', num2str(cells_used), 'Cells_', num2str(min_reps), 'MinReps_', num2str(length(list_of_stims_to_use)), 'LabelsUsed_', num2str(numtables + 1));
-        savename_unsupervised = strcat('ExperimentalDataUnsupervised_', num2str(cells_used), 'Cells_', num2str(min_reps), 'MinReps_', num2str(length(list_of_stims_to_use)), 'LabelsUsed_', num2str(numtables + 1));
+%         savename_supervised = strcat('ExperimentalDataSupervised_', stim_name, num2str(cells_used), 'Cells_', num2str(min_reps), 'MinReps_', num2str(length(list_of_stims_to_use)), 'LabelsUsed_', num2str(numtables + 1));
+        savename_unsupervised = strcat('ExperimentalDataUnsupervised_', stim_name, num2str(cells_used), 'Cells_', num2str(min_reps), 'MinReps_', num2str(length(list_of_stims_to_use)), 'LabelsUsed_', num2str(numtables + 1));
     end
 %     save(savename_supervised, 'datatable_supervised', 'list_of_cells_excluded'); 
     save(savename_unsupervised, 'datatable_unsupervised', 'list_of_cells_excluded');
