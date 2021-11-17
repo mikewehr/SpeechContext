@@ -5,7 +5,7 @@
 cd('/Volumes/wehrrig2b.uoregon.edu/lab/djmaus/Data/sfm/synthetic_SpeechContext_data')
 group='Group11';
 
-cd (group)
+cd(group)
 d=dir('outPSTH*.mat');
 for i=1:length(d)
     fprintf('\n%d/%d', i, length(d))
@@ -51,7 +51,6 @@ end
 xlabel('cell 1')
 ylabel('cell 25')
 axis(ax)
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % single trials
