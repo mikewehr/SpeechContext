@@ -8,9 +8,9 @@
 % keep some fields intact
 % replace M1 fields with random spiketimes
 % change some stimulus responses to impart tuning
-% save as a new outfile 
+% save as a new outfile
 % repeat to generate outfiles for a population of cells
-% repeat for different populations with different tuning effects 
+% repeat for different populations with different tuning effects
 %     -all random (negative control)
 %     -differential responses to stimuli in different cells (best decoding)
 %     -only responses to some stimuli (partial decoding?)
@@ -20,12 +20,12 @@
 %     look in the outfilelist for the included ones (that have spikes)
 cd    '/Volumes/wehrrig2b.uoregon.edu/lab/djmaus/Data/sfm/GrandKilosort0095CombinedOutfiles'
 
-    
+
 cd /Volumes/wehrrig2b.uoregon.edu/lab/djmaus/Data/sfm/2021-01-08_14-18-09_mouse-0095/
 fprintf('\nloading outfile...')
 load outPSTH_ch5c643.mat
 fprintf('\tdone')
-% 
+%
 %          dirlist: {'/'  '/'}
 %          targetdir: '/'
 %       generated_by: 'Outfile_Combiner'
@@ -61,10 +61,20 @@ if ~exist('synthetic_SpeechContext_data')
 end
 cd synthetic_SpeechContext_data
 
-if ~exist('Group4') %random
-    mkdir Group4
+if ~exist('Group10') %
+    mkdir Group10
 end
-cd Group4
+cd Group10
+
+% SNR='low';
+SNR='timing';
+
+% Group5: low SNR, differential
+% Group6: high SNR, differential
+% Group7: random
+% Group8: single-ended high SNR
+% Group9: single-ended low SNR
+% Group10: high SNR, differential, only the timing changes (not magnitude)
 
 for cell_idx=1:25
     
@@ -86,7 +96,7 @@ for cell_idx=1:25
                     %pick a random number of spikes
                     numspikes=randi(100, 1);
                     %generate N random spiketimes within xlimits
-                    spiketimes=sort(randi(round(out.xlimits), numspikes, 1))';
+                    spiketimes=sort(randi(fix(out.xlimits), numspikes, 1))';
                     M1OFF(i,j,k, r).spiketimes=spiketimes;
                 end
             end
@@ -94,40 +104,74 @@ for cell_idx=1:25
     end
     
     %modify M1OFF to impart tuning
-    if cell_idx<10
-        d=0;
-        for i=[8 9 10 2] %last 4 ba-da files = da
-            d=d+1;
-            for j=1:out.numamps
-                for k=1:out.numdurs
-                    for r=1:out.nrepsOFF(i,j,k)
-                        %pick a random number of spikes
-                        numspikes=d*2 + randi(3, 1); %linearly tuned to ba-ness
-                        %                         numspikes=25-4*i + randi(3, 1); %linearly tuned to ba-ness
-                        
-                        %generate N random spiketimes within xlimits
-                        spiketimes=sort(randi(round([200 350]), numspikes, 1))';
-                        spiketimes=sort([spiketimes M1OFF(i,j,k, r).spiketimes]);
-                        M1OFF(i,j,k, r).spiketimes=spiketimes;
+    if 1
+        if cell_idx<10
+            d=0;
+            for i=[8 9 10 2] %last 4 ba-da files = da
+                d=d+1;
+                for j=1:out.numamps
+                    for k=1:out.numdurs
+                        for r=1:out.nrepsOFF(i,j,k)
+                            %pick a random number of spikes
+                            switch SNR
+                                case 'low'
+                                    numspikes=d*2 + randi(3, 1); %linearly tuned to da-ness, low SNR
+                                case 'high'
+                                    numspikes=d*5 + randi(5, 1); %linearly tuned to da-ness, high SNR
+                                case 'timing'
+                                    numspikes= 20;
+                                otherwise
+                                    error('WTF')
+                            end
+                            %generate N random spiketimes within xlimits
+                            switch SNR
+                                case 'timing'
+                                    start=170+15*(d+4);
+                                    stop=start+50;
+                                    spiketimes=sort(randi(round([start stop]), numspikes, 1))';
+                                otherwise
+                                    spiketimes=sort(randi(round([200 350]), numspikes, 1))';
+                            end
+                            spiketimes=sort([spiketimes M1OFF(i,j,k, r).spiketimes]);
+                            M1OFF(i,j,k, r).spiketimes=spiketimes;
+                        end
                     end
                 end
             end
         end
-    elseif cell_idx>15
-        d=0;
-        for i=[1 3 4 5] %first 4 ba-da files = ba (file 2 is sourcefile 10)
-            d=d+1;
-            for j=1:out.numamps
-                for k=1:out.numdurs
-                    for r=1:out.nrepsOFF(i,j,k)
-                        %pick a random number of spikes
-                        numspikes=12-d*2 + randi(3, 1); %linearly tuned to ba-ness
-                        %                         numspikes=25-4*i + randi(3, 1); %linearly tuned to ba-ness
-                        
-                        %generate N random spiketimes within xlimits
-                        spiketimes=sort(randi(round([200 350]), numspikes, 1))';
-                        spiketimes=sort([spiketimes M1OFF(i,j,k, r).spiketimes]);
-                        M1OFF(i,j,k, r).spiketimes=spiketimes;
+    end
+    if 1
+        if cell_idx>15
+            d=0;
+            for i=[1 3 4 5] %first 4 ba-da files = ba (file 2 is sourcefile 10)
+                d=d+1;
+                for j=1:out.numamps
+                    for k=1:out.numdurs
+                        for r=1:out.nrepsOFF(i,j,k)
+                            %pick a random number of spikes
+                            switch SNR
+                                case 'low'
+                                    numspikes=10-d*2 + randi(3, 1); %linearly tuned to ba-ness
+                                case 'high'
+                                    numspikes=25-5*d + randi(5, 1); %linearly tuned to ba-ness, high SNR
+                                case 'timing'
+                                    numspikes= 20;
+                                otherwise
+                                    error('WTF')
+                            end
+                            
+                            %generate N random spiketimes within xlimits
+                            switch SNR
+                                case 'timing'
+                                    start=170+15*d;
+                                    stop=start+50;
+                                    spiketimes=sort(randi(round([start stop]), numspikes, 1))';
+                                otherwise
+                                    spiketimes=sort(randi(round([200 350]), numspikes, 1))';
+                            end
+                            spiketimes=sort([spiketimes M1OFF(i,j,k, r).spiketimes]);
+                            M1OFF(i,j,k, r).spiketimes=spiketimes;
+                        end
                     end
                 end
             end
