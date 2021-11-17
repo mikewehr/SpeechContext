@@ -61,13 +61,13 @@ if ~exist('synthetic_SpeechContext_data')
 end
 cd synthetic_SpeechContext_data
 
-if ~exist('Group10') %
-    mkdir Group10
+if ~exist('Group11') %
+    mkdir Group11
 end
-cd Group10
+cd Group11
 
 % SNR='low';
-SNR='timing';
+SNR='reallyhigh';
 
 % Group5: low SNR, differential
 % Group6: high SNR, differential
@@ -75,6 +75,7 @@ SNR='timing';
 % Group8: single-ended high SNR
 % Group9: single-ended low SNR
 % Group10: high SNR, differential, only the timing changes (not magnitude)
+%  Group11: really high SNR, differential
 
 for cell_idx=1:25
     
@@ -118,6 +119,8 @@ for cell_idx=1:25
                                     numspikes=d*2 + randi(3, 1); %linearly tuned to da-ness, low SNR
                                 case 'high'
                                     numspikes=d*5 + randi(5, 1); %linearly tuned to da-ness, high SNR
+                                case 'reallyhigh'
+                                    numspikes=d*15 + randi(5, 1); %linearly tuned to da-ness, high SNR
                                 case 'timing'
                                     numspikes= 20;
                                 otherwise
@@ -154,6 +157,8 @@ for cell_idx=1:25
                                     numspikes=10-d*2 + randi(3, 1); %linearly tuned to ba-ness
                                 case 'high'
                                     numspikes=25-5*d + randi(5, 1); %linearly tuned to ba-ness, high SNR
+                                case 'reallyhigh'
+                                    numspikes=75-15*d + randi(5, 1); %linearly tuned to ba-ness, high SNR
                                 case 'timing'
                                     numspikes= 20;
                                 otherwise

@@ -3,7 +3,7 @@
 
 %the outfiles are on D:
 cd('/Volumes/wehrrig2b.uoregon.edu/lab/djmaus/Data/sfm/synthetic_SpeechContext_data')
-group='Group6';
+group='Group11';
 
 cd (group)
 d=dir('outPSTH*.mat');
@@ -14,6 +14,8 @@ for i=1:length(d)
     data(i).M1OFF=out.out.M1OFF;
     data(i).mM1OFF=out.out.mM1OFF;
 end
+
+nreps=max(out.out.nreps(:))
 
 start=200;
 stop=350;
@@ -50,7 +52,6 @@ xlabel('cell 1')
 ylabel('cell 25')
 axis(ax)
 
-mytable=Table(M)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % single trials
@@ -66,6 +67,7 @@ for j=1:length(data)
     end
             scsorted=sc([1  3 4 5 6 7 8 9 10 2 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30], :);
         Mtrials(j,:,:)=scsorted;
+        %Mtrials is cells x stimulus x rep
         Mflat=[Mflat scsorted];
 
 end
@@ -75,12 +77,67 @@ xlabel('stimulus')
 ylabel('cells and trials')
 title([group, 'single trials'])
 
-Mflat2=[];
+
+clear response Mflat2
 k=0;
-for i=1:10
-    for j=1:40
+for i=[1 10] %stimulus 1 and 10
+for j=1: nreps
         k=k+1;
+        response2(k)=i
         Mflat2(:, k)= Mtrials(:, i, j);
     end
 end
+figure
+imagesc(Mflat2)
+xlabel('stimuli and trials')
+ylabel('cells')
+title([group, 'single trials (Mflat2)'])
+
+% Mflat2 is cells x (stim*reps) and only has stimuli 1 and 10
+%Mflat 2 is designed to be input for classificationlearner
+
+
+clear response Mflat3
+k=0;
+for i=[1:10] %all stimuli
+for j=1: nreps
+        k=k+1;
+        response3(k)=i
+        Mflat3(:, k)= Mtrials(:, i, j);
+    end
+end
+figure
+imagesc(Mflat3)
+xlabel('stimuli and trials')
+ylabel('cells')
+title([group, 'single trials (Mflat3)'])
+
+% Mflat2 is cells x (stim*reps)
+%Mflat 2 is designed to be input for classificationlearner
+
+yfit = trainedModel.predictFcn(Mflat3);
+sum(yfit==response3')/length(response3)
+
+PC=[sum(yfit(1:40))/1, ...
+sum(yfit(41:80))/1, ...
+sum(yfit(81:120))/1, ...
+sum(yfit(121:160))/1, ...
+sum(yfit(161:200))/1, ...
+sum(yfit(201:240))/1, ...
+sum(yfit(241:280))/1, ...
+sum(yfit(281:320))/1, ...
+sum(yfit(321:360))/1, ...
+sum(yfit(361:400))/1]
+
+
+
+
+
+
+
+
+
+
+
+
 
