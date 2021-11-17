@@ -2,10 +2,10 @@
 % so we can do some sanity checking
 
 %the outfiles are on D:
-cd('/Volumes/wehrrig2b.uoregon.edu/lab/djmaus/Data/sfm/synthetic_SpeechContext_data')
-group='Group6';
+cd('/Users/sammehan/Documents/Matlab/SpeechContext2021/Synthetic Outfiles')
+group = 'Group6';
 
-cd (group)
+cd(group)
 d=dir('outPSTH*.mat');
 for i=1:length(d)
     fprintf('\n%d/%d', i, length(d))
@@ -15,7 +15,7 @@ for i=1:length(d)
     data(i).mM1OFF=out.out.mM1OFF;
 end
 
-start=200;
+start=190;
 stop=350;
 % trial-averaged
 for j=1:length(data)
@@ -50,7 +50,7 @@ xlabel('cell 1')
 ylabel('cell 25')
 axis(ax)
 
-mytable=Table(M)
+mytable=Table(M);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % single trials
