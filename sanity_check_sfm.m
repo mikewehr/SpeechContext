@@ -1,16 +1,18 @@
-% load synthetic speech context outfiles and extract spikes into a matrix
-% so we can do some sanity checking
+% load synthetic speech context outfiles and extract spikes into a matrix so we can do some sanity checking
 
-%the outfiles are on D:
 clear
 tic
-cd('/Users/sammehan/Documents/Wehr Lab/SpeechContext2021/Synthetic Outfiles')
-group = 'Group8';
-plot_switch = 0;
-cd(group)
-d = dir('outPSTH*.mat');
+cd('/Users/sammehan/Documents/Wehr Lab/SpeechContext2021/Synthetic Outfiles') % Set directory
 
+%%% Settings
+group = 'Group9';                                                           % What subdirectory in here?
+plot_switch = 0;                                                            % Do you want all of the diagnostic plots? (neurometric curve plots not included)
+no_context_switch = 1;                                                      % Do you want all trials or just BA-DA?
+fit_model_switch = 0;                                                       % Do you need to open Classification Learner and fit a model?
+
+cd(group)
 if ~exist('GroupDataTable.mat', 'file')
+    d = dir('outPSTH*.mat');
     for i = 1:length(d)
         fprintf('\n%d/%d', i, length(d))
         outfilename = sprintf('outPSTH_synth_ch%dc%d.mat', i, i);
@@ -25,10 +27,10 @@ else
     nreps = 40;
 end
 
-start = 190;
-stop = 350;
 % trial-averaged
 if ~exist('CellsByStimDatatable.mat', 'file')
+    start = 190;
+    stop = 350;
     for j = 1:length(data)
         mM1OFF = data(j).mM1OFF(:,2,2,1);
         for k = 1:length(mM1OFF)
@@ -39,7 +41,7 @@ if ~exist('CellsByStimDatatable.mat', 'file')
         scsorted = sc([1 3 4 5 6 7 8 9 10 2 11 13 14 15 16 17 18 19 20 12 21 23 24 25 26 27 28 29 30 22]);
         cellsbystim_datatable(j,:) = scsorted;
     end
-    save('CellsByStimDatatable.mat', 'cellsbystim_datatable');
+    save('CellsByStimDatatable.mat', 'cellsbystim_datatable', 'scsorted');
 else
     load('CellsByStimDatatable.mat');
 end
@@ -67,6 +69,7 @@ end
 
 %%%
 % Single trials
+
 if ~exist('TotalTrials&MTrials.mat', 'file')
     TotalTrialsByStim = [];
     for j = 1:length(data)
@@ -87,7 +90,6 @@ if ~exist('TotalTrials&MTrials.mat', 'file')
 else
     load('TotalTrials&MTrials.mat');
 end
-no_context_switch = 1;
 if no_context_switch == 1
     TotalTrialsByStim = TotalTrialsByStim(1:10, :)';
 else
@@ -137,15 +139,8 @@ if ~exist('CellsTrialAveragedAllBADA.mat', 'file')
             CellsTrialAveragedBADA(:, k) = Mtrials(:, i, j);
         end
     end
-    if plot_switch == 1
-        figure
-        imagesc(CellsTrialAveragedBADA)
-        xlabel('stimuli and trials')
-        ylabel('cells')
-        title([group, 'single trials (CellsTrialAveragedBADA)'])
-    end
-    % CellsTrialAveragedBADA is cells x (stim * reps)
-    % CellsTrialAveragedBADA is designed to be input for classification learner
+% CellsTrialAveragedBADA is cells x (stim * reps)
+% CellsTrialAveragedBADA is designed to be input for classification learner
     coerce_switch = 1;
     if coerce_switch == 1
         StimID3_Coerce = zeros(length(StimID3), 1);
@@ -164,16 +159,24 @@ if ~exist('CellsTrialAveragedAllBADA.mat', 'file')
 else
     load('CellsTrialAveragedAllBADA.mat');
 end
+if plot_switch == 1
+    figure
+    imagesc(CellsTrialAveragedBADA)
+    xlabel('stimuli and trials')
+    ylabel('cells')
+    title([group, 'single trials (CellsTrialAveragedBADA)'])
+end
 
-fit_model_switch = 0;
+%%% End Preprocessing
+
 if fit_model_switch == 1
     classificationLearner
     f = gcf;
     uiwait(gcf);
 end
 
-load('Group8ExemplarsLinDisc.mat');
-yfit = Group8ExemplarsLinDisc.predictFcn(CellsTrialAveragedBADA);
+load('Group9ExemplarsLinDisc.mat');
+yfit = Group9ExemplarsLinDisc.predictFcn(CellsTrialAveragedBADA);
 totalfitresults = sum(yfit == StimID3_Coerce) / length(StimID3_Coerce);
 
 confusionmatrixallstims = zeros(30, 3);
