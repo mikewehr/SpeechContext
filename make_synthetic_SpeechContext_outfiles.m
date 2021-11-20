@@ -61,13 +61,13 @@ if ~exist('synthetic_SpeechContext_data')
 end
 cd synthetic_SpeechContext_data
 
-if ~exist('Group11') %
-    mkdir Group11
+if ~exist('Group12') %
+    mkdir Group12
 end
-cd Group11
+cd Group12
 
 % SNR='low';
-SNR='reallyhigh';
+SNR='high';
 
 % Group5: low SNR, differential
 % Group6: high SNR, differential
@@ -75,7 +75,8 @@ SNR='reallyhigh';
 % Group8: single-ended high SNR
 % Group9: single-ended low SNR
 % Group10: high SNR, differential, only the timing changes (not magnitude)
-%  Group11: really high SNR, differential
+% Group11: really high SNR, differential
+% Group12: speech context effects
 
 for cell_idx=1:25
     
