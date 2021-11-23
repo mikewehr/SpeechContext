@@ -6,9 +6,10 @@ cd('/Users/sammehan/Documents/Wehr Lab/SpeechContext2021/Data')             % Se
 
 %%% Settings
 group = 'ExpData';                                                          % What subdirectory in here?
-plot_switch = 1;                                                            % Do you want all of the diagnostic plots? (neurometric curve plots not included)
+plot_switch = 0;                                                            % Do you want all of the diagnostic plots? (neurometric curve plots not included)
 context_switch = 1;                                                         % Do you want all trials or just BA-DA?
-fit_model_switch = 0;                                                       % Do you need to open Classification Learner and fit a model?
+fit_model_switch = 1;                                                       % Do you need to open Classification Learner and fit a model?
+coerce_switch = 1;                                                          % Do you want to make a new set of labels with all stims fit to BA or DA?
 
 if ~exist('ExpDataTable.mat', 'file')
     d = dir('outPSTH*.mat');
@@ -110,21 +111,35 @@ if plot_switch == 1
     title([group, ' single trials'])
 end
 
-if ~exist('TrialAveragedExemplars.mat', 'file')
+% if ~exist('TrialAveragedExemplars.mat', 'file')
     clear response CellsTrialAveragedExemplars
     CellsTrialAveragedExemplars = [];
     k = 0;
-    for i = [1 10]                                                          % BA and DA only
+    for i = [1 10]                                                          % Enter stims to train on in numerical form
         for j = 1:nreps
             k = k + 1;
             StimID2(k) = i;
             CellsTrialAveragedExemplars(:, k) = Mtrials(:, i, j);
         end
     end
-    save('TrialAveragedExemplars.mat', 'CellsTrialAveragedExemplars', 'StimID2');
-else
-    load('TrialAveragedExemplars.mat');
+%     save('TrialAveragedExemplars.mat', 'CellsTrialAveragedExemplars', 'StimID2');
+% else
+%     load('TrialAveragedExemplars.mat');
+% end
+if coerce_switch == 1
+    StimID2_Coerce = zeros(length(StimID2), 1);
+    for i = 1:length(StimID2)
+        if StimID2(i) == 1 || StimID2(i) == 10
+            StimID2_Coerce(i) = StimID2(i);
+        elseif StimID2(i) == 2 || StimID2(i) == 3 || StimID2(i) == 4 || StimID2(i) == 5 || StimID2(i) == 11 || StimID2(i) == 12 || StimID2(i) == 13 || StimID2(i) == 14 || StimID2(i) == 15 || StimID2(i) == 21 || StimID2(i) == 22 || StimID2(i) == 23 || StimID2(i) == 24 || StimID2(i) == 25
+            StimID2_Coerce(i) = 1;
+        elseif StimID2(i) == 6 || StimID2(i) == 7 || StimID2(i) == 8 || StimID2(i) == 9 || StimID2(i) == 16 || StimID2(i) == 17 || StimID2(i) == 18 || StimID2(i) == 19 || StimID2(i) == 20 || StimID2(i) == 26 || StimID2(i) == 27 || StimID2(i) == 28 || StimID2(i) == 29 || StimID2(i) == 30
+            StimID2_Coerce(i) = 10;
+        else
+        end
+    end
 end
+
 if plot_switch == 1
     figure
     imagesc(CellsTrialAveragedExemplars)
@@ -134,7 +149,6 @@ if plot_switch == 1
 end
                                                                             % CellsTrialAveragedExemplars is cells x (stim * reps) and only has stimuli 1 and 10 (BA and DA)
                                                                             % CellsTrialAveragedExemplars is designed to be input for classification learner
-
 stims = [1:30];                                                             % Set stims for constructing table if needed
 if ~exist('CellsTrialAveragedAllBADA.mat', 'file')
     clear response CellsTrialAveragedAllBADA CellsTrialAveragedAllStims
@@ -157,7 +171,6 @@ if ~exist('CellsTrialAveragedAllBADA.mat', 'file')
     end
                                                                             % CellsTrialAveragedBADA is cells x (stim * reps)
                                                                             % CellsTrialAveragedBADA is designed to be input for classification learner
-    coerce_switch = 1;
     if coerce_switch == 1
         StimID3_Coerce = zeros(length(StimID3), 1);
         for i = 1:length(StimID3)
@@ -207,9 +220,9 @@ if fit_model_switch == 1
     uiwait(gcf);
 end
 
-load('ExpDataExemplarsQuarterHoldOptBayes.mat');
+load('ExpDataAllBADAOptTree.mat');
 if context_switch == 1
-    yfit = ExpDataExemplarsQuarterHoldOptBayes.predictFcn(CellsTrialAveragedAllStims);
+    yfit = ExpDataAllBADAOptTree.predictFcn(CellsTrialAveragedAllStims);
 elseif context_switch == 0
     yfit = Group12ExemplarsLinDisc.predictFcn(CellsTrialAveragedBADA);
 end
@@ -225,7 +238,7 @@ for i = 1:length(yfit)
         confusionmatrixallstims(curr_TrueStimID, 2) = confusionmatrixallstims(curr_TrueStimID, 2) + 1;
     end
 end
-for j = 1:30                                                                %  or length(confusionmatrixallstims)
+for j = 1:30                                                                % or length(confusionmatrixallstims)
     confusionmatrixallstims(j, 3) = confusionmatrixallstims(j, 2)/(confusionmatrixallstims(j, 1) + confusionmatrixallstims(j, 2));
 end
 
