@@ -2,7 +2,7 @@
 
 clear
 tic
-cd('/Users/sammehan/Documents/Wehr Lab/SpeechContext2021/Data') % Set directory
+cd('/Users/sammehan/Documents/Wehr Lab/SpeechContext2021/Synthetic Test Data') % Set directory
 
 %%% Settings
 group = 'Group12';                                                           % What subdirectory in here?
@@ -27,6 +27,11 @@ else
     nreps = 40;
 end
 
+for i = 1:length(data)
+    data(i).M1OFF = data(i).M1OFF([1 3 4 5 6 7 8 9 10 2 11 13 14 15 16 17 18 19 20 12 21 23 24 25 26 27 28 29 30 22], :, :, :);
+    data(i).mM1OFF = data(i).mM1OFF([1 3 4 5 6 7 8 9 10 2 11 13 14 15 16 17 18 19 20 12 21 23 24 25 26 27 28 29 30 22], :, :);
+end
+
 % trial-averaged
 if ~exist('CellsByStimDatatable.mat', 'file')
     start = 190;
@@ -38,8 +43,7 @@ if ~exist('CellsByStimDatatable.mat', 'file')
             spikecount = length(find(spiketimes >= start & spiketimes <= stop));
             sc(k) = spikecount;
         end
-        scsorted = sc([1 3 4 5 6 7 8 9 10 2 11 13 14 15 16 17 18 19 20 12 21 23 24 25 26 27 28 29 30 22]);
-        cellsbystim_datatable(j,:) = scsorted;
+        cellsbystim_datatable(j,:) = sc;
     end
     save('CellsByStimDatatable.mat', 'cellsbystim_datatable', 'scsorted');
 else
@@ -81,9 +85,7 @@ if ~exist('TotalTrials&MTrials.mat', 'file')
                 sc(k, rep) = spikecount;
             end
         end
-        scsorted = sc([1 3 4 5 6 7 8 9 10 2 11 13 14 15 16 17 18 19 20 12 21 23 24 25 26 27 28 29 30 22], :);
-        Mtrials(j,:,:) = scsorted;
-        % Mtrials is cells x stimulus x rep
+        Mtrials(j,:,:) = sc;                                                % Mtrials is cells x stimulus x rep
         TotalTrialsByStim = [TotalTrialsByStim scsorted];
     end
     save('TotalTrials&MTrials.mat', 'TotalTrialsByStim', 'Mtrials');
@@ -179,9 +181,9 @@ if fit_model_switch == 1
     uiwait(gcf);
 end
 
-load('testLinDisc.mat');
+load('Group12ExemplarsLinSVM.mat');
 % if no_context_switch == 0
-    yfit = testLinDisc.predictFcn(CellsTrialAveragedAllStims);
+    yfit = Group12ExemplarsLinSVM.predictFcn(CellsTrialAveragedAllStims);
 % elseif no_context_switch == 1
 %     yfit = Group12ExemplarsLinDisc.predictFcn(CellsTrialAveragedBADA);
 % end
