@@ -12,7 +12,7 @@ fit_model_switch = 0;                                                       % Do
 coerce_switch = 1;                                                          % Do you want to make a new set of labels with all stims fit to BA or DA? (KEEP AT 1)
 consonant_switch = 1;                                                       % Do you want to look at spikes during the whole consonant-vowel pair or just the consonant?
 multi_bin_switch = 1;                                                       % Do you want to break the trials down in time?
-% load_override_switch = 1;                                                   % Ignore loading a previous table in order to make a new one
+load_override_switch = 0;                                                   % Ignore loading a previous table in order to make a new one
 
 if ~exist('ExpDataTable.mat', 'file')
     d = dir('outPSTH*.mat');
@@ -50,7 +50,7 @@ if multi_bin_switch == 1
     time_intervals = [start int_1 int_2 stop];
 else
 end
-if ~exist('CellsByStimDatatable.mat', 'file')
+if ~exist('CellsByStimDatatable.mat', 'file') || load_override_switch == 1
     for j = 1:length(data)
         mM1OFF = data(j).mM1OFF(:,2,2,1);
         for k = 1:length(mM1OFF)
@@ -68,9 +68,9 @@ if ~exist('CellsByStimDatatable.mat', 'file')
         cellsbystim_datatable(j,:) = sc;
         sc = [];
     end
-    if consonant_switch == 0
+    if consonant_switch == 0 && load_override_switch == 0
         save('CellsByStimDatatable.mat', 'cellsbystim_datatable', 'time_intervals');
-    elseif consonant_switch == 1
+    elseif consonant_switch == 1 && load_override_switch == 0
         save('CellsByStimDatatableConsonantBinned.mat', 'cellsbystim_datatable', 'time_intervals');
     end
 else
@@ -111,8 +111,7 @@ end
 % Single trials
 
 iExclude = 0;
-num_bins = nreps * interval_factor;
-if ~exist('TotalTrials&MTrials.mat', 'file')
+if ~exist('TotalTrials&MTrials.mat', 'file') || load_override_switch == 1
     TotalTrialsByStim = [];
     for j = 1:length(data)
         M1OFF = data(j).M1OFF(:,2,2,:);
@@ -143,14 +142,16 @@ if ~exist('TotalTrials&MTrials.mat', 'file')
         end    
     end
     StimList = (1:30)';
-    if consonant_switch == 0 && multi_bin_switch == 0
-        save('TotalTrials&MTrials.mat', 'TotalTrialsByStim', 'Mtrials', 'StimList');
-    elseif consonant_switch == 1 && multi_bin_switch == 0
-        save('TotalTrials&MTrialsConsonant.mat', 'TotalTrialsByStim', 'Mtrials', 'StimList');
-    elseif consonant_switch == 0 && multi_bin_switch == 1
-        save('TotalTrials&MTrialsBinned.mat', 'TotalTrialsByStim', 'Mtrials', 'StimList', 'time_intervals');
-    elseif consonant_switch == 1 && multi_bin_switch == 1
-        save('TotalTrials&MTrialsConsonantBinned.mat', 'TotalTrialsByStim', 'Mtrials', 'StimList', 'time_intervals');
+    if load_override_switch == 0
+        if consonant_switch == 0 && multi_bin_switch == 0
+            save('TotalTrials&MTrials.mat', 'TotalTrialsByStim', 'Mtrials', 'StimList');
+        elseif consonant_switch == 1 && multi_bin_switch == 0
+            save('TotalTrials&MTrialsConsonant.mat', 'TotalTrialsByStim', 'Mtrials', 'StimList');
+        elseif consonant_switch == 0 && multi_bin_switch == 1
+            save('TotalTrials&MTrialsBinned.mat', 'TotalTrialsByStim', 'Mtrials', 'StimList', 'time_intervals');
+        elseif consonant_switch == 1 && multi_bin_switch == 1
+            save('TotalTrials&MTrialsConsonantBinned.mat', 'TotalTrialsByStim', 'Mtrials', 'StimList', 'time_intervals');
+        end
     end
 else
     if consonant_switch == 0 && multi_bin_switch == 0
@@ -177,7 +178,7 @@ if plot_switch == 1
 end
 
 
-if ~exist('TrialAveragedExemplars.mat', 'file')  
+if ~exist('TrialAveragedExemplars.mat', 'file') || load_override_switch == 1
     clear response CellsTrialAveragedExemplars
     CellsTrialAveragedExemplars = [];
     k = 1;
@@ -216,25 +217,27 @@ if ~exist('TrialAveragedExemplars.mat', 'file')
             end
         end
     end
-    if multi_bin_switch == 0
-        if coerce_switch == 0 && consonant_switch == 0
-            save('TrialAveragedExemplars.mat', 'CellsTrialAveragedExemplars', 'StimID2');
-        elseif coerce_switch == 1 && consonant_switch == 0
-            save('TrialAveragedExemplars.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'StimID2_Coerce');
-        elseif coerce_switch == 0 && consonant_switch == 1
-            save('TrialAveragedExemplarsConsonant.mat', 'CellsTrialAveragedExemplars', 'StimID2');
-        elseif coerce_switch == 1 && consonant_switch == 1
-            save('TrialAveragedExemplarsConsonant.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'StimID2_Coerce');
-        end
-    elseif multi_bin_switch == 1
-        if coerce_switch == 0 && consonant_switch == 0
-            save('TrialAveragedExemplarsBinned.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'time_intervals');
-        elseif coerce_switch == 1 && consonant_switch == 0
-            save('TrialAveragedExemplarsBinned.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'StimID2_Coerce', 'time_intervals');
-        elseif coerce_switch == 0 && consonant_switch == 1
-            save('TrialAveragedExemplarsConsonantBinned.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'time_intervals');
-        elseif coerce_switch == 1 && consonant_switch == 1
-            save('TrialAveragedExemplarsConsonantBinned.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'StimID2_Coerce', 'time_intervals');
+    if load_override_switch == 0
+        if multi_bin_switch == 0
+            if coerce_switch == 0 && consonant_switch == 0
+                save('TrialAveragedExemplars.mat', 'CellsTrialAveragedExemplars', 'StimID2');
+            elseif coerce_switch == 1 && consonant_switch == 0
+                save('TrialAveragedExemplars.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'StimID2_Coerce');
+            elseif coerce_switch == 0 && consonant_switch == 1
+                save('TrialAveragedExemplarsConsonant.mat', 'CellsTrialAveragedExemplars', 'StimID2');
+            elseif coerce_switch == 1 && consonant_switch == 1
+                save('TrialAveragedExemplarsConsonant.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'StimID2_Coerce');
+            end
+        elseif multi_bin_switch == 1
+            if coerce_switch == 0 && consonant_switch == 0
+                save('TrialAveragedExemplarsBinned.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'time_intervals');
+            elseif coerce_switch == 1 && consonant_switch == 0
+                save('TrialAveragedExemplarsBinned.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'StimID2_Coerce', 'time_intervals');
+            elseif coerce_switch == 0 && consonant_switch == 1
+                save('TrialAveragedExemplarsConsonantBinned.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'time_intervals');
+            elseif coerce_switch == 1 && consonant_switch == 1
+                save('TrialAveragedExemplarsConsonantBinned.mat', 'CellsTrialAveragedExemplars', 'StimID2', 'StimID2_Coerce', 'time_intervals');
+            end
         end
     end
 else
@@ -259,14 +262,14 @@ end
                                                                             % CellsTrialAveragedExemplars is cells x (stim * reps) and only has stimuli 1 and 10 (BA and DA)
                                                                             % CellsTrialAveragedExemplars is designed to be input for classification learner
 stims = [1:30];                                                             % Set stims for to be trained on (should be all unless testing things)
-% if ~exist('CellsTrialAveragedAllBADA.mat', 'file')
+if ~exist('CellsTrialAveragedAllBADA.mat', 'file') || load_override_switch == 1
     clear response CellsTrialAveragedAllBADA CellsTrialAveragedAllStims
     if context_switch == 0
         CellsTrialAveragedAllBADA = [];
     elseif context_switch == 1
         CellsTrialAveragedAllStims = [];
     end
-    k = 0;
+    k = 1;
     for i = stims
         if multi_bin_switch == 0
             for j = 1:nreps
@@ -308,30 +311,32 @@ stims = [1:30];                                                             % Se
             end
         end
     end
-    if multi_bin_switch == 1
-        save('CellsTrialAveragedBinnedAllStims.mat', 'CellsTrialAveragedAllStims', 'StimID3', 'StimID3_Coerce');
-    elseif context_switch == 0 && consonant_switch == 0
-        save('CellsTrialAveragedAllBADA.mat', 'CellsTrialAveragedAllBADA', 'StimID3', 'StimID3_Coerce');
-    elseif context_switch == 1 && consonant_switch == 0
-        save('CellsTrialAveragedAllStims.mat', 'CellsTrialAveragedAllStims', 'StimID3', 'StimID3_Coerce');
-    elseif context_switch == 0 && consonant_switch == 1
-        save('CellsTrialAveragedConsonantAllBADA.mat', 'CellsTrialAveragedAllBADA', 'StimID3', 'StimID3_Coerce');
-    elseif context_switch == 1 && consonant_switch == 1
-        save('CellsTrialAveragedConsonantAllStims.mat', 'CellsTrialAveragedAllStims', 'StimID3', 'StimID3_Coerce');
+    if load_override_switch == 0
+        if multi_bin_switch == 1
+            save('CellsTrialAveragedBinnedAllStims.mat', 'CellsTrialAveragedAllStims', 'StimID3', 'StimID3_Coerce');
+        elseif context_switch == 0 && consonant_switch == 0
+            save('CellsTrialAveragedAllBADA.mat', 'CellsTrialAveragedAllBADA', 'StimID3', 'StimID3_Coerce');
+        elseif context_switch == 1 && consonant_switch == 0
+            save('CellsTrialAveragedAllStims.mat', 'CellsTrialAveragedAllStims', 'StimID3', 'StimID3_Coerce');
+        elseif context_switch == 0 && consonant_switch == 1
+            save('CellsTrialAveragedConsonantAllBADA.mat', 'CellsTrialAveragedAllBADA', 'StimID3', 'StimID3_Coerce');
+        elseif context_switch == 1 && consonant_switch == 1
+            save('CellsTrialAveragedConsonantAllStims.mat', 'CellsTrialAveragedAllStims', 'StimID3', 'StimID3_Coerce');
+        end
     end
-% else
-%     if multi_bin_switch == 1
-%         load('CellsTrialAveragedBinnedAllStims.mat');
-%     elseif context_switch == 1 && consonant_switch == 0
-%         load('CellsTrialAveragedAllStims.mat');
-%     elseif context_switch == 0 && consonant_switch == 0
-%         load('CellsTrialAveragedAllBADA.mat');
-%     elseif context_switch == 0 && consonant_switch == 1
-%         load('CellsTrialAveragedConsonantAllBADA.mat');
-%     elseif context_switch == 1 && consonant_switch == 1
-%         load('CellsTrialAveragedConsonantAllStims.mat');
-%     end
-% end
+else
+    if multi_bin_switch == 1
+        load('CellsTrialAveragedBinnedAllStims.mat');
+    elseif context_switch == 1 && consonant_switch == 0
+        load('CellsTrialAveragedAllStims.mat');
+    elseif context_switch == 0 && consonant_switch == 0
+        load('CellsTrialAveragedAllBADA.mat');
+    elseif context_switch == 0 && consonant_switch == 1
+        load('CellsTrialAveragedConsonantAllBADA.mat');
+    elseif context_switch == 1 && consonant_switch == 1
+        load('CellsTrialAveragedConsonantAllStims.mat');
+    end
+end
 if plot_switch == 1
     if context_switch == 0
         figure
@@ -356,9 +361,9 @@ if fit_model_switch == 1
     uiwait(gcf);
 end
 % Switch stop time to be phoneme only and not include vowel
-load('ExpDataExemplarsQuarterHoldOptBayes.mat');
+load('ExpDataExemsCons3BinsOptDisc.mat');
 if context_switch == 1
-    yfit = ExpDataExemplarsQuarterHoldOptBayes.predictFcn(CellsTrialAveragedAllStims);
+    yfit = ExpDataExemsCons3BinsOptDisc.predictFcn(CellsTrialAveragedAllStims);
 elseif context_switch == 0
     yfit = ExpDataExemplarsLinDisc.predictFcn(CellsTrialAveragedBADA);
 end
