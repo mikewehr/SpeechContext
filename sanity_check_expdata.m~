@@ -39,16 +39,27 @@ end
 % trial-averaged
 start = 200;
 if consonant_switch == 1
-    stop = 250;
+    stop = 270;
 elseif consonant_switch == 0
     stop = 325;
 end
 if multi_bin_switch == 1
-    int_1 = 220;                                                            %Enter time intervals to bin by
-    int_2 = 233;
+    int_1 = 205;                                                            %Enter time intervals to bin by
+    int_2 = 210;
+%     int_3 = 215;
+%     int_4 = 220;
+%     int_5 = 225;
+%     int_6 = 230;
+%     int_7 = 235;
+%     int_8 = 240;
+%     int_9 = 245;
+%     int_10 = 250;
+%     int_11 = 255;
+%     int_12 = 260;
+%     int_13 = 265;
     interval_factor = length(whos('int_*')) + 1;
     sc = [];
-    time_intervals = [start int_1 int_2 stop];
+    time_intervals = [start int_1 int_2 int_3 int_4 int_5 int_6 int_7 int_8 int_9 int_10 int_11 int_12 int_13 stop];
 else
 end
 if ~exist('CellsByStimDatatable.mat', 'file') || load_override_switch == 1
@@ -60,10 +71,21 @@ if ~exist('CellsByStimDatatable.mat', 'file') || load_override_switch == 1
                 spikecount = length(find(spiketimes >= start & spiketimes <= stop));
                 sc(k) = spikecount;
             elseif multi_bin_switch == 1
-                spikecount_int_1 = length(find(spiketimes >= start & spiketimes <= int_1));
+                spikecount_int_1 = length(find(spiketimes >= start & spiketimes <= stop));
                 spikecount_int_2 = length(find(spiketimes >= int_1 & spiketimes <= int_2));
-                spikecount_int_3 = length(find(spiketimes >= int_2 & spiketimes <= stop));
-                sc = [sc spikecount_int_1 spikecount_int_2 spikecount_int_3];
+                spikecount_int_3 = length(find(spiketimes >= int_2 & spiketimes <= int_3));
+                spikecount_int_4 = length(find(spiketimes >= int_3 & spiketimes <= int_4));
+                spikecount_int_5 = length(find(spiketimes >= int_4 & spiketimes <= int_5));
+                spikecount_int_6 = length(find(spiketimes >= int_5 & spiketimes <= int_6));
+                spikecount_int_7 = length(find(spiketimes >= int_6 & spiketimes <= int_7));
+                spikecount_int_8 = length(find(spiketimes >= int_7 & spiketimes <= int_8));
+                spikecount_int_9 = length(find(spiketimes >= int_8 & spiketimes <= int_9));
+                spikecount_int_10 = length(find(spiketimes >= int_9 & spiketimes <= int_10));
+                spikecount_int_11 = length(find(spiketimes >= int_10 & spiketimes <= int_11));
+                spikecount_int_12 = length(find(spiketimes >= int_11 & spiketimes <= int_12));
+                spikecount_int_13 = length(find(spiketimes >= int_12 & spiketimes <= int_13));
+                spikecount_int_14 = length(find(spiketimes >= int_13 & spiketimes <= stop));
+                sc = [sc spikecount_int_1 spikecount_int_2 spikecount_int_3 spikecount_int_4 spikecount_int_5 spikecount_int_6 spikecount_int_7 spikecount_int_8 spikecount_int_9 spikecount_int_10 spikecount_int_11 spikecount_int_12 spikecount_int_13 spikecount_int_14];
             end
         end
         cellsbystim_datatable(j,:) = sc;
@@ -127,10 +149,32 @@ if ~exist('TotalTrials&MTrials.mat', 'file') || load_override_switch == 1
                     elseif multi_bin_switch == 1
                         spikecount_int_1 = length(find(spiketimes >= start & spiketimes <= int_1));
                         spikecount_int_2 = length(find(spiketimes >= int_1 & spiketimes <= int_2));
-                        spikecount_int_3 = length(find(spiketimes >= int_2 & spiketimes <= stop));
+                        spikecount_int_3 = length(find(spiketimes >= int_2 & spiketimes <= int_3));
+                        spikecount_int_4 = length(find(spiketimes >= int_3 & spiketimes <= int_4));
+                        spikecount_int_5 = length(find(spiketimes >= int_4 & spiketimes <= int_5));
+                        spikecount_int_6 = length(find(spiketimes >= int_5 & spiketimes <= int_6));
+                        spikecount_int_7 = length(find(spiketimes >= int_6 & spiketimes <= int_7));
+                        spikecount_int_8 = length(find(spiketimes >= int_7 & spiketimes <= int_8));
+                        spikecount_int_9 = length(find(spiketimes >= int_8 & spiketimes <= int_9));
+                        spikecount_int_10 = length(find(spiketimes >= int_9 & spiketimes <= int_10));
+                        spikecount_int_11 = length(find(spiketimes >= int_10 & spiketimes <= int_11));
+                        spikecount_int_12 = length(find(spiketimes >= int_11 & spiketimes <= int_12));
+                        spikecount_int_13 = length(find(spiketimes >= int_12 & spiketimes <= int_13));
+                        spikecount_int_14 = length(find(spiketimes >= int_13 & spiketimes <= stop));
                         sc(k, index) = spikecount_int_1;
                         sc(k, index + 1) = spikecount_int_2;
                         sc(k, index + 2) = spikecount_int_3;
+                        sc(k, index + 3) = spikecount_int_4;
+                        sc(k, index + 4) = spikecount_int_5;
+                        sc(k, index + 5) = spikecount_int_6;
+                        sc(k, index + 6) = spikecount_int_7;
+                        sc(k, index + 7) = spikecount_int_8;
+                        sc(k, index + 8) = spikecount_int_9;
+                        sc(k, index + 9) = spikecount_int_10;
+                        sc(k, index + 10) = spikecount_int_11;
+                        sc(k, index + 11) = spikecount_int_12;
+                        sc(k, index + 12) = spikecount_int_13;
+                        sc(k, index + 13) = spikecount_int_14;
                         index = index + interval_factor;
                     end
                 end
@@ -196,9 +240,31 @@ if ~exist('TrialAveragedExemplars.mat', 'file') || load_override_switch == 1
                     StimID2(k) = i;
                     StimID2(k + 1) = i;
                     StimID2(k + 2) = i;
+                    StimID2(k + 3) = i;
+                    StimID2(k + 4) = i;
+                    StimID2(k + 5) = i;
+                    StimID2(k + 6) = i;
+                    StimID2(k + 7) = i;
+                    StimID2(k + 8) = i;
+                    StimID2(k + 9) = i;
+                    StimID2(k + 10) = i;
+                    StimID2(k + 11) = i;
+                    StimID2(k + 12) = i;
+                    StimID2(k + 13) = i;
                     CellsTrialAveragedExemplars(:, k) = Mtrials(:, i, j);
                     CellsTrialAveragedExemplars(:, k + 1) = Mtrials(:, i, (j + 1));
                     CellsTrialAveragedExemplars(:, k + 2) = Mtrials(:, i, (j + 2));
+                    CellsTrialAveragedExemplars(:, k + 3) = Mtrials(:, i, (j + 3));
+                    CellsTrialAveragedExemplars(:, k + 4) = Mtrials(:, i, (j + 4));
+                    CellsTrialAveragedExemplars(:, k + 5) = Mtrials(:, i, (j + 5));
+                    CellsTrialAveragedExemplars(:, k + 6) = Mtrials(:, i, (j + 6));
+                    CellsTrialAveragedExemplars(:, k + 7) = Mtrials(:, i, (j + 7));
+                    CellsTrialAveragedExemplars(:, k + 8) = Mtrials(:, i, (j + 8));
+                    CellsTrialAveragedExemplars(:, k + 9) = Mtrials(:, i, (j + 9));
+                    CellsTrialAveragedExemplars(:, k + 10) = Mtrials(:, i, (j + 10));
+                    CellsTrialAveragedExemplars(:, k + 11) = Mtrials(:, i, (j + 11));
+                    CellsTrialAveragedExemplars(:, k + 12) = Mtrials(:, i, (j + 12));
+                    CellsTrialAveragedExemplars(:, k + 13) = Mtrials(:, i, (j + 13));
                     k = k + interval_factor;
                 else
                 end
@@ -288,9 +354,31 @@ if ~exist('CellsTrialAveragedAllBADA.mat', 'file') || load_override_switch == 1
                     StimID3(k) = i;
                     StimID3(k + 1) = i;
                     StimID3(k + 2) = i;
+                    StimID3(k + 3) = i;
+                    StimID3(k + 4) = i;
+                    StimID3(k + 5) = i;
+                    StimID3(k + 6) = i;
+                    StimID3(k + 7) = i;
+                    StimID3(k + 8) = i;
+                    StimID3(k + 9) = i;
+                    StimID3(k + 10) = i;
+                    StimID3(k + 11) = i;
+                    StimID3(k + 12) = i;
+                    StimID3(k + 13) = i;
                     CellsTrialAveragedAllStims(:, k) = Mtrials(:, i, j);
                     CellsTrialAveragedAllStims(:, k + 1) = Mtrials(:, i, j + 1);
                     CellsTrialAveragedAllStims(:, k + 2) = Mtrials(:, i, j + 2);
+                    CellsTrialAveragedAllStims(:, k + 3) = Mtrials(:, i, j + 3);
+                    CellsTrialAveragedAllStims(:, k + 4) = Mtrials(:, i, j + 4);
+                    CellsTrialAveragedAllStims(:, k + 5) = Mtrials(:, i, j + 5);
+                    CellsTrialAveragedAllStims(:, k + 6) = Mtrials(:, i, j + 6);
+                    CellsTrialAveragedAllStims(:, k + 7) = Mtrials(:, i, j + 7);
+                    CellsTrialAveragedAllStims(:, k + 8) = Mtrials(:, i, j + 8);
+                    CellsTrialAveragedAllStims(:, k + 9) = Mtrials(:, i, j + 9);
+                    CellsTrialAveragedAllStims(:, k + 10) = Mtrials(:, i, j + 10);
+                    CellsTrialAveragedAllStims(:, k + 11) = Mtrials(:, i, j + 11);
+                    CellsTrialAveragedAllStims(:, k + 12) = Mtrials(:, i, j + 12);
+                    CellsTrialAveragedAllStims(:, k + 13) = Mtrials(:, i, j + 13);
                     k = k + interval_factor;
                 else
                 end
