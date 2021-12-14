@@ -165,8 +165,8 @@ p=0;
 % subplot1(numsourcefiles,1, 'Max', [.95 .9])
 for sourcefileindex=1:numsourcefiles
     p=p+1;
-figure
-% subplot1(p)
+    figure
+    % subplot1(p)
     hold on
     spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
     X=xlimits(1):binwidth:xlimits(2); %specify bin centers
@@ -175,6 +175,7 @@ figure
     N=1000*N./binwidth; %normalize to spike rate in Hz
     offset=0;
     yl=ylimits;
+    xlabel('time, ms')
     inc=(yl(2))/max(max(max(nreps)));
     if rasters==1
         for n=1:nrepsOFF(sourcefileindex, aindex, dindex)
@@ -228,19 +229,19 @@ figure
         h=title(sprintf('%s: \ntetrode%d cell%d %dms, nreps: %d-%d, OFF',datadir,out.channel,out.cluster,durs(dindex),min(min(min(nrepsOFF))),max(max(max(nrepsOFF)))));
         set(h, 'HorizontalAlignment', 'center', 'interpreter', 'none', 'fontsize', fs, 'fontw', 'normal')
     end
-        vpos=mean(ylimits);
-    text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
-
-end
-
-%label amps and freqs
-p=0;
-for sourcefileindex=1:numsourcefiles
-    p=p+1;
-%     subplot1(p)
     vpos=mean(ylimits);
     text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
+    
 end
+
+% %label amps and freqs
+% p=0;
+% for sourcefileindex=1:numsourcefiles
+%     p=p+1;
+%     %     subplot1(p)
+%     vpos=mean(ylimits);
+%     text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
+% end
 
 if IL
     %plot the mean tuning curve ON
@@ -298,12 +299,12 @@ if IL
         
         ylimits2(2)=ylimits(2)+offset;
         ylimits2(2)=2*ylimits(2);
-try
-    ylim(ylimits2)
-catch 
-    ylim auto
-end
-%                 ylim([-2 1.1*(yl(2)+offset)])
+        try
+            ylim(ylimits2)
+        catch
+            ylim auto
+        end
+        %                 ylim([-2 1.1*(yl(2)+offset)])
         
         if 0*LaserRecorded
             for rep=1:nrepsON(sourcefileindex, aindex, dindex)
@@ -332,25 +333,25 @@ end
         % set(gca, 'yticklabel', '')
         
     end
-subplot1(1)
-h=title(sprintf('%s: \ntetrode%d cell%d %dms, nreps: %d-%d, ON',datadir,out.channel,out.cluster,durs(dindex),min(min(min(nrepsON))),max(max(max(nrepsON)))));
-set(h, 'HorizontalAlignment', 'center', 'interpreter', 'none', 'fontsize', fs, 'fontw', 'normal')
-
-%label amps and freqs
-p=0;
-for sourcefileindex=1:numsourcefiles
-    p=p+1;
-    subplot1(p)
-    vpos=mean(ylimits);
-    text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
-end
-
+    subplot1(1)
+    h=title(sprintf('%s: \ntetrode%d cell%d %dms, nreps: %d-%d, ON',datadir,out.channel,out.cluster,durs(dindex),min(min(min(nrepsON))),max(max(max(nrepsON)))));
+    set(h, 'HorizontalAlignment', 'center', 'interpreter', 'none', 'fontsize', fs, 'fontw', 'normal')
+    
+    %label amps and freqs
+    p=0;
+    for sourcefileindex=1:numsourcefiles
+        p=p+1;
+        subplot1(p)
+        vpos=mean(ylimits);
+        text(xlimits(1), vpos, sprintf('%s', sourcefiles{sourcefileindex}), 'interpreter', 'none')
+    end
+    
 end %if IL
 
 
 fprintf('\nlist of sourcefiles:')
 for sourcefileindex=1:numsourcefiles
-fprintf('\n%s',    sourcefiles{sourcefileindex})
+    fprintf('\n%s',    sourcefiles{sourcefileindex})
 end
 % 1:10: ba-da
 % 11:20: iba-ida
@@ -363,8 +364,8 @@ cmap=jet(10);
 figure
 c=0;
 for sourcefileindex=order
-c=c+1;
-fprintf('\n%s',    sourcefiles{sourcefileindex})
+    c=c+1;
+    fprintf('\n%s',    sourcefiles{sourcefileindex})
     hold on
     spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
     X=xlimits(1):binwidth:xlimits(2); %specify bin centers
@@ -375,13 +376,13 @@ fprintf('\n%s',    sourcefiles{sourcefileindex})
     bada(c)=max(N(peakidx));
     set(b, 'color', cmap(c,:), 'linewid', 2);
 end
-legend ('ba', '', '','','','','','','','da')  
+legend ('ba', '', '','','','','','','','da')
 title('ba-da')
 
 figure
 c=0;
 for sourcefileindex=order+10
-c=c+1;
+    c=c+1;
     hold on
     spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
     X=xlimits(1):binwidth:xlimits(2); %specify bin centers
@@ -392,14 +393,14 @@ c=c+1;
     ibaida(c)=max(N(peakidx));
     set(b, 'color', cmap(c,:), 'linewid', 2);
 end
-legend ('ba', '', '','','','','','','','da')  
+legend ('ba', '', '','','','','','','','da')
 title('iba-ida')
 
 figure
 c=0;
 for sourcefileindex=order+20
- c=c+1;
-   hold on
+    c=c+1;
+    hold on
     spiketimes1=mM1OFF(sourcefileindex, aindex, dindex).spiketimes;
     X=xlimits(1):binwidth:xlimits(2); %specify bin centers
     [N, x]=hist(spiketimes1, X);
@@ -411,7 +412,7 @@ for sourcefileindex=order+20
 end
 xlabel('time, ms')
 title('uba-uda')
-legend ('ba', '', '','','','','','','','da')  
+legend ('ba', '', '','','','','','','','da')
 figure
 hold on
 x=1:10;

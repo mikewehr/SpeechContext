@@ -1,7 +1,7 @@
 
 
 tic
-cd('/Users/sammehan/Documents/Wehr Lab/SpeechContext2021/Synthetic Outfiles')
+cd('D:\lab\djmaus\Data\sfm\synthetic_SpeechContext_data\Group12')
 d = dir('outPSTH*.mat');
 
 for i = 1:length(d)
@@ -12,5 +12,8 @@ for i = 1:length(d)
     data(i).mM1OFF = out.out.mM1OFF;
 end
 
-save('ExpDataTable', 'data');
+try
+    save('ExpDataTable', 'data');
+catch
+end
 toc
