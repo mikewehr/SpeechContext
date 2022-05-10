@@ -12,12 +12,12 @@ end
 
 % % Preprocessing of Raster Data
 
-rasterdir = 'F:\Data\sfm\RasterFiles';                        % Enter dir with rastered data if skipping the step from above - SFM 9/8/21
+rasterdir = 'F:\Data\sfm\Synthetic Test Data\Group6';                        % Enter dir with rastered data if skipping the step from above - SFM 9/8/21
 cd(rasterdir)
 rasterlist = dir('*.mat');
 preprocess_switch = 1;
 decompression_switch = 0;
-real_data = 1;                                                % Binary switch on whether to organize synthetic data, won't work with real data - SFM 9/13/21
+real_data = 0;                                                % Binary switch on whether to organize synthetic data, won't work with real data - SFM 9/13/21
 
 
 if real_data == 0
@@ -91,10 +91,10 @@ start_time_samp = round((start_time/1000) * samprate);
 end_time_samp = round((end_time/1000) * samprate);
 hertzconv = round((1 / ((end_time - start_time) / 1000)), 2);   % Factor to multiple spike counts by to convert to Hertz - SFM 9/9/21
 hertzconv_switch = 0;                                           % Switch on whether to convery spike counts to Hz - SFM 9/10/21
-min_reps = 100;                                                 % Set minimum number of repetitions each cell needs to have to be included - SFM 9/14/21
+min_reps = 40;                                                 % Set minimum number of repetitions each cell needs to have to be included - SFM 9/14/21
 min_indices = min_reps * length(uniquestimuli);
 
-list_of_stims_to_use = uniquestims(1:30);
+list_of_stims_to_use = {uniquestims{1}, uniquestims{10}};
 % list_of_stims_to_use = {uniquestims{1}, uniquestims{10}, uniquestims{11}, uniquestims{20}, uniquestims{21}, uniquestims{30}}; 
 
 split_switch = 0;                                               % Binary on whether to create training and test split tables or one big table - SFM 9/10/21
@@ -232,11 +232,11 @@ stim_name = 'BA-DA';
 if split_switch == 1
     datatable_supervised = table(datatable_train);
     datatable_unsupervised = table(datatable_test);
-    %true_stims = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
+%     true_stims = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
     datatable_supervised = addvars(datatable_unsupervised, true_stims);
 else
     datatable_unsupervised = table(datatable);
-%     true_stims_synth6_19 = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
+    true_stims_synth6_19 = {'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'DA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA', 'BA'}';
 %    true_stims = {'IBA', 'UDA', 'UDA', 'IBA', 'BA', 'DA', 'DA', 'BA', 'BA', 'IDA', 'UBA', 'DA', 'DA', 'UDA', 'IBA', 'DA', 'IDA', 'BA', 'UBA', 'UBA', 'IDA', 'UDA', 'UDA', 'UBA', 'IDA', 'IBA', 'UBA', 'IBA', 'UBA', 'IDA', 'IBA', 'DA', 'BA'}';
     %BA/DA
 %     Stim = {'BA', 'DA', 'DA', 'BA', 'DA', 'DA', 'DA', 'BA', 'DA', 'BA'}';
@@ -244,7 +244,7 @@ else
 %     Stim = {'BA', 'BA', 'DA', 'BA', 'DA', 'DA', 'DA', 'BA', 'BA', 'DA', 'BA'}';
     %UBA/UDA
 %     Stim = {'DA', 'DA', 'BA', 'BA', 'DA', 'BA', 'BA', 'DA', 'DA', 'BA', 'BA', 'BA'}';
-%     datatable_supervised = addvars(datatable_unsupervised, Stim);
+    datatable_supervised = addvars(datatable_unsupervised, true_stims_synth6_19);
 end
 
 groupname = strsplit(rasterdir, '\');
