@@ -1,0 +1,36 @@
+
+
+%masterdirs = list of dirs to analyze
+
+for i = 1:length(masterdirs)
+    cd(masterdirs{1});
+    load('dirs.mat', 'notebook.mat')
+    masterstimlog = stimlog;
+    for j = 2:length(dirs)
+        cd(dirs{j})
+        load('notebook.mat')
+        for field = fieldnames(stimlog)
+            fname = field{1};
+            masterstimlog.(fname) = vertcat(stimlog.(fname));
+        end 
+    end
+    fields = {'LaserOnOff', 'LaserStart', 'LaserWidth', 'LaserNumPulses', 
+    masterstimlog = masterstimlog
+    load('rez.mat');
+    
+    
+    
+end
+
+
+for i = 1:length(masterdirs)
+    cd(masterdirs{i});
+    SortedUnits = load(dir('SortedUnits*'));
+    temp_strsplit = strsplit(SortedUnits(1).dir, '-');
+    mouseID = temp_strsplit{end};
+    SortedUnits(end, :) = mouseID;
+    savename = strcat('SortedUnits', num2str(mouseID));
+    load('RecLengths.mat');
+    save(savename, 'SortedUnits', 'L')
+end
+
