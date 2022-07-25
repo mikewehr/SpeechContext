@@ -11,11 +11,19 @@ function [ProcessedDatatable] = makeProcessedDatatable(varargin)
         EphysPath = masterdirs{i};
         temp_string = strsplit(EphysPath, '\');
         LocalDataRoot = strcat(temp_string{1}, '\', temp_string{2}, '\', temp_string{3}, '\');
+        temp_str = strsplit(EphysPath, '-');
+        mouseID = temp_str{end};
         load('dirs.mat');
         for i = 1:length(dirs)
             [SortedUnitsFile] = ProcessSpikes(dirs{i}, LocalDataRoot);
+            if i == 1
+                SortedUnits = SortedUnitsFiles;
+            end
+            for j = 1:length(SortedUnits)
+                SortedUnits(j).spiketimes = [SortedUnits(j).spiketimes SortedUnitsFile(j).spiketimes];
+            end
+            clear SortedUnitsFile
         end
-        
         try
             load(fullfile(MasterDir,'RecLengths.mat'))
         catch
@@ -25,11 +33,11 @@ function [ProcessedDatatable] = makeProcessedDatatable(varargin)
             L=(rez.ops.recLength)/sp.sample_rate;
             save(fullfile(MasterDir,'RecLengths.mat'),'L')
         end
-        
-        temp_str = strsplit(EphysPath, '-');
-        mouseID = temp_str{end};
+        savename = strcat('SortedUnits-', mouseID);
+        save(fullfile(MasterDir, savename), 'L');
 
-        [Events, StartAcquisitionSec] = ProcessEvents(pwd);
+        [Events, StartAcquisitionSec] = ProcessEvents(MasterDir);
+        
         if strcmp(Events(1).type, 'soundfile') == 1
             MasterEvents.Speech = Events;
             fieldnames_speech = fieldnames(MasterEvents.Speech);
