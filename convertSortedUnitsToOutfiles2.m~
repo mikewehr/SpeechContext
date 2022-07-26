@@ -6,6 +6,7 @@ all_SortedUnits = dir('SortedUnits*');
 
 
 for i = 1:length(all_SortedUnits)
+    clear MasterEvents SortedUnits StartAcquisitionSec
     load(all_MasterEvents(i).name);
     load(all_SortedUnits(i).name);
     clear all_sourcefiles
@@ -23,10 +24,10 @@ for i = 1:length(all_SortedUnits)
         stim_ID(j) = str2double(temp_string{5});
     end
     
-    data = [];
-    M1OFF = [];
-    mM1OFF = [];
-    stim_dur_ms = 363.734;
+    clear data mouse ID outfile_list 
+    data.M1OFF = [];
+    data.mM1OFF = [];
+    stim_dur_ms = MasterEvent.Speech(1).duration;                           % Assuming constant stimulus duration
     stim_dur_samp = stim_dur_ms * 30;
     temp_string = strsplit(SortedUnits(1).dir, '-');
     mouseID = temp_string{end};
@@ -36,20 +37,23 @@ for i = 1:length(all_SortedUnits)
     for j = 1:length(SortedUnits)
         outname = strcat('outPSTH_ch', num2str(SortedUnits(j).channel), 'c', num2str(SortedUnits(j).cluster));
         outfile_list{j} = outname;
-        SortedUnits(j).spikesamps = SortedUnits(j).spiketimes * 30e3;
+%         SortedUnits(j).spikesamps = SortedUnits(j).spiketimes * 30e3;
         for k = 1:length(unique_sourcefiles)
             stim_indices = find(strcmp(unique_sourcefiles{k}, {MasterEvents.Speech.sourcefile}));
             temp_spikes = [];
             for iTrial = 1:length(stim_indices)
-                curr
+                curr_spiketimes = []; adj_curr_spiketimes = []; data(j).M1OFF(k, aindex, dindex, iTrial).spiketimes = [];
                 start_time = MasterEvents.Speech(stim_indices(iTrial)).soundcard_trigger_timestamp_sec;
                 stop_time = start_time + (stim_dur_ms/1000);
                 curr_spiketimes = SortedUnits(j).spiketimes(SortedUnits(j).spiketimes >= start_time & SortedUnits(j).spiketimes <= stop_time);
-                adj_curr_spiketimes = curr_spiketimes - start_time;
-                data(j).mM1OFF(k, aindeix, dindex, iTrial).spiketimes = [adj_curr_spiketimes, data(j).mM1OFF(k, aindeix, dindex, iTrial).spiketimes];
-                temp_spikes = [temp_spikes, adj_curr_spiketimes]; 
+                if ~isempty(curr_spiketimes)
+                    adj_curr_spiketimes = curr_spiketimes - start_time;
+                    data(j).M1OFF(k, aindex, dindex, iTrial).spiketimes = [adj_curr_spiketimes data(j).M1OFF(k, aindex, dindex, iTrial).spiketimes];
+                    temp_spikes = [temp_spikes, adj_curr_spiketimes]; 
+                end
             end
-        data(j).M1OFF(k, aindex, dindex).spiketimes = temp_spikes;
+        
+        data(j).mM1OFF(k, aindex, dindex).spiketimes = sort(temp_spikes);
         end
     end
     

@@ -29,26 +29,17 @@ if multi_bin_switch == 1
 else
 end
 
-% nreps = 100;                                                                % Hard code in expected nreps since true nreps/cell can be variable
+% nreps = 100;                                                               % Hard code in expected nreps since true nreps/cell can be variable
 
 datatables = dir('ExpData*');
 for iMouse = 1:length(datatables)
     load(datatables(iMouse).name)
     for j = 1:length(data)
-        M1OFF = data(j).M1OFF;
-        for k = 1:size(M1OFF, 1)
-            spiketimes = (M1OFF(k, 2, 2).spiketimes * 1000);                     % Convert from seconds to ms
-            if multi_bin_switch == 0
-                spikecount = length(find(spiketimes >= start & spiketimes <= stop));
-                sc(k) = spikecount;
-            elseif multi_bin_switch == 1
-                spikecount_int_1 = length(find(spiketimes >= start & spiketimes <= int_1));
-                spikecount_int_2 = length(find(spiketimes >= int_1 & spiketimes <= int_2));
-                spikecount_int_3 = length(find(spiketimes >= int_2 & spiketimes <= stop));
-    %             spikecount_int_4 = length(find(spiketimes >= int_3 & spiketimes <= stop));
-    %             sc = [sc spikecount_int_1 spikecount_int_2];
-                sc = [sc spikecount_int_1 spikecount_int_2 spikecount_int_3];
-            end
+        mM1OFF = data(j).mM1OFF;
+        for k = 1:size(mM1OFF, 1)
+            spiketimes = (mM1OFF(k, 2, 2).spiketimes * 1000);                % Convert from seconds to ms
+            spikecount = length(find(spiketimes >= start & spiketimes <= stop));
+            sc(k) = spikecount;
         end
         cellsbystim_datatable(j,:) = sc;
         sc = [];

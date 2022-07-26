@@ -27,7 +27,7 @@ for i = 1:length(all_SortedUnits)
     clear data mouse ID outfile_list 
     data.M1OFF = [];
     data.mM1OFF = [];
-    stim_dur_ms = 363.734;
+    stim_dur_ms = MasterEvents.Speech(1).duration;                           % Assuming constant stimulus duration
     stim_dur_samp = stim_dur_ms * 30;
     temp_string = strsplit(SortedUnits(1).dir, '-');
     mouseID = temp_string{end};
@@ -41,13 +41,13 @@ for i = 1:length(all_SortedUnits)
         for k = 1:length(unique_sourcefiles)
             stim_indices = find(strcmp(unique_sourcefiles{k}, {MasterEvents.Speech.sourcefile}));
             temp_spikes = [];
-            for iTrial = 1:length(stim_indices)
+            for iTrial = 200:length(stim_indices)%1:length(stim_indices)
                 curr_spiketimes = []; adj_curr_spiketimes = []; data(j).M1OFF(k, aindex, dindex, iTrial).spiketimes = [];
                 start_time = MasterEvents.Speech(stim_indices(iTrial)).soundcard_trigger_timestamp_sec;
                 stop_time = start_time + (stim_dur_ms/1000);
                 curr_spiketimes = SortedUnits(j).spiketimes(SortedUnits(j).spiketimes >= start_time & SortedUnits(j).spiketimes <= stop_time);
                 if ~isempty(curr_spiketimes)
-                    adj_curr_spiketimes = curr_spiketimes - start_time;
+                    adj_curr_spiketimes = (curr_spiketimes - start_time) * 1000; %Adjust to start of trial and convert to ms
                     data(j).M1OFF(k, aindex, dindex, iTrial).spiketimes = [adj_curr_spiketimes data(j).M1OFF(k, aindex, dindex, iTrial).spiketimes];
                     temp_spikes = [temp_spikes, adj_curr_spiketimes]; 
                 end

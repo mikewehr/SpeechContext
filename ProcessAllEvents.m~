@@ -1,83 +1,47 @@
-function [ProcessedDatatable] = makeProcessedDatatable(varargin)
+function [MasterEvents] = ProcessAllEvents(varargin)
+% Run ProcessEvents across all directories for a given mouse and combine
+% them based on the master directory. Input can be a master directory string or a
+% list of master directories 
+    
+    
+    datadir = varargin;
 
-    masterdirs = varargin;
-    if isempty(varargin)
-        error('You gotta add some directories to process!')
-    end
-
-    for i = 1:length(masterdirs)
-        cd(masterdirs{i});
-        MasterDir = masterdirs{i};
-        EphysPath = masterdirs{i};
-        temp_string = strsplit(EphysPath, '\');
-        LocalDataRoot = strcat(temp_string{1}, '\', temp_string{2}, '\', temp_string{3}, '\');
-        temp_str = strsplit(EphysPath, '-');
-        mouseID = temp_str{end};
+    for iMouse = 1:length(datadir)
+        cd(datadir{iMouse});
         load('dirs.mat');
+        temp_str = strsplit(pwd, '-');
+        mouseID = temp_str{end};
+        load(fullfile(datadir{iMouse},'rez.mat'))
+        L = (rez.ops.recLength)/sp.sample_rate;
+        save(fullfile(datadir{iMouse},'RecLengths.mat'),'L')
+        sampleRate = sp.sample_rate;
         for i = 1:length(dirs)
-            [SortedUnitsFile] = ProcessSpikes(dirs{i}, LocalDataRoot);
+            [Events] = ProcessEvents(dirs{i});
+            
             if i == 1
-                SortedUnits = SortedUnitsFile;
+                if strcmp(Events(1).type, 'soundfile') == 1
+                    speech_fieldnames = fieldnames(Events);
+                    MasterEvents.Speech = Events;
+                    MasterEvents.Tuning = struct([]);
+                elseif strcmp(Events(1).type, 'tone') == 1
+                    tuning_fieldnames = fieldnames(Events);
+                    MasterEvents.Tuning = Events;
+                    MasterEvents.Speech = struct([]);
+                else
+                    error("This doesn't appear to be recording either tuning curves or speech context protocols, this function may need to be edited to include more stimulus types")
+                end
             end
-            for j = 1:length(SortedUnits)
-                SortedUnits(j).spiketimes = [SortedUnits(j).spiketimes SortedUnitsFile(j).spiketimes];
-            end
-            clear SortedUnitsFile
-        end
-        try
-            load(fullfile(MasterDir,'RecLengths.mat'))
-        catch
-            % load rez, which contains number of samples of each recording 1=1, 2=1+2,
-            % 3=1+2+3, etc
-            load(fullfile(MasterDir,'rez.mat'))
-            L=(rez.ops.recLength)/sp.sample_rate;
-            save(fullfile(MasterDir,'RecLengths.mat'),'L')
-        end
-        savename = strcat('SortedUnits-', mouseID);
-        save(fullfile(MasterDir, savename), 'L');
-
-        [Events, StartAcquisitionSec] = ProcessEvents(MasterDir);
-        save(fullfile(MasterDir, 'EventsSCT_Trigs.mat'), 'L');
-        MasterEvents = Events;
-        
-        if strcmp(Events(1).type, 'soundfile') == 1
-            MasterEvents.Speech = Events;
-            fieldnames_speech = fieldnames(MasterEvents.Speech);
-            MasterEvents.Tuning = struct([]);
-        elseif strcmp(Events(1).type, 'tone') == 1
-            MasterEvents.Tuning = Events;
-            fieldnames_tuning = fieldnames(MasterEvents.Tuning);
-            MasterEvents.Speech = struct([]);
-        else 
-            error("This doesn't appear to be recording either tuning curves or speech context protocols!")
-        end
-        InitialStartAcquisitionSec = StartAcquisitionSec;
-
-        for j = 2:length(dirs)
-            cd(dirs{j})
-            try
-                load(fullfile(MasterDir,'RecLengths.mat'))
-            catch
-                % load rez, which contains number of samples of each recording 1=1, 2=1+2,
-                % 3=1+2+3, etc
-                load(fullfile(MasterDir,'rez.mat'))
-                L=(rez.ops.recLength)/sp.sample_rate;
-                save(fullfile(MasterDir,'RecLengths.mat'),'L')
-            end
-            clear Events
-            [Events] = ProcessEvents(dirs{j});
-            save(fullfile(dirs{j}, 'EventsSCT_Trigs.mat'),  'L');
             
             if ~isempty(Events)
                 for m = 1:length(Events)
-                    Events(m).message_timestamp_sec = Events(m).message_timestamp_sec + L(j - 1);
-                    Events(m).soundcard_trigger_timestamp_sec = Events(m).soundcard_trigger_timestamp_sec + L(j - 1);
+                    Events(m).message_timestamp_sec = Events(m).message_timestamp_sec + L(i - 1);
+                    Events(m).soundcard_trigger_timestamp_sec = Events(m).soundcard_trigger_timestamp_sec + L(i - 1);
                 end
-                start_acq_samp = L(j - 1)*(30e3);                               %Shouldn't be hardcoded
+                start_acq_samp = L(i - 1)*(30e3);                               %Shouldn't be hardcoded
                 for m = 1:length(Events)
                     Events(m).message_timestamp_samples = Events(m).message_timestamp_samples + start_acq_samp;
                 end
-
+                
                 clear temp_stim_types
                 for i = 1:length(Events)
                     temp_stim_types{i} = Events(i).type;
@@ -162,11 +126,10 @@ function [ProcessedDatatable] = makeProcessedDatatable(varargin)
                     error("Unexpected number of types of stimuli, what experiment did you run?")
                 end
             end
+
+            
+            
+            
         end
-        savename = strcat(EphysPath, '\MasterEvents-', mouseID);
-        save(savename, 'MasterEvents', 'StartAcquisitionSec');
     end
-
 end
-
-
