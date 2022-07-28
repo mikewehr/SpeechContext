@@ -1,15 +1,14 @@
 % load speech context outfiles and extract spikes into a matrix
 
 clear
-tic
 cd('/Users/sammehan/Documents/Wehr Lab/SpeechContext2021/ExpData')          % Set directory
 
 %%% Settings
-plot_switch = 0;                                                            % Do you want all of the diagnostic plots (1)? (neurometric curve plots not included)
 context_switch = 1;                                                         % Do you want all trials (1) or just BA-DA (0)?
 fit_model_switch = 1;                                                       % Do you need to open Classification Learner and fit a model (1) ?
 consonant_switch = 1;                                                       % Do you want to look at spikes during the whole consonant-vowel pair (0) or just the consonant (1)?
 multi_bin_switch = 1;                                                       % Do you want to break the trials down in time (1) (Still need to hard code in new intervals)?
+% xlim = -181.8672;
 
 % trial-averaged
 start = 195;
@@ -21,68 +20,39 @@ end
 if multi_bin_switch == 1
     int_1 = 210;                                                            % Enter time intervals to bin by
     int_2 = 233;
-%     int_3 = 233;
     interval_factor = length(whos('int_*')) + 1;
     sc = [];
-%     time_intervals = [start int_1 stop];
     time_intervals = [start int_1 int_2 stop];
 else
 end
 
 % nreps = 100;                                                               % Hard code in expected nreps since true nreps/cell can be variable
-
-datatables = dir('ExpData*');
-for iMouse = 1:length(datatables)
-    load(datatables(iMouse).name)
-    for j = 1:length(data)
-        mM1OFF = data(j).mM1OFF;
-        for k = 1:size(mM1OFF, 1)
-            spiketimes = (mM1OFF(k, 2, 2).spiketimes * 1000);                % Convert from seconds to ms
-            spikecount = length(find(spiketimes >= start & spiketimes <= stop));
-            sc(k) = spikecount;
-        end
-        cellsbystim_datatable(j,:) = sc;
-        sc = [];
+load('MasterExpDataTable.mat')
+cellsbystim_datatable = [];
+for j = 1:length(masterdata)
+    Stimtimes = masterdata(j).Stimetimes;
+    for k = 1:size(Stimtimes, 1)
+        spiketimes = (Stimtimes(k).spiketimes);                
+        spikecount = length(find(spiketimes >= start & spiketimes <= stop));
+        sc(k) = spikecount;
     end
-end
-
-
-if plot_switch == 1
-    figure
-    imagesc(cellsbystim_datatable(:, 1:10))
-    colormap jet
-    xlabel('stimulus')
-    ylabel('cell')
-    title([group, ' trial-averaged'])
-
-    figure
-    plot(cellsbystim_datatable(1,1:30), cellsbystim_datatable(25,1:30), 'o')
-    ax = axis;
-    xlabel('cell 1')
-    ylabel('cell 25')
-    
-    figure
-    for i = 1:size(cellsbystim_datatable, 2)
-        text(cellsbystim_datatable(1,i), cellsbystim_datatable(25, i),int2str(i))
-    end
-    xlabel('cell 1')
-    ylabel('cell 25')
-    axis(ax)
+    cellsbystim_datatable(j,:) = sc;
+    sc = [];
 end
 
 %%%
 % Single trials
 
 iExclude = 0;
-
 TotalTrialsByStim = [];
 for j = 1:length(data)
-    M1OFF = data(j).M1OFF(:,2,2,:);
-    if size(M1OFF, 4) >= 100
-        for k = 1:size(M1OFF, 1)
+    Trialtimes = data(j).Trialtimes(:,:);
+    sc = [];
+%     if size(Trialtimes, 4) >= 100
+        for k = 1:size(Trialtimes, 1)
             index = 1;
-            for rep = 1:nreps                                           % or 1:size(M1OFF, 4)
-                spiketimes = M1OFF(k, 1, 1, rep).spiketimes;
+            for rep = 1:size(Trialtimes, 2)
+                spiketimes = Trialtimes(k, rep).spiketimes;
                 if multi_bin_switch == 0
                     spikecount = length(find(spiketimes >= start & spiketimes <= stop));
                     sc(k, rep) = spikecount;
@@ -90,21 +60,18 @@ for j = 1:length(data)
                     spikecount_int_1 = length(find(spiketimes >= start & spiketimes <= int_1));
                     spikecount_int_2 = length(find(spiketimes >= int_1 & spiketimes <= int_2));
                     spikecount_int_3 = length(find(spiketimes >= int_2 & spiketimes <= stop));
-%                     spikecount_int_4 = length(find(spiketimes >= int_3 & spiketimes <= stop));
                     sc(k, index) = spikecount_int_1;
                     sc(k, index + 1) = spikecount_int_2;
                     sc(k, index + 2) = spikecount_int_3;
-%                     sc(k, index + 3) = spikecount_int_4;
                     index = index + interval_factor;
                 end
             end
         end
         Mtrials(j,:,:) = sc;                                            % Mtrials is cells x stimulus x rep
-        TotalTrialsByStim = [TotalTrialsByStim sc];
-    else
-        iExclude = iExclude + 1;
-        list_of_cells_excluded(iExclude) = j;
-    end    
+%     else
+%         iExclude = iExclude + 1;
+%         list_of_cells_excluded(iExclude) = j;
+%     end    
 end
 StimList = (1:30)';
 
@@ -112,13 +79,6 @@ if context_switch == 0
     TotalTrialsByStim = TotalTrialsByStim(1:10, :)';
 else
     TotalTrialsByStim = TotalTrialsByStim';
-end
-if plot_switch == 1
-    figure
-    imagesc(TotalTrialsByStim)
-    xlabel('stimulus')
-    ylabel('cells and trials')
-    title([group, ' single trials'])
 end
 
 clear response CellsTrialAveragedExemplars
@@ -137,11 +97,9 @@ for i = [1 10]                                                          % Enter 
                 StimID2(k) = i;
                 StimID2(k + 1) = i;
                 StimID2(k + 2) = i;
-%                 StimID2(k + 3) = i;
                 CellsTrialAveragedExemplars(:, k) = Mtrials(:, i, j);
                 CellsTrialAveragedExemplars(:, k + 1) = Mtrials(:, i, (j + 1));
                 CellsTrialAveragedExemplars(:, k + 2) = Mtrials(:, i, (j + 2));
-%                 CellsTrialAveragedExemplars(:, k + 3) = Mtrials(:, i, (j + 3));
                 k = k + interval_factor;
             else
             end
@@ -161,16 +119,8 @@ for i = 1:length(StimID2)
     end
 end
 
-if plot_switch == 1
-    figure
-    imagesc(CellsTrialAveragedExemplars)
-    xlabel('stimuli and trials')
-    ylabel('cells')
-    title([group, ' single trials (CellsTrialAveragedExemplars)'])
-end
-                                                                            % CellsTrialAveragedExemplars is cells x (stim * reps) and only has stimuli 1 and 10 (BA and DA)
-                                                                            % CellsTrialAveragedExemplars is designed to be input for classification learner
-stims = [1:30];                                                             % Set stims for to be trained on (should be all unless testing things)
+% CellsTrialAveragedExemplars is cells x (stim * reps) and only has stimuli 1 and 10 (BA and DA)
+% CellsTrialAveragedExemplars is designed to be input for classification learner
 
 clear response CellsTrialAveragedAllBADA CellsTrialAveragedAllStims
 if context_switch == 0
@@ -196,19 +146,17 @@ for i = stims
                 StimID3(k) = i;
                 StimID3(k + 1) = i;
                 StimID3(k + 2) = i;
-%                 StimID3(k + 3) = i;
                 CellsTrialAveragedAllStims(:, k) = Mtrials(:, i, j);
                 CellsTrialAveragedAllStims(:, k + 1) = Mtrials(:, i, j + 1);
                 CellsTrialAveragedAllStims(:, k + 2) = Mtrials(:, i, j + 2);
-%                 CellsTrialAveragedAllStims(:, k + 3) = Mtrials(:, i, j + 3);
                 k = k + interval_factor;
             else
             end
         end
     end
 end
-                                                                            % CellsTrialAveragedBADA is cells x (stim * reps)
-                                                                            % CellsTrialAveragedBADA is designed to be input for classification learner
+% CellsTrialAveragedBADA is cells x (stim * reps)
+% CellsTrialAveragedBADA is designed to be input for classification learner
 
 StimID3_Coerce = zeros(length(StimID3), 1);
 for i = 1:length(StimID3)
@@ -222,65 +170,3 @@ for i = 1:length(StimID3)
     end
 end
 
-if plot_switch == 1
-    if context_switch == 0
-        figure
-        imagesc(CellsTrialAveragedBADA)
-        xlabel('stimuli and trials')
-        ylabel('cells')
-        title([group, ' single trials (CellsTrialAveragedBADA)'])
-    elseif context_switch == 1
-        figure
-        imagesc(CellsTrialAveragedAllStims)
-        xlabel('stimuli and trials')
-        ylabel('cells')
-        title([group, ' single trials (CellsTrialAveragedAllStims)'])
-    end
-end
-
-
-
-%%% End Preprocessing
-toc
-
-if fit_model_switch == 1
-    classificationLearner
-    f = gcf;
-    uiwait(gcf);
-end
-% Switch stop time to be phoneme only and not include vowel
-load('OptSVM.mat');
-if context_switch == 1
-    yfit = OptSVM.predictFcn(CellsTrialAveragedAllStims);
-elseif context_switch == 0
-    yfit = ExpDataExemplarsLinDisc.predictFcn(CellsTrialAveragedBADA);
-end
-totalfitresults = sum(yfit == StimID3_Coerce) / length(StimID3_Coerce);
-
-confusionmatrixallstims = zeros(30, 3);
-for i = 1:length(yfit)
-    curr_PredStimID = yfit(i);
-    curr_TrueStimID = StimID3(i);
-    if curr_PredStimID == 1
-        confusionmatrixallstims(curr_TrueStimID, 1) = confusionmatrixallstims(curr_TrueStimID, 1) + 1;
-    elseif curr_PredStimID == 10
-        confusionmatrixallstims(curr_TrueStimID, 2) = confusionmatrixallstims(curr_TrueStimID, 2) + 1;
-    end
-end
-for j = 1:30                                                                % or length(confusionmatrixallstims)
-    confusionmatrixallstims(j, 3) = confusionmatrixallstims(j, 2)/(confusionmatrixallstims(j, 1) + confusionmatrixallstims(j, 2));
-end
-
-figure
-plot(1:10, confusionmatrixallstims((1:10), 3), 'bo-');
-if context_switch == 1
-    hold on
-    plot(1:10, confusionmatrixallstims((11:20), 3), 'go-');
-    hold on
-    plot(1:10, confusionmatrixallstims((21:30), 3), 'ro-');
-end
-xlabel('Ba-Da Spectrum');
-ylabel('% of Stims Labeled Da');
-title([group, ' Neurometric Curve (Trained Exemplars vs. Test 1-30)'])
-
-toc
