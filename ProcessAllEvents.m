@@ -21,8 +21,10 @@ function [MasterEvents] = ProcessAllEvents(varargin)
         sampleRate = sp.sample_rate;
         for i = 1:length(dirs)
             [Events] = ProcessEvents(dirs{i});
+            load(fullfile(dirs{i}, 'notebook.mat'));
             
             if i == 1
+                MasterStimlog = stimlog;
                 if strcmp(Events(1).type, 'soundfile') == 1
                     speech_fieldnames = fieldnames(Events);
                     MasterEvents.Speech = Events;
@@ -35,7 +37,7 @@ function [MasterEvents] = ProcessAllEvents(varargin)
                     error("This doesn't appear to be recording either tuning curves or speech context protocols, this function may need to be edited to include more stimulus types")
                 end
             else
-            
+                MasterStimlog = [MasterStimlog stimlog];
                 start_acq_samp = L(i - 1) * sampleRate;
                 for m = 1:length(Events)
                     Events(m).message_timestamp_sec = Events(m).message_timestamp_sec + L(i - 1);
@@ -68,5 +70,6 @@ function [MasterEvents] = ProcessAllEvents(varargin)
             end
         end
         save(fullfile(datadir{iMouse}, 'MasterEvents.mat'), 'MasterEvents', 'L', 'sampleRate');
+        save(fullfile(datadir{iMouse}, 'MasterStimlog.mat'), 'MasterStimlog');
     end
 end

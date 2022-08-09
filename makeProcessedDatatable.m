@@ -27,19 +27,21 @@ function [ProcessedDatatable] = makeProcessedDatatable(varargin)
         load(fullfile(MasterDir, 'dirs.mat'));
         for i = 1:length(dirs)
             [SortedUnitsFile] = ProcessSpikes(dirs{i}, LocalDataRoot);
+            load(SortedUnitsFile);
             if i == 1
-                SortedUnits = SortedUnitsFile;
+                AllSortedUnits = SortedUnits;
             end
             for j = 1:length(SortedUnits)
                 if i >= 2
                     start = L(currentdir_indx - 1);
-                    SortedUnitsFile(j).spiketimes = SortedUnitsFile(j).spiketimes + start;
+                    SortedUnits(j).spiketimes = SortedUnits(j).spiketimes + start;
                 end
-                SortedUnits(j).spiketimes = [SortedUnits(j).spiketimes SortedUnitsFile(j).spiketimes];
+                AllSortedUnits(j).spiketimes = [AllSortedUnits(j).spiketimes SortedUnits(j).spiketimes];
             end
             clear SortedUnitsFile
         end
         
+        SortedUnits = AllSortedUnits;
         savename = strcat('SortedUnits-', mouseID);
         save(fullfile(MasterDir, savename), 'L');
 
