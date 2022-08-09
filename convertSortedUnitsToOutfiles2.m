@@ -44,14 +44,17 @@ for i = 1:length(all_SortedUnits)
             stim_indices = find(strcmp(unique_sourcefiles{k}, {MasterEvents.Speech.sourcefile}));
             temp_spikes = [];
             for iTrial = 1:length(stim_indices)
-                curr_spiketimes = []; adj_curr_spiketimes = []; data(j).Trialtimes(k, iTrial).spiketimes = [];
+                curr_spiketimes = []; adj_curr_spiketimes = []; 
                 start_time = MasterEvents.Speech(stim_indices(iTrial)).soundcard_trigger_timestamp_sec;
-                stop_time = start_time + (stim_dur_sec);
-                curr_spiketimes = SortedUnits(j).spiketimes(SortedUnits(j).spiketimes >= start_time & SortedUnits(j).spiketimes <= stop_time);
-                if ~isempty(curr_spiketimes)
-                    adj_curr_spiketimes = (curr_spiketimes - start_time) * 1000; %Adjust to start of trial and convert to ms
-                    data(j).Trialtimes(k, iTrial).spiketimes = [data(j).Trialtimes(k, iTrial).spiketimes adj_curr_spiketimes];
-                    temp_spikes = [temp_spikes, adj_curr_spiketimes]; 
+                if start_time < SortedUnits(j).spiketimes(end) == 1
+                    data(j).Trialtimes(k, iTrial).spiketimes = [];
+                    stop_time = start_time + (stim_dur_sec);
+                    curr_spiketimes = SortedUnits(j).spiketimes(SortedUnits(j).spiketimes >= start_time & SortedUnits(j).spiketimes <= stop_time);
+%                     if ~isempty(curr_spiketimes)
+                        adj_curr_spiketimes = (curr_spiketimes - start_time) * 1000; %Adjust to start of trial and convert to ms
+                        data(j).Trialtimes(k, iTrial).spiketimes = [data(j).Trialtimes(k, iTrial).spiketimes adj_curr_spiketimes];
+                        temp_spikes = [temp_spikes, adj_curr_spiketimes]; 
+%                     end
                 end
             end
         

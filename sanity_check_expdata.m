@@ -27,81 +27,98 @@ else
 end
 
 % nreps = 100;                                                               % Hard code in expected nreps since true nreps/cell can be variable
-load('MasterExpDataTable.mat')
-cellsbystim_datatable = [];
-for j = 1:length(masterdata)
-    Stimtimes = masterdata(j).Stimetimes;
-    for k = 1:size(Stimtimes, 1)
-        spiketimes = (Stimtimes(k).spiketimes);                
-        spikecount = length(find(spiketimes >= start & spiketimes <= stop));
-        sc(k) = spikecount;
-    end
-    cellsbystim_datatable(j,:) = sc;
-    sc = [];
-end
+all_datatables = dir('ExpDataTable*.mat');
+% cellsbystim_datatable = [];
+% AllCellsByStimDatatable = [];
+% for iMouse = 1:length(all_datatables)
+%     load(all_datatables(iMouse).name)
+%     for j = 1:length(data)
+%         Stimtimes = data(j).Stimtimes;
+%         for k = 1:size(Stimtimes, 2)
+%             spiketimes = (Stimtimes(k).spiketimes);                
+%             spikecount = length(find(spiketimes >= start & spiketimes <= stop));
+%             sc(k) = spikecount;
+%         end
+%         cellsbystim_datatable(j,:) = sc;
+%         sc = [];
+%     end
+%     AllCellsByStimDatatable = [AllCellsByStimDatatable; cellsbystim_datatable];
+%     cellsbystim_datatable = [];
+% end
 
 %%%
 % Single trials
 
 iExclude = 0;
-TotalTrialsByStim = [];
-for j = 1:length(data)
-    Trialtimes = data(j).Trialtimes(:,:);
-    sc = [];
-%     if size(Trialtimes, 4) >= 100
-        for k = 1:size(Trialtimes, 1)
-            index = 1;
-            for rep = 1:size(Trialtimes, 2)
-                spiketimes = Trialtimes(k, rep).spiketimes;
-                if multi_bin_switch == 0
-                    spikecount = length(find(spiketimes >= start & spiketimes <= stop));
-                    sc(k, rep) = spikecount;
-                elseif multi_bin_switch == 1
-                    spikecount_int_1 = length(find(spiketimes >= start & spiketimes <= int_1));
-                    spikecount_int_2 = length(find(spiketimes >= int_1 & spiketimes <= int_2));
-                    spikecount_int_3 = length(find(spiketimes >= int_2 & spiketimes <= stop));
-                    sc(k, index) = spikecount_int_1;
-                    sc(k, index + 1) = spikecount_int_2;
-                    sc(k, index + 2) = spikecount_int_3;
-                    index = index + interval_factor;
+MtrialsAll = [];
+for iMouse = 1:length(all_datatables)
+    load(all_datatables(iMouse).name);
+    for j = 1:length(data)
+        Trialtimes = data(j).Trialtimes(:,:);
+        sc = [];
+        if size(Trialtimes, 2) >= 100
+            for k = 1:size(Trialtimes, 1)
+                index = 1;
+                all_reps = 1:size(Trialtimes, 2);
+                reps = datasample(all_reps, 100);
+                for rep = 1:length(reps)
+                    spiketimes = Trialtimes(k, reps(rep)).spiketimes;
+                    if multi_bin_switch == 0
+                        spikecount = length(find(spiketimes >= start & spiketimes <= stop));
+                        sc(k, rep) = spikecount;
+                    elseif multi_bin_switch == 1
+                        spikecount_int_1 = length(find(spiketimes >= start & spiketimes <= int_1));
+                        spikecount_int_2 = length(find(spiketimes >= int_1 & spiketimes <= int_2));
+                        spikecount_int_3 = length(find(spiketimes >= int_2 & spiketimes <= stop));
+                        sc(k, index) = spikecount_int_1;
+                        sc(k, index + 1) = spikecount_int_2;
+                        sc(k, index + 2) = spikecount_int_3;
+                        index = index + interval_factor;
+                    end
                 end
             end
-        end
-        Mtrials(j,:,:) = sc;                                            % Mtrials is cells x stimulus x rep
-%     else
-%         iExclude = iExclude + 1;
-%         list_of_cells_excluded(iExclude) = j;
-%     end    
+            Mtrials(j,:,:) = sc;                                            % Mtrials is cells x stimulus x rep
+        else
+            iExclude = iExclude + 1;
+            list_of_cells_excluded(iExclude) = j;
+        end    
+    end
+    MtrialsAll(iMouse).data = Mtrials;
+    clear Mtrials
 end
 StimList = (1:30)';
 
-if context_switch == 0
-    TotalTrialsByStim = TotalTrialsByStim(1:10, :)';
-else
-    TotalTrialsByStim = TotalTrialsByStim';
-end
 
-clear response CellsTrialAveragedExemplars
 CellsTrialAveragedExemplars = [];
 k = 1;
-for i = [1 10]                                                          % Enter stims to train on in numerical form
+for iMouse = 1:length(all_datatables)                                       
     if multi_bin_switch == 0
-        for j = 1:nreps
-            StimID2(k) = i;
-            CellsTrialAveragedExemplars(:, k) = Mtrials(:, i, j);
-            k = k + 1;
+        data = MtrialsAll(iMouse).data;
+        for iCell = 1:size(data, 1)
+            for i = [1 10]
+%                 for j = 1:size(MtrialsAll, 3)
+                StimID2(k) = i;
+                CellsTrialAveragedExemplars(:, k) = data(iCell, i, :);
+                    k = k + 1;
+%                 end
+            end
         end
     elseif multi_bin_switch == 1
-        for j = 1:(nreps * interval_factor)
-            if j == 1 || rem(j, interval_factor) == 1
-                StimID2(k) = i;
-                StimID2(k + 1) = i;
-                StimID2(k + 2) = i;
-                CellsTrialAveragedExemplars(:, k) = Mtrials(:, i, j);
-                CellsTrialAveragedExemplars(:, k + 1) = Mtrials(:, i, (j + 1));
-                CellsTrialAveragedExemplars(:, k + 2) = Mtrials(:, i, (j + 2));
-                k = k + interval_factor;
-            else
+        data = MtrialsAll(iMouse).data;
+        for iCell = 1:size(data, 1)
+            for i = [1 10]
+%                 for j = 1:size(data, 3)
+%                     if j == 1 || rem(j, interval_factor) == 1
+                        StimID2(k) = i;
+%                         StimID2(k + 1) = i;
+%                         StimID2(k + 2) = i;
+                        CellsTrialAveragedExemplars(:, k) = data(iCell, i, :);
+%                         CellsTrialAveragedExemplars(:, k + 1) = data(iCell, i, :);
+%                         CellsTrialAveragedExemplars(:, k + 2) = data(iCell, i, :);
+                        k = k + 1;%interval_factor;
+%                     else
+%                     end
+%                 end
             end
         end
     end    
@@ -129,30 +146,36 @@ elseif context_switch == 1
     CellsTrialAveragedAllStims = [];
 end
 k = 1;
-for i = stims
-    if multi_bin_switch == 0
-        for j = 1:nreps
-            StimID3(k) = i;
-            if context_switch == 0
-                CellsTrialAveragedAllBADA(:, k) = Mtrials(:, i, j);
-            elseif context_switch == 1
-                CellsTrialAveragedAllStims(:, k) = Mtrials(:, i, j);
+for iMouse = 1:length(all_datatables)
+    data = MtrialsAll(iMouse).data;
+    for iCell = 1:size(data, 1)
+        if multi_bin_switch == 0
+            for iStim = 1:size(data, 2)
+                StimID3(k) = iStim;
+                if context_switch == 0
+                    CellsTrialAveragedAllBADA(:, k) = data(iCell, iStim, :);
+                elseif context_switch == 1
+                    CellsTrialAveragedAllStims(:, k) = data(iCell, iStim, :);
+                end
+                k = k + 1;
             end
-            k = k + 1;
-        end
-    elseif multi_bin_switch == 1
-        for j = 1:(nreps * interval_factor)
-            if j == 1 || rem(j, interval_factor) == 1
-                StimID3(k) = i;
-                StimID3(k + 1) = i;
-                StimID3(k + 2) = i;
-                CellsTrialAveragedAllStims(:, k) = Mtrials(:, i, j);
-                CellsTrialAveragedAllStims(:, k + 1) = Mtrials(:, i, j + 1);
-                CellsTrialAveragedAllStims(:, k + 2) = Mtrials(:, i, j + 2);
-                k = k + interval_factor;
-            else
+        elseif multi_bin_switch == 1
+            for iStim = 1:size(data, 2)
+%                 for j = 1:size(data, 3)
+%                     if j == 1 || rem(j, interval_factor) == 1
+                        StimID3(k) = iStim;
+%                         StimID3(k + 1) = i;
+%                         StimID3(k + 2) = i;
+                        CellsTrialAveragedAllStims(:, k) = data(iCell, iStim, :);
+%                         CellsTrialAveragedAllStims(:, k + 1) = Mtrials(:, i, j + 1);
+%                         CellsTrialAveragedAllStims(:, k + 2) = Mtrials(:, i, j + 2);
+                        k = k + 1;%interval_factor;
+%                     else
+%                     end
+%                 end
             end
         end
+        
     end
 end
 % CellsTrialAveragedBADA is cells x (stim * reps)
@@ -170,3 +193,4 @@ for i = 1:length(StimID3)
     end
 end
 
+classificationLearner

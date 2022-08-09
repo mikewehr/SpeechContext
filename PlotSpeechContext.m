@@ -122,7 +122,7 @@ if isempty(channel)     %default to all tetrodes
             %   lines 44-55 in PlotClicktrain_PSTH_single
             %   lines 30-43 in ProcessClicktrain_PSTH_single
             PlotSpeechContext_single(datadir, fn, xlimits, ylimits, binwidth)
-%             close all %close each new PSTH as they are generated for directories with many cells/outfiles SFM 4/9/21
+            close all %close each new PSTH as they are generated for directories with many cells/outfiles SFM 4/9/21
         end
         %end of Nick addition 8/31/18. Some slight rearrangements below.
     else
@@ -130,12 +130,12 @@ if isempty(channel)     %default to all tetrodes
         if isempty(d)
             fprintf('\nNo clustered data found (no .t files in this directory)')
             PlotSpeechContext_single(datadir, fn, xlimits, ylimits, binwidth)
-%             close all %close each new PSTH as they are generated for directories with many cells/outfiles SFM 4/9/21
+            close all 
         end
         for i=1:length(d)
             fn=d(i).name;
             PlotSpeechContext_single(datadir, fn, xlimits, ylimits, binwidth)
-%             close all %close each new PSTH as they are generated for directories with many cells/outfiles SFM 4/9/21
+            close all 
         end
     end
 else %user specified a channel
@@ -144,17 +144,17 @@ else %user specified a channel
         for i=1:length(d)
             fn=d(i).name;
             PlotSpeechContext_single(datadir, fn, xlimits, ylimits)
-%             close all %close each new PSTH as they are generated for directories with many cells/outfiles SFM 4/9/21
+            close all 
         end
-    else %user specified a channel and a cluster
+    else 
         if clust<10
             fn=sprintf('ch%d_simpleclust_0%d.t', channel, clust);
             PlotSpeechContext_single(datadir, fn, xlimits, ylimits)
-%             close all %close each new PSTH as they are generated for directories with many cells/outfiles SFM 4/9/21
+            close all 
         else
             fn=sprintf('ch%d_simpleclust_%d.t', channel, clust);
             PlotSpeechContext_single(datadir, fn, xlimits, ylimits)
-%             close all %close each new PSTH as they are generated for directories with many cells/outfiles SFM 4/9/21
+            close all 
             
         end
     end
