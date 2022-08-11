@@ -35,6 +35,7 @@ for i = 1:length(all_SortedUnits)
     stim_dur_samp = stim_dur_ms * 30;
     temp_string = strsplit(SortedUnits(1).dir, '-');
     mouseID = temp_string{end};
+    pydata = [];
     
     for j = 1:length(SortedUnits)
         outname = strcat('outPSTH_ch', num2str(SortedUnits(j).channel), 'c', num2str(SortedUnits(j).cluster));
@@ -46,16 +47,17 @@ for i = 1:length(all_SortedUnits)
             for iTrial = 1:length(stim_indices)
                 curr_spiketimes = []; adj_curr_spiketimes = []; 
                 start_time = MasterEvents.Speech(stim_indices(iTrial)).soundcard_trigger_timestamp_sec;
-                if start_time < SortedUnits(j).spiketimes(end) == 1
+%                 if start_time < SortedUnits(j).spiketimes(end) == 1
                     data(j).Trialtimes(k, iTrial).spiketimes = [];
                     stop_time = start_time + (stim_dur_sec);
                     curr_spiketimes = SortedUnits(j).spiketimes(SortedUnits(j).spiketimes >= start_time & SortedUnits(j).spiketimes <= stop_time);
-%                     if ~isempty(curr_spiketimes)
+                    if ~isempty(curr_spiketimes)
                         adj_curr_spiketimes = (curr_spiketimes - start_time) * 1000; %Adjust to start of trial and convert to ms
                         data(j).Trialtimes(k, iTrial).spiketimes = [data(j).Trialtimes(k, iTrial).spiketimes adj_curr_spiketimes];
                         temp_spikes = [temp_spikes, adj_curr_spiketimes]; 
-%                     end
-                end
+                    end
+%                     pydata(j, k, iTrial).spiketimes = temp_spikes;
+%                 end
             end
         
         data(j).Stimtimes(k).spiketimes = sort(temp_spikes);
@@ -63,7 +65,9 @@ for i = 1:length(all_SortedUnits)
     end
     
     savename = strcat('ExpDataTable-', num2str(mouseID));
+%     pysavename = strcat('PyData', num2str(mouseID));
     save(savename, 'data', 'mouseID', 'outfile_list');
+%     save(pysavename, 'pydata');
     
     masterdata = [masterdata data];
     masterMouseID = [masterMouseID, all_mouseID];

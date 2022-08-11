@@ -26,11 +26,9 @@ function [MasterEvents] = ProcessAllEvents(varargin)
             if i == 1
                 MasterStimlog = stimlog;
                 if strcmp(Events(1).type, 'soundfile') == 1
-                    speech_fieldnames = fieldnames(Events);
                     MasterEvents.Speech = Events;
                     MasterEvents.Tuning = struct([]);
                 elseif strcmp(Events(1).type, 'tone') == 1
-                    tuning_fieldnames = fieldnames(Events);
                     MasterEvents.Tuning = Events;
                     MasterEvents.Speech = struct([]);
                 else

@@ -43,7 +43,7 @@ function [ProcessedDatatable] = makeProcessedDatatable(varargin)
         
         SortedUnits = AllSortedUnits;
         savename = strcat('SortedUnits-', mouseID);
-        save(fullfile(MasterDir, savename), 'L');
+        save(fullfile(MasterDir, savename), 'SortedUnits', 'L');
 
         ProcessAllEvents(MasterDir);
     end
