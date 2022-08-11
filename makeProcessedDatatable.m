@@ -33,15 +33,21 @@ function [ProcessedDatatable] = makeProcessedDatatable(varargin)
             end
             for j = 1:length(SortedUnits)
                 if i >= 2
-                    start = L(currentdir_indx - 1);
+                    start = L(i - 1);
                     SortedUnits(j).spiketimes = SortedUnits(j).spiketimes + start;
+                    AllSortedUnits(j).spiketimes = [AllSortedUnits(j).spiketimes SortedUnits(j).spiketimes];
                 end
-                AllSortedUnits(j).spiketimes = [AllSortedUnits(j).spiketimes SortedUnits(j).spiketimes];
             end
             clear SortedUnitsFile
         end
         
-        SortedUnits = AllSortedUnits;
+        for j = 1:length(AllSortedUnits)
+            SortedUnits(j).spiketimes = AllSortedUnits(j).spiketimes;
+            SortedUnits(j).dir_indx = AllSortedUnits(j).dir_indx;
+            SortedUnits(j).Bdir = AllSortedUnits(j).Bdir;
+            SortedUnits(j).dir = AllSortedUnits(j).dir;
+        end
+            
         savename = strcat('SortedUnits-', mouseID);
         save(fullfile(MasterDir, savename), 'SortedUnits', 'L');
 

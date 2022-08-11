@@ -6,7 +6,7 @@ cd('/Users/sammehan/Documents/Wehr Lab/SpeechContext2021/ExpData')          % Se
 %%% Settings
 context_switch = 1;                                                         % Do you want all trials (1) or just BA-DA (0)?
 fit_model_switch = 1;                                                       % Do you need to open Classification Learner and fit a model (1) ?
-consonant_switch = 1;                                                       % Do you want to look at spikes during the whole consonant-vowel pair (0) or just the consonant (1)?
+consonant_switch = 0;                                                       % Do you want to look at spikes during the whole consonant-vowel pair (0) or just the consonant (1)?
 multi_bin_switch = 1;                                                       % Do you want to break the trials down in time (1) (Still need to hard code in new intervals)?
 % xlim = -181.8672;
 
@@ -28,23 +28,23 @@ end
 
 % nreps = 100;                                                               % Hard code in expected nreps since true nreps/cell can be variable
 all_datatables = dir('ExpDataTable*.mat');
-% cellsbystim_datatable = [];
-% AllCellsByStimDatatable = [];
-% for iMouse = 1:length(all_datatables)
-%     load(all_datatables(iMouse).name)
-%     for j = 1:length(data)
-%         Stimtimes = data(j).Stimtimes;
-%         for k = 1:size(Stimtimes, 2)
-%             spiketimes = (Stimtimes(k).spiketimes);                
-%             spikecount = length(find(spiketimes >= start & spiketimes <= stop));
-%             sc(k) = spikecount;
-%         end
-%         cellsbystim_datatable(j,:) = sc;
-%         sc = [];
-%     end
-%     AllCellsByStimDatatable = [AllCellsByStimDatatable; cellsbystim_datatable];
-%     cellsbystim_datatable = [];
-% end
+cellsbystim_datatable = [];
+AllCellsByStimDatatable = [];
+for iMouse = 1:length(all_datatables)
+    load(all_datatables(iMouse).name)
+    for j = 1:length(data)
+        Stimtimes = data(j).Stimtimes;
+        for k = 1:size(Stimtimes, 2)
+            spiketimes = (Stimtimes(k).spiketimes);                
+            spikecount = length(find(spiketimes >= start & spiketimes <= stop));
+            sc(k) = spikecount;
+        end
+        cellsbystim_datatable(j,:) = sc;
+        sc = [];
+    end
+    AllCellsByStimDatatable = [AllCellsByStimDatatable; cellsbystim_datatable];
+    cellsbystim_datatable = [];
+end
 
 %%%
 % Single trials
